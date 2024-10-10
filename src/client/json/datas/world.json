@@ -1,0 +1,145 @@
+[
+	{
+		"HeroID": "1000",
+		"HeroOrderID": "1000",
+		"ID": "courier",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "Courier",
+				"SlotText": "Courier"
+			}
+		},
+		"Name": "Courier"
+	},
+	{
+		"HeroID": "1001",
+		"HeroOrderID": "1001",
+		"ID": "ward",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "Ward",
+				"SlotText": "Ward"
+			}
+		},
+		"Name": "Ward"
+	},
+	{
+		"HeroID": "1002",
+		"HeroOrderID": "1002",
+		"ID": "radiantcreeps",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "radiant_creeps",
+				"SlotText": "Radiant creeps"
+			}
+		},
+		"Name": "Radiant creeps"
+	},
+	{
+		"HeroID": "1003",
+		"HeroOrderID": "1003",
+		"ID": "radiantsiegecreeps",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "radiant_siege_creeps",
+				"SlotText": "Radiant siege creeps"
+			}
+		},
+		"Name": "Radiant siege creeps"
+	},
+	{
+		"HeroID": "1004",
+		"HeroOrderID": "1004",
+		"ID": "direcreeps",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "dire_creeps",
+				"SlotText": "Dire creeps"
+			}
+		},
+		"Name": "Dire creeps"
+	},
+	{
+		"HeroID": "1005",
+		"HeroOrderID": "1005",
+		"ID": "diresiegecreeps",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "dire_siege_creeps",
+				"SlotText": "Dire siege creeps"
+			}
+		},
+		"Name": "Dire siege creeps"
+	},
+	{
+		"HeroID": "1006",
+		"HeroOrderID": "1006",
+		"ID": "radianttowers",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "radiant_towers",
+				"SlotText": "Radiant towers"
+			}
+		},
+		"Name": "Radiant towers"
+	},
+	{
+		"HeroID": "1007",
+		"HeroOrderID": "1007",
+		"ID": "diretowers",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "dire_towers",
+				"SlotText": "Dire towers"
+			}
+		},
+		"Name": "Dire towers"
+	},
+	{
+		"HeroID": "1008",
+		"HeroOrderID": "1008",
+		"ID": "roshan",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "roshan",
+				"SlotText": "Roshan"
+			}
+		},
+		"Name": "Roshan"
+	},
+	{
+		"HeroID": "1009",
+		"HeroOrderID": "1009",
+		"ID": "ancient",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "ancient",
+				"SlotText": "Ancient"
+			}
+		},
+		"Name": "Ancient"
+	},
+	{
+		"HeroID": "1010",
+		"HeroOrderID": "1010",
+		"ID": "neutralcreeps",
+		"ItemSlots": {
+			"courier": {
+				"SlotIndex": "0",
+				"SlotName": "neutral_creeps",
+				"SlotText": "Neutral creeps"
+			}
+		},
+		"Name": "Neutral creeps"
+	}
+]

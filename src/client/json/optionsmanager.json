@@ -1,0 +1,307 @@
+{
+	"categories": [
+		"app.lang",
+		"app",
+		"engine",
+		"app.css.variables"
+
+	],
+	"options": [
+		{
+			"name": "app.css.theme",
+			"type": "list",
+			"default": "dark",
+			"datalist": [
+				"dark",
+				"light"
+			]
+		},
+		{
+			"name": "app.backgroundcolor",
+			"type": "color",
+			"default": "#13385DFF"
+		},
+		{
+			"name": "app.showpedestal",
+			"type": "boolean",
+			"default": true
+		},
+		{
+			"name": "app.showmetamorphosis",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"name": "app.market.automarket",
+			"type": "boolean",
+			"default": true
+		},
+		{
+			"name": "app.market.currency",
+			"type": "list",
+			"default": "USD",
+			"datalist":[
+				"USD",
+				"EUR",
+				"GBP",
+				"CNY",
+				"JPY",
+				"RUB"
+			]
+		},
+		{
+			"name": "app.lang",
+			"type": "list",
+			"default": "english",
+			"datalist": [
+				"english",
+				"french"
+			]
+		},
+		{
+			"name": "app.loadout.pedestalmodel",
+			"type": "list",
+			"default": "models/heroes/pedestal/pedestal_1",
+			"datalist":[
+				"models/heroes/pedestal/pedestal_1",
+				"models/heroes/pedestal/pedestal_1_small",
+				"models/heroes/pedestal/pedestal_1_large",
+				"models/items/pedestals/pedestal_2/pedestal_2",
+				"models/heroes/pedestal/pedestal_2_ground",
+				"models/heroes/pedestal/pedestal_2_ground_dire",
+				"models/heroes/pedestal/effigy_pedestal_radiant",
+				"models/heroes/pedestal/effigy_pedestal_dire",
+				"models/heroes/pedestal/effigy_pedestal_frost_radiant",
+				"models/heroes/pedestal/effigy_pedestal_frosty_dire",
+				"models/heroes/pedestal/pedestal_effigy_jade",
+				"models/heroes/pedestal/effigy_pedestal_ti5",
+				"models/heroes/pedestal/effigy_pedestal_ti5_dire",
+				"models/heroes/pedestal/effigy_pedestal_ti5_lv2",
+				"models/heroes/pedestal/effigy_pedestal_ti5_lv2_dire",
+				"models/heroes/pedestal/effigy_pedestal_wm16",
+				"models/heroes/pedestal/mesh/effigy_pedestal_fm16",
+				"models/heroes/pedestal/mesh/effigy_pedestal_fm16_dire",
+				"models/heroes/pedestal/mesh/effigy_pedestal_fm16_dire_wood",
+				"models/heroes/pedestal/mesh/effigy_pedestal_fm16_wood",
+				"models/heroes/pedestal/mesh/effigy_pedestal_ti6_dire_model",
+				"models/heroes/pedestal/mesh/effigy_pedestal_ti6_lv2_dire_model_dmx",
+				"models/heroes/pedestal/mesh/effigy_pedestal_ti6_lv2_model_dmx",
+				"models/heroes/pedestal/mesh/effigy_pedestal_ti6_model"
+			]
+		},
+		{
+			"name": "app.loadout.lod",
+			"type": "list",
+			"default": "1",
+			"datalist":[
+				"1",
+				"2"
+			]
+		},
+		{
+			"name": "engine.render.silhouettemode",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"name": "engine.render.silhouettecolor",
+			"type": "color",
+			"default": "#FFFFFFFF"
+		},
+		{
+			"name": "app.cameras.orbit.position",
+			"type": "string",
+			"default": "0 -500 100"
+		},
+		{
+			"name": "app.cameras.orbit.target",
+			"type": "string",
+			"default": "0 0 100"
+		},
+		{
+			"name": "app.cameras.orbit.verticalfov",
+			"type": "number",
+			"default": 30
+		},
+		{
+			"name": "app.cameras.orbit.saveposition",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"name": "app.cameras.orbit.polarrotation",
+			"type": "boolean",
+			"default": true
+		},
+		{
+			"name": "app.cameras.default.orthographic",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"name": "app.itemselector.columns",
+			"type": "integer",
+			"default": "2",
+			"min": "1",
+			"max": "5"
+		},
+		{
+			"name": "app.itemselector.hideitemname",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"name": "app.heroselector.filter.method",
+			"type": "list",
+			"default": "grayscale",
+			"datalist": [
+				"grayscale",
+				"hide"
+			]
+		},
+		{
+			"name": "app.picture.size",
+			"type": "string",
+			"default": null
+		},
+		{
+			"name": "engine.shadereditor.recompiledelay",
+			"type": "integer",
+			"default": "1000",
+			"min": "1"
+		},
+		{
+			"name": "app.lights.ambient.color",
+			"type": "color",
+			"default": "#FFFFFFFF"
+		},
+		{
+			"name": "app.lights.ambient.intensity",
+			"type": "number",
+			"default": "1.0"
+		},
+		{
+			"name": "app.lights.pointlights.count",
+			"type": "integer",
+			"default": "1"
+		},
+		{
+			"name": "app.lights.pointlights.0.color",
+			"type": "color",
+			"default": "#FFFFFFFF"
+		},
+		{
+			"name": "app.lights.pointlights.0.intensity",
+			"type": "number",
+			"default": "0.3"
+		},
+		{
+			"name": "app.lights.pointlights.0.position",
+			"type": "vec3",
+			"default": "0 -250 50"
+		},
+		{
+			"name": "app.lights.pointlights.0.visible",
+			"type": "boolean",
+			"default": true
+		},
+		{
+			"name": "app.lights.pointlights.1.color",
+			"type": "color",
+			"default": "#FFFFFFFF"
+		},
+		{
+			"name": "app.lights.pointlights.1.intensity",
+			"type": "number",
+			"default": "0.3"
+		},
+		{
+			"name": "app.lights.pointlights.1.position",
+			"type": "vec3",
+			"default": "0 250 0"
+		},
+		{
+			"name": "app.lights.pointlights.1.visible",
+			"type": "boolean",
+			"default": true
+		}
+		,{
+			"name": "app.inspector.display",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.transformations.display",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.showeffects",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.objexporter.exporttextures",
+			"type": "boolean",
+			"default": true
+		}
+		,{
+			"name": "app.objexporter.singlemesh",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.objexporter.askoptions",
+			"type": "boolean",
+			"default": true
+		}
+		,{
+			"name": "app.objexporter.subdivide",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.objexporter.mergevertices",
+			"type": "boolean",
+			"default": true
+		}
+		,{
+			"name": "app.objexporter.subdivide.iterations",
+			"type": "integer",
+			"min": 1,
+			"max": 5,
+			"default": 1
+		}
+		,{
+			"name": "app.heroselector.sort.field",
+			"type": "list",
+			"default": "name",
+			"datalist": [
+				"name"
+				,"order"
+				,"female"
+			]
+		}
+		,{
+			"name": "app.characters.desaturate",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.items.desaturate",
+			"type": "boolean",
+			"default": false
+		}
+		,{
+			"name": "app.characters.equipdefaultitems",
+			"type": "boolean",
+			"default": true
+		}
+		,{
+			"name": "app.units.display",
+			"type": "map",
+			"default": {}
+		}
+	]
+
+}
