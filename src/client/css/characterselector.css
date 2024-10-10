@@ -1,0 +1,72 @@
+.character-selector{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	/*background-color: brown;*/
+	/*opacity: 60%;*/
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	transition: top 0.4s;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.3);
+	z-index: 1000;
+}
+.character-selector-characters{
+	display: flex;
+	flex-wrap: wrap;
+	/*overflow: auto;*/
+	overflow-y: auto;
+	text-align: center;
+	justify-content: center;
+}
+.character-selector-filter-name{
+	position: absolute;
+	font-size: 20rem;
+	pointer-events: none;
+	opacity: 40%;
+}
+.character-selector-character{
+	height: var(--hero-icon-height);
+	width: var(--hero-icon-width);
+	overflow: hidden;
+	position: relative;
+	padding: 0.1rem;
+	cursor: pointer;
+}
+.character-selector-character.filtered{
+	filter: grayscale(100%) brightness(0.3);
+}
+
+.character-selector-character-img{
+	position: relative;
+}
+
+.hero-icon{
+	background-image:url('https://dota2content.dotaloadout.com/generated/heroes.jpeg');
+	height: 100%;
+	width: 100%;
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+.hero-name{
+	position: absolute;
+	bottom: 0px;
+	color: var(--theme-text-color);
+	background-color: rgb(var(--theme-text-bg-color) / 0.5);
+	width: 100%;
+	overflow: hidden;
+	font-size: 1.1em;
+}
+.filter-container{
+	display: flex;
+	gap: 1rem;
+	padding: 1rem;
+}
+.characters-filter-name, .characters-sort-field{
+	font-size: 1.5rem;
+	padding: 0.3rem;
+	cursor: pointer;
+}

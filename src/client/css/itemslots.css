@@ -1,0 +1,48 @@
+.item-slots{
+	display: flex;
+	flex-direction: column;
+}
+
+.item-slots-character{
+	overflow: hidden;
+	position: relative;
+	width: var(--hero-icon-width);
+	height: var(--hero-icon-height);
+	flex-shrink: 0;
+}
+
+.item-slots-list{
+	width: 100%;
+	overflow: hidden auto;
+	flex: 1;
+}
+
+.item-slot{
+	position: relative;
+	width: 100%;
+	cursor: pointer;
+	width: var(--item-icon-width);
+	height: var(--item-icon-height);
+}
+
+
+.item-slot-img{
+	width: 100%;
+}
+.item-name{
+	position: absolute;
+	bottom: 0px;
+	background-color: rgb(var(--theme-text-bg-color) / 0.5);
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.item-slot-remove{
+	position: absolute;
+	top: 0px;
+}
+.hide-item-name .item-name{
+	display:none;
+}

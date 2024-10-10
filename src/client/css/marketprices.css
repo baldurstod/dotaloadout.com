@@ -1,0 +1,10 @@
+.market-prices{
+	position: absolute;
+	bottom: 0;
+}
+
+.market-prices>.price{
+	text-decoration: none;
+	font-size: 1.5rem;
+	display: block;
+}

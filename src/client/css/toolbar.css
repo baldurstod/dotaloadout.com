@@ -1,0 +1,36 @@
+.toolbar{
+	height:5rem;
+	width:100%;
+	/*background-color: chocolate;*/
+	flex: 0 0 3rem;
+	display: flex;
+	overflow: hidden;
+}
+.toolbar-items{
+	flex: 1;
+}
+.toolbar-buttons{
+	margin: 0.1rem;
+	flex: 0;
+	display: flex;
+}
+.toolbar-button{
+	cursor: pointer;
+}
+.toolbar-button.disabled{
+	opacity: 50%;
+}
+
+.toolbar-button > svg {
+	height: 2.8rem;
+	width: 2.8rem;
+
+}
+.toolbar-activity{
+	display: flex;
+}
+.toolbar-activity-selector, .toolbar-activity-modifiers{
+	font-size: 2rem;
+	margin: 0.3rem;
+	cursor: pointer;
+}

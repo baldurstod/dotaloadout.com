@@ -1,0 +1,11 @@
+.style-selector{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.style-selector-item-header{
+	font-size: 1.5em;
+}
+.style-selector-item-style{
+	cursor: pointer;
+}

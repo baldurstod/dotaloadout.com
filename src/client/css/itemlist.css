@@ -1,0 +1,113 @@
+.item-list{
+	flex: 0 0 calc(var(--item-icon-width) * var(--item-selector-columns));
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	--color-arcana: 173, 229, 92;
+	--color-common: 176, 195, 217;
+	--color-immortal: 228, 174, 57;
+	--color-legendary: 211, 44, 230;
+	--color-mythical: 136, 71, 255;
+	--color-rare: 75, 105, 255;
+	--color-seasonal: 255, 243, 79;
+	--color-uncommon: 94, 152, 217;
+
+	--item-rarity-gradient-alpha: 1.0;
+	--item-rarity-gradient-width: 15%;
+
+	--item-rarity-gradient-mid: rgba(0, 0, 0, 0) var(--item-rarity-gradient-width), rgba(0, 0, 0, 0) calc(100% - var(--item-rarity-gradient-width));
+
+	--item-rarity-arcana:linear-gradient(0.25turn, rgba(var(--color-arcana), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-arcana), var(--item-rarity-gradient-alpha)));
+	--item-rarity-common:linear-gradient(0.25turn, rgba(var(--color-common), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-common), var(--item-rarity-gradient-alpha)));
+	--item-rarity-immortal:linear-gradient(0.25turn, rgba(var(--color-immortal), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-immortal), var(--item-rarity-gradient-alpha)));
+	--item-rarity-legendary:linear-gradient(0.25turn, rgba(var(--color-legendary), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-legendary), var(--item-rarity-gradient-alpha)));
+	--item-rarity-mythical:linear-gradient(0.25turn, rgba(var(--color-mythical), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-mythical), var(--item-rarity-gradient-alpha)));
+	--item-rarity-rare:linear-gradient(0.25turn, rgba(var(--color-rare), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-rare), var(--item-rarity-gradient-alpha)));
+	--item-rarity-seasonal:linear-gradient(0.25turn, rgba(var(--color-seasonal), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-seasonal), var(--item-rarity-gradient-alpha)));
+	--item-rarity-uncommon:linear-gradient(0.25turn, rgba(var(--color-uncommon), var(--item-rarity-gradient-alpha)), var(--item-rarity-gradient-mid), rgba(var(--color-uncommon), var(--item-rarity-gradient-alpha)));
+}
+.item-list-header select, .item-list-header input{
+	cursor: pointer;
+}
+.item-list-header-slot-filter{
+	width: 100%;
+	font-size: 1.5rem;
+	box-sizing: border-box;
+}
+
+.item-list-items{
+	flex: 1;
+	overflow: hidden;
+}
+.item-list-items-inner{
+	overflow-y: auto;
+	margin-right: -100px;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: start;
+}
+.item-list-item{
+	cursor: pointer;
+	width: var(--item-icon-width);
+	height: var(--item-icon-height);
+	position: relative;
+}
+.item-list-item .has-styles{
+	position: absolute;
+	width: 0.75rem;
+	height: 0.75rem;
+	top: 0.25rem;
+	left: 1rem;
+	border-radius: 0.5rem;
+	background-color: white;
+}
+.item-list-item::before{
+	width: calc(var(--item-icon-width) - 10px);
+	height: calc(var(--item-icon-height) - 10px);
+	width: var(--item-icon-width);
+	height: var(--item-icon-height);
+	background-size: 100% auto;
+	position: relative;
+	content: '';
+	pointer-events: none;
+	display: block;
+	position: absolute;
+	z-index: 10;
+}
+.characterlist{
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: baseline;
+	padding-bottom: 20rem;
+}
+.item-rarity-arcana::before{
+	background-image: var(--item-rarity-arcana);
+}
+.item-rarity-common::before{
+	background-image: var(--item-rarity-common);
+}
+.item-rarity-immortal::before{
+	background-image: var(--item-rarity-immortal);
+}
+.item-rarity-legendary::before{
+	background-image: var(--item-rarity-legendary);
+}
+.item-rarity-mythical::before{
+	background-image: var(--item-rarity-mythical);
+}
+.item-rarity-rare::before{
+	background-image: var(--item-rarity-rare);
+}
+.item-rarity-seasonal::before{
+	background-image: var(--item-rarity-seasonal);
+}
+.item-rarity-uncommon::before{
+	background-image: var(--item-rarity-uncommon);
+}

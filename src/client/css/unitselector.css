@@ -1,0 +1,11 @@
+:host{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.units{
+	display: flex;
+	flex-direction: column;
+	max-height: 10rem;
+	overflow-y: auto;
+}

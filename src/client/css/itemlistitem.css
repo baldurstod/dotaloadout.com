@@ -1,0 +1,12 @@
+item-list-item{
+	width: 10rem;
+	cursor: pointer;
+}
+.item-list-item-img{
+	width: 100%;
+}
+.item-list-item-name{
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+}

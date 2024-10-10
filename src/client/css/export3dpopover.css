@@ -1,0 +1,14 @@
+.export-3d-popover{
+	position: absolute;
+	inset: unset;
+	top: 50px;
+	right: 50px;
+	margin: 0;
+	background-color: var(--theme-popup-bg-color);
+	color: var(--theme-text-color);
+	padding: 1rem;
+}
+
+.export-3d-popover>harmony-switch {
+	width: 100%;
+}
