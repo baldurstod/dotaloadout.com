@@ -60,10 +60,6 @@ func initEngine() *gin.Engine {
 
 func rewriteURL(r *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.URL.Path == "/list" {
-			c.Next()
-			return
-		}
 		if strings.HasPrefix(c.Request.URL.Path, "/@") {
 			c.Request.URL.Path = "/"
 			r.HandleContext(c)
