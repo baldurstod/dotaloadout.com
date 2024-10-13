@@ -1,8 +1,6 @@
 import { AmbientLight, Camera, ContextObserver, GraphicsEvent, Graphics, GraphicsEvents, HALF_PI, OrbitControl, Scene, SceneExplorer, Source2ModelManager, WebGLStats, Composer } from 'harmony-3d';
 import { createElement } from 'harmony-ui';
-
 import { Controller } from '../controller';
-
 import { loadoutCamera, loadoutScene } from '../loadout/scene';
 
 export class Viewer {
@@ -10,7 +8,7 @@ export class Viewer {
 	#htmlCanvas;
 	#renderer;
 	#orbitControl;
-	#composer:Composer;
+	#composer: Composer;
 	constructor() {
 		this.#initHTML();
 		this.#orbitControl = new OrbitControl(loadoutCamera, this.#htmlCanvas);
@@ -40,7 +38,7 @@ export class Viewer {
 
 		this.#renderer.clearColor([0.5, 0.5, 0.5, 1]);
 
-		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event) => {
+		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: CustomEvent) => {
 			WebGLStats.tick();
 			if (this.#composer?.enabled) {
 				this.#composer.render(event.detail.delta);
