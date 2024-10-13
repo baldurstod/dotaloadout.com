@@ -11,23 +11,27 @@ import (
 
 	assets "github.com/baldurstod/dotaloadout.com"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
 )
 
-func startServer(config HTTP) {
-	engine := initEngine()
+func startServer(config Config) {
+	/*
+		store = initStore(&config.Sessions)
+		if store == nil {
+			log.Fatal("Can't init session store")
+		}*/
+
+	engine := initEngine(config)
 	var err error
 
 	log.Printf("Listening on port %d\n", config.Port)
-	if config.Https || (ReleaseMode == "true") { // HTTPS is mandatory in release mode
-		err = engine.RunTLS(":"+strconv.Itoa(config.Port), config.HttpsCertFile, config.HttpsKeyFile)
-	} else {
-		err = engine.Run(":" + strconv.Itoa(config.Port))
-	}
+	err = engine.RunTLS(":"+strconv.Itoa(config.Port), config.HttpsCertFile, config.HttpsKeyFile)
 	log.Fatal(err)
 }
 
-func initEngine() *gin.Engine {
+func initEngine(config Config) *gin.Engine {
 	if ReleaseMode == "true" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -52,6 +56,12 @@ func initEngine() *gin.Engine {
 		useFS = os.DirFS("build/client")
 	}
 
+	p := config.Patreon
+	pm := newPatreonMiddleware(p.ClientID, p.ClientSecret, p.RedirectURL, p.CreatorID)
+
+	store := memstore.NewStore([]byte(config.SessionsAuthKey))
+	r.Use(sessions.Sessions("session_id", store))
+	r.Use(pm.middleware(r))
 	r.Use(rewriteURL(r))
 	r.StaticFS("/static", http.FS(useFS))
 

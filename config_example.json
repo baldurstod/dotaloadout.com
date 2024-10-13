@@ -1,0 +1,18 @@
+{
+	"http": {
+		"port": 0,
+		"https_key_file": "./var/key.pem",
+		"https_cert_file": "./var/cert.pem"
+	},
+	"patreon": {
+		"client_id": "",
+		"client_secret": "",
+		"redirect_url": "",
+		"creator_id": ""
+	},
+	"sessions": {
+		"sessions_file_store": "./var/sessions",
+		"sessions_auth_key": "",
+		"sessions_encrypt_key": ""
+	}
+}
