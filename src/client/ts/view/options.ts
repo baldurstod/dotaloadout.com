@@ -112,7 +112,7 @@ export class Options {
 						'data-i18n':'#shader_editor',
 						events: {
 							activated: event => {
-								this.#shaderEditor.initEditor({aceUrl:'./js/ace-builds/src-min/ace.js', displayCustomShaderButtons: true});
+								this.#shaderEditor.initEditor({aceUrl:'./assets/js/ace-builds/src-min/ace.js', displayCustomShaderButtons: true});
 								event.target.append(this.#shaderEditor);
 							},
 						},
