@@ -30,7 +30,7 @@ func initStore(config *Sessions) *sessions.FilesystemStore {
 
 func getSession(c *gin.Context) sessions.Session {
 	session := sessions.Default(c)
-	session.Options(sessions.Options{MaxAge: 86400 * 90, Path: "/"})
+	session.Options(sessions.Options{MaxAge: 86400 * 30, Path: "/"})
 	return session
 }
 

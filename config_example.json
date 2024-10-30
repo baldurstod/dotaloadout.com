@@ -11,8 +11,10 @@
 		"creator_id": ""
 	},
 	"sessions": {
-		"sessions_file_store": "./var/sessions",
-		"sessions_auth_key": "",
-		"sessions_encrypt_key": ""
+		"connect_uri": "mongodb://localhost:27017",
+		"db_name": "",
+		"collection": "",
+		"secret": "",
+		"session_name": "session"
 	}
 }

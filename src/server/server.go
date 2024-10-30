@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"io/fs"
 	"log"
 	"net/http"
@@ -12,8 +13,10 @@ import (
 	assets "github.com/baldurstod/dotaloadout.com"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/memstore"
+	"github.com/gin-contrib/sessions/mongo/mongodriver"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func startServer(config Config) {
@@ -59,8 +62,16 @@ func initEngine(config Config) *gin.Engine {
 	p := config.Patreon
 	pm := newPatreonMiddleware(p.ClientID, p.ClientSecret, p.RedirectURL, p.CreatorID)
 
-	store := memstore.NewStore([]byte(config.SessionsAuthKey))
-	r.Use(sessions.Sessions("session_id", store))
+	// Init sessions store
+	mongoOptions := options.Client().ApplyURI(config.Sessions.ConnectURI)
+	client, err := mongo.Connect(context.Background(), mongoOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c := client.Database(config.Sessions.DBName).Collection(config.Sessions.Collection)
+	store := mongodriver.NewStore(c, 86400*30, true, []byte(config.Sessions.Secret))
+
+	r.Use(sessions.Sessions(config.Sessions.SessionName, store))
 	r.Use(pm.middleware(r))
 	r.Use(rewriteURL(r))
 	r.StaticFS("/static", http.FS(useFS))

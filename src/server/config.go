@@ -20,7 +20,9 @@ type Patreon struct {
 }
 
 type Sessions struct {
-	SessionsFileStore  string `json:"sessions_file_store"`
-	SessionsAuthKey    string `json:"sessions_auth_key"`
-	SessionsEncryptKey string `json:"sessions_encrypt_key"`
+	ConnectURI  string `json:"connect_uri"`
+	DBName      string `json:"db_name"`
+	Collection  string `json:"collection"`
+	Secret      string `json:"secret"`
+	SessionName string `json:"session_name"`
 }
