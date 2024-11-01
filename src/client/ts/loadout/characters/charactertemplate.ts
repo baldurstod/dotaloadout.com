@@ -42,7 +42,15 @@ export class CharacterTemplate {
 		return this.#definition['is_hero'];
 	}
 
-	getModelName(modelID) {
+	getModelCount(): number {
+		let i = 0;
+		for (; i == 0 || this.#definition[`Model${i}`];) {
+			++i;
+		}
+		return i;
+	}
+
+	getModelName(modelID: number) {
 		return this.#definition[`Model${modelID}`] ?? this.#definition.Model;
 	}
 

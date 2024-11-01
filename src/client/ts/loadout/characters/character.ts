@@ -10,6 +10,7 @@ import { MODIFIER_ACTIVITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_
 import { DEFAULT_ACTIVITY } from '../../constants';
 import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
 import { AssetModifier } from '../assetmodifier';
+import { CharacterTemplate } from './charactertemplate';
 
 const UNIT_PLACEMENT = [
 	[0, 0, 0],
@@ -24,7 +25,7 @@ const UNIT_PLACEMENT = [
 export class Character {
 	#characterId;
 	#modelId = 0;
-	#template;
+	#template: CharacterTemplate;
 	#items = new Map();
 	#itemsPerSlot = new Map();
 	bundleItem = null;
@@ -124,6 +125,10 @@ export class Character {
 
 	isHero() {
 		return this.#template.isHero();
+	}
+
+	getModelCount() {
+		return this.#template.getModelCount();
 	}
 
 	getModelName() {
@@ -256,7 +261,7 @@ export class Character {
 				case MODIFIER_ENTITY_MODEL:
 				case MODIFIER_COURIER:
 				case MODIFIER_COURIER_FLYING:
-					if (modifier.asset.startsWith(this.id )) {
+					if (modifier.asset.startsWith(this.id)) {
 						alternateModelName = modifier.modifier;
 					} else {
 						//console.error('Have a modifier for another entity: ', modifier);
