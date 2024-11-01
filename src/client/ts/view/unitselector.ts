@@ -1,16 +1,16 @@
-import { createElement } from 'harmony-ui';
+import { createElement, I18n } from 'harmony-ui';
 import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
 import { Controller } from '../controller';
 import { EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
 import { CharacterManager } from '../loadout/characters/charactermanager';
 import { Units } from '../loadout/misc/units';
-
 import unitSelectorCSS from '../../css/unitselector.css';
+import { Character } from '../loadout/characters/character';
 
 export class UnitSelector {
-	#htmlElement;
-	#htmlUnits;
-	#character;
+	#htmlElement: HTMLElement;
+	#htmlUnits: HTMLElement;
+	#character?: Character;
 	#items = new Map();
 
 	constructor() {
@@ -25,8 +25,13 @@ export class UnitSelector {
 
 		const units = this.#character.getUnits();
 		this.#htmlUnits.replaceChildren();
-		for (const [ unitID, _ ] of units) {
+		for (const [unitID, _] of units) {
 			this.#createUnitSelector(unitID);
+		}
+
+		const modelCount = this.#character.getModelCount();
+		if (modelCount > 1) {
+			this.#createModelSelector(modelCount);
 		}
 	}
 
@@ -47,6 +52,30 @@ export class UnitSelector {
 		});
 	}
 
+	#createModelSelector(modelCount: number) {
+		createElement('div', {
+			parent: this.#htmlUnits,
+			childs: [
+				createElement('label', {
+					i18n: '#model',
+				}),
+				createElement('input', {
+					class: 'unit',
+					type: 'range',
+					min: 0,
+					max: modelCount - 1,
+					steap: 1,
+					value: this.#character.getModelId(),
+					events: {
+						change: (event: Event) => this.#character.setModelId(Number((event.target as HTMLInputElement).value)),
+						//OptionsManager.setSubItem('app.units.display', unitID, event.target.checked),
+					},
+					//checked: OptionsManager.getSubItem('app.units.display', unitID),
+				}),
+			]
+		});
+	}
+
 	#initHTML() {
 		this.#htmlElement = createElement('div', {
 			attachShadow: { mode: 'closed' },
@@ -55,6 +84,7 @@ export class UnitSelector {
 				this.#htmlUnits = createElement('div', { class: 'units' }),
 			]
 		});
+		I18n.observeElement(this.#htmlElement);
 		return this.#htmlElement;
 	}
 

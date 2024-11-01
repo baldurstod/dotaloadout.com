@@ -135,6 +135,18 @@ export class Character {
 		return this.#alternateModelName ?? this.#template.getModelName(this.#modelId);
 	}
 
+	async setModelId(modelId: number) {
+		if (modelId >= 0 && modelId <= this.getModelCount()) {
+			this.#modelId = modelId;
+		}
+		await this.#resetModel();
+		this.processModifiers();
+	}
+
+	getModelId(): number {
+		return this.#modelId;
+	}
+
 	hasItem(itemId) {
 		return this.#items.has(itemId);
 	}
