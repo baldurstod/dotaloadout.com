@@ -256,7 +256,7 @@ export class Character {
 				case MODIFIER_ENTITY_MODEL:
 				case MODIFIER_COURIER:
 				case MODIFIER_COURIER_FLYING:
-					if (modifier.asset == this.id) {
+					if (modifier.asset.startsWith(this.id )) {
 						alternateModelName = modifier.modifier;
 					} else {
 						//console.error('Have a modifier for another entity: ', modifier);
