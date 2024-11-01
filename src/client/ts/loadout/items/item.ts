@@ -39,6 +39,18 @@ export class Item {
 		return this.#model;
 	}
 
+	async playSequence(sequenceName: string) {
+		for (const entity of this.getExtraEntities()) {
+			entity?.playSequence?.(sequenceName);
+		}
+		const model = await this.getModel();
+		if (!model) {
+			return;
+		}
+
+		model.playSequence?.(sequenceName);
+	}
+
 	getExtraEntities() {
 		return this.#extraEntities;
 	}

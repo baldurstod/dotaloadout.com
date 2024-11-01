@@ -71,9 +71,7 @@ export class Character {
 		const sequenceName = this.#activity;
 
 		for (const [_, item] of this.#items) {
-			for (const entity of item.getExtraEntities()) {
-				entity?.playSequence?.(sequenceName);
-			}
+			item.playSequence(sequenceName);
 		}
 
 		for (const [_, entity] of this.#units) {
