@@ -1,4 +1,4 @@
-import { AmbientLight, Camera, ContextObserver, GraphicsEvent, Graphics, GraphicsEvents, HALF_PI, OrbitControl, Scene, SceneExplorer, Source2ModelManager, WebGLStats, Composer } from 'harmony-3d';
+import { AmbientLight, Camera, ContextObserver, GraphicsEvent, Graphics, GraphicsEvents, HALF_PI, OrbitControl, WebGLStats, Composer } from 'harmony-3d';
 import { createElement } from 'harmony-ui';
 import { Controller } from '../controller';
 import { loadoutCamera, loadoutScene } from '../loadout/scene';

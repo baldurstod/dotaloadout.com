@@ -106,7 +106,7 @@ export class Options {
 					}),
 					createElement('harmony-tab', {
 						'data-i18n':'#scene_explorer',
-						child: SceneExplorer.htmlElement,
+						child: new SceneExplorer().htmlElement,
 					}),
 					createElement('harmony-tab', {
 						'data-i18n':'#shader_editor',
