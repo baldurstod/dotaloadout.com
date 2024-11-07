@@ -173,8 +173,8 @@ class Application {
 		Controller.addEventListener(EVENT_OPEN_CHARACTER_SELECTOR, () => this.#appCharacterSelector.show());
 		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#characterSelected((event as CustomEvent).detail.characterId));
 
-		Controller.addEventListener(EVENT_TOOLBAR_PLAY, () => Graphics.speed = 1.0);
-		Controller.addEventListener(EVENT_TOOLBAR_PAUSE, () => Graphics.speed = 0.0);
+		Controller.addEventListener(EVENT_TOOLBAR_PLAY, () => new Graphics().speed = 1.0);
+		Controller.addEventListener(EVENT_TOOLBAR_PAUSE, () => new Graphics().speed = 0.0);
 		Controller.addEventListener(EVENT_TOOLBAR_SHARE, () => this.#shareLoadout());
 		Controller.addEventListener(EVENT_TOOLBAR_PICTURE, () => this.#savePicture());
 		Controller.addEventListener(EVENT_TOOLBAR_EXPORT_FBX, () => this.#exportToFBX());
@@ -268,7 +268,7 @@ class Application {
 	set backGroundColor(hex) {
 		if (hex) {
 			let rgb = hexToRgb(hex);
-			Graphics.clearColor(rgb);
+			new Graphics().clearColor(rgb);
 			loadoutColorBackground.setColor(rgb);
 
 			this.#htmlElement.style.backgroundColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ', 1.0)';
@@ -293,15 +293,15 @@ class Application {
 
 	#setSilhouetteMode(silhouetteMode) {
 		if (silhouetteMode) {
-			Graphics.setIncludeCode('silhouetteMode', '#define SILHOUETTE_MODE');
+			new Graphics().setIncludeCode('silhouetteMode', '#define SILHOUETTE_MODE');
 		} else {
-			Graphics.setIncludeCode('silhouetteMode', '#undef SILHOUETTE_MODE');
+			new Graphics().setIncludeCode('silhouetteMode', '#undef SILHOUETTE_MODE');
 		}
 	}
 
 	#setSilhouetteColor(silhouetteColor) {
 		let rgb = hexToRgb(silhouetteColor);
-		Graphics.setIncludeCode('silhouetteColor', `#define SILHOUETTE_COLOR vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
+		new Graphics().setIncludeCode('silhouetteColor', `#define SILHOUETTE_COLOR vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
 	}
 
 	#initLights() {
@@ -402,7 +402,7 @@ class Application {
 
 	#savePicture() {
 		const value = this.#getPictureSize();
-		Graphics.savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', value.w, value.h);
+		new Graphics().savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', value.w, value.h);
 	}
 
 	#getPictureSize() {

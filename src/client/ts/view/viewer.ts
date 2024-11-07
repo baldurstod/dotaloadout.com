@@ -28,7 +28,7 @@ export class Viewer {
 	}
 
 	#initRenderer() {
-		this.#renderer = Graphics.initCanvas({
+		this.#renderer = new Graphics().initCanvas({
 			canvas: this.#htmlCanvas,
 			alpha: true,
 			autoResize: true,
@@ -43,7 +43,7 @@ export class Viewer {
 			if (this.#composer?.enabled) {
 				this.#composer.render(event.detail.delta);
 			} else {
-				Graphics.render(loadoutScene, loadoutScene.activeCamera, event.detail.delta);
+				new Graphics().render(loadoutScene, loadoutScene.activeCamera, event.detail.delta);
 			}
 		});
 
