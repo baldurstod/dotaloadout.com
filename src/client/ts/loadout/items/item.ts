@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { Source2ModelManager, Source2ParticleManager, Entity } from 'harmony-3d';
+import { Source2ModelManager, Source2ParticleManager, Entity, Source2ModelInstance } from 'harmony-3d';
 import { AssetModifier } from '../assetmodifier';
 import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
 import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
@@ -41,7 +41,7 @@ export class Item {
 
 	async playSequence(sequenceName: string) {
 		for (const entity of this.getExtraEntities()) {
-			entity?.playSequence?.(sequenceName);
+			(entity as Source2ModelInstance)?.playSequence?.(sequenceName);
 		}
 		const model = await this.getModel();
 		if (!model) {
