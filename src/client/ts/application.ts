@@ -444,7 +444,7 @@ class Application {
 		if (new OptionsManager().getItem('app.objexporter.subdivide')) {
 			subdivisions = new OptionsManager().getItem('app.objexporter.subdivide.iterations');
 		}
-		let files = await ObjExporter.exportMeshes({
+		let files = await new ObjExporter().exportMeshes({
 			meshes: loadoutScene.getMeshList(),
 			exportTexture: new OptionsManager().getItem('app.objexporter.exporttextures'),
 			singleMesh: new OptionsManager().getItem('app.objexporter.singlemesh'),
