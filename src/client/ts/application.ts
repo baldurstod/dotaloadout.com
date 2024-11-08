@@ -1,7 +1,7 @@
 import { AmbientLight, Graphics, Group, ObjExporter, PointLight, Repositories, Repository, Source2ModelManager, Source2ParticleManager, exportToBinaryFBX, stringToVec3, CameraProjection } from 'harmony-3d';
-import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
+import { OptionsManager } from 'harmony-browser-utils';
 import { SaveFile, supportsPopover } from 'harmony-browser-utils';
-import { ShortcutHandler } from 'harmony-browser-utils/src/shortcuthandler';
+import { ShortcutHandler } from 'harmony-browser-utils';
 import { createElement, hide, show, documentStyle, shadowRootStyle, I18n } from 'harmony-ui';
 
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
@@ -137,7 +137,7 @@ class Application {
 		OptionsManager.addEventListener('engine.render.silhouettecolor', event => this.#setSilhouetteColor((event as CustomEvent).detail.value));
 
 		OptionsManager.addEventListener('app.shortcuts.*', event => {
-			ShortcutHandler.setShortcut((event as CustomEvent).detail.name, (event as CustomEvent).detail.value);
+			new ShortcutHandler().setShortcut((event as CustomEvent).detail.name, (event as CustomEvent).detail.value);
 		});
 
 		OptionsManager.addEventListener('app.lights.ambient.color', event => this.#ambientLight.color = hexToRgb((event as CustomEvent).detail.value));
