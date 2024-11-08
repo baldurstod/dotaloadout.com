@@ -1,4 +1,4 @@
-import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
+import { OptionsManager } from 'harmony-browser-utils';
 
 import { DOTA2_MARKET_PRICES_PATH } from '../constants';
 
@@ -40,7 +40,7 @@ export class MarketPrice {
 	}
 
 	static async getPrice(id) {
-		if (!OptionsManager.getItem('app.market.automarket')) {
+		if (!new OptionsManager().getItem('app.market.automarket')) {
 			return;
 		}
 		await this.#requestPrices();

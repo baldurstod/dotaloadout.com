@@ -1,4 +1,4 @@
-import { NotificationManager } from 'harmony-browser-utils/src/notificationManager';
+import { NotificationManager } from 'harmony-browser-utils';
 import { createElement, I18n } from 'harmony-ui';
 import { ADSBYGOOGLE_INS, ADSBYGOOGLE_SRC } from '../googleconstants';
 

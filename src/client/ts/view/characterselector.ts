@@ -6,7 +6,7 @@ import { Controller } from '../controller';
 import { EVENT_CHARACTER_SELECTED } from '../controllerevents';
 import { DOTA2_HEROES_IMG } from '../constants';
 import { createCharacterElement } from './utils/createcharacterelement';
-import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
+import { OptionsManager } from 'harmony-browser-utils/';
 
 const FILTER_METHOD = 'app.heroselector.filter.method'
 const SORT_FIELD = 'app.heroselector.sort.field'
@@ -15,7 +15,7 @@ export class CharacterSelector {
 	#htmlElement;
 	#htmlCharacters = new Map();
 	#characters = new Set();
-	#filters = { name:'' };
+	#filters = { name: '' };
 	#htmlCharactersContainer;
 	#htmlNameContainer;
 	#htmlNameContainerTimeout;
@@ -25,11 +25,11 @@ export class CharacterSelector {
 	#sortField;
 	#htmlSortField;
 	constructor() {
-		this.#setFilterMethod(OptionsManager.getItem(FILTER_METHOD));
-		OptionsManager.addEventListener(FILTER_METHOD, event => this.#setFilterMethod(event.detail.value));
+		this.#setFilterMethod(new OptionsManager().getItem(FILTER_METHOD));
+		new OptionsManager().addEventListener(FILTER_METHOD, (event: CustomEvent) => this.#setFilterMethod(event.detail.value));
 
-		this.#setSortField(OptionsManager.getItem(SORT_FIELD));
-		OptionsManager.addEventListener(SORT_FIELD, event => this.#setSortField(event.detail.value));
+		this.#setSortField(new OptionsManager().getItem(SORT_FIELD));
+		new OptionsManager().addEventListener(SORT_FIELD, (event: CustomEvent) => this.#setSortField(event.detail.value));
 	}
 
 	#initHTML() {
@@ -55,7 +55,7 @@ export class CharacterSelector {
 							],
 							value: this.#sortField,
 							events: {
-								change: event => OptionsManager.setItem(SORT_FIELD, event.target.value),//this.#setNameFilter(event.target.value)
+								change: event => new OptionsManager().setItem(SORT_FIELD, event.target.value),//this.#setNameFilter(event.target.value)
 							},
 						}),
 					],
@@ -68,7 +68,7 @@ export class CharacterSelector {
 				}),
 			],
 			events: {
-				click: event => { if (event.target == event.currentTarget) {this.hide();} },
+				click: event => { if (event.target == event.currentTarget) { this.hide(); } },
 			}
 		});
 		return this.#htmlElement;

@@ -8,7 +8,7 @@ import { Units } from '../misc/units';
 import { loadoutScene } from '../scene';
 import { MODIFIER_ACTIVITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
 import { DEFAULT_ACTIVITY } from '../../constants';
-import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
+import { OptionsManager } from 'harmony-browser-utils/';
 import { AssetModifier } from '../assetmodifier';
 import { CharacterTemplate } from './charactertemplate';
 
@@ -48,7 +48,7 @@ export class Character {
 		this.#characterId = characterId;
 		this.#template = CharacterTemplates.getTemplate(characterId);
 		this.#group.name = this.name;
-		OptionsManager.addEventListener('app.units.display', event => this.#positionUnits(event));
+		new OptionsManager().addEventListener('app.units.display', event => this.#positionUnits(event));
 	}
 
 	async #getModel() {
@@ -251,7 +251,7 @@ export class Character {
 	}
 
 	async processModifiers() {
-		this.#group.setAttribute('desaturate', OptionsManager.getItem('app.characters.desaturate'));
+		this.#group.setAttribute('desaturate', new OptionsManager().getItem('app.characters.desaturate'));
 		this.#clearExtraEntities();
 		const modifiers = await this.getAssetModifiers()
 
@@ -329,12 +329,12 @@ export class Character {
 		this.#group.addChild(this.#petModel);
 		this.#group.addChild(this.#metamorphosisModel);
 
-		const desaturateItems = OptionsManager.getItem('app.items.desaturate');
+		const desaturateItems = new OptionsManager().getItem('app.items.desaturate');
 		this.#pedestalModel?.setAttribute('desaturate', desaturateItems);
 		this.#petModel?.setAttribute('desaturate', desaturateItems);
 
 		if (this.#pedestalModel) {
-			if (OptionsManager.getItem('app.showpedestal')) {
+			if (new OptionsManager().getItem('app.showpedestal')) {
 				this.#pedestalModel.visible = undefined;
 			} else {
 				this.#pedestalModel.visible = false;
@@ -342,7 +342,7 @@ export class Character {
 		}
 
 		if (this.#metamorphosisModel) {
-			if (OptionsManager.getItem('app.showmetamorphosis')) {
+			if (new OptionsManager().getItem('app.showmetamorphosis')) {
 				this.#metamorphosisModel.visible = undefined;
 				this.#model.visible = false;
 			} else {
@@ -397,9 +397,9 @@ export class Character {
 			this.#units.get(modifierAsset)?.remove();
 			this.#units.delete(modifierAsset);
 			model.position = UNIT_PLACEMENT[this.#units.size + (this.getModelName() ? 1 : 0)];
-			model.visible = OptionsManager.getSubItem('app.units.display', modifierAsset) ? undefined : false;
+			model.visible = new OptionsManager().getSubItem('app.units.display', modifierAsset) ? undefined : false;
 
-			OptionsManager.addEventListener('app.units.display', (event) => {
+			new OptionsManager().addEventListener('app.units.display', (event: CustomEvent) => {
 				model.visible = event.detail.value[modifierAsset] ? undefined : false;
 			});
 
@@ -412,7 +412,7 @@ export class Character {
 	}
 
 	async #positionUnits(event?) {
-		const display = event?.detail?.value ?? OptionsManager.getItem('app.units.display');
+		const display = event?.detail?.value ?? new OptionsManager().getItem('app.units.display');
 		console.info(display);
 		let unit = this.getModelName() ? 1 : 0;
 		for (const [unitId, model] of this.#units) {
@@ -425,7 +425,7 @@ export class Character {
 	}
 
 	async #initPedestal() {
-		this.#pedestalModel = await Source2ModelManager.createInstance('dota2', OptionsManager.getItem('app.loadout.pedestalmodel'), true);
+		this.#pedestalModel = await Source2ModelManager.createInstance('dota2', new OptionsManager().getItem('app.loadout.pedestalmodel'), true);
 	}
 
 	async #setSkin(skin) {

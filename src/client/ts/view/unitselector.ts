@@ -1,5 +1,5 @@
 import { createElement, I18n } from 'harmony-ui';
-import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
+import { OptionsManager } from 'harmony-browser-utils';
 import { Controller } from '../controller';
 import { EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
 import { CharacterManager } from '../loadout/characters/charactermanager';
@@ -46,9 +46,9 @@ export class UnitSelector {
 			'data-i18n': Units.getName(unitID),
 			parent: this.#htmlUnits,
 			events: {
-				change: event => OptionsManager.setSubItem('app.units.display', unitID, event.target.checked),
+				change: event => new OptionsManager().setSubItem('app.units.display', unitID, event.target.checked),
 			},
-			checked: OptionsManager.getSubItem('app.units.display', unitID),
+			checked: new OptionsManager().getSubItem('app.units.display', unitID),
 		});
 	}
 

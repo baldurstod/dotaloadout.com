@@ -1,9 +1,6 @@
 import { AmbientLight, Graphics, Group, ObjExporter, PointLight, Repositories, Repository, Source2ModelManager, Source2ParticleManager, exportToBinaryFBX, stringToVec3, CameraProjection } from 'harmony-3d';
-import { OptionsManager } from 'harmony-browser-utils';
-import { SaveFile, supportsPopover } from 'harmony-browser-utils';
-import { ShortcutHandler } from 'harmony-browser-utils';
+import { NotificationManager, OptionsManager, SaveFile, ShortcutHandler, supportsPopover } from 'harmony-browser-utils';
 import { createElement, hide, show, documentStyle, shadowRootStyle, I18n } from 'harmony-ui';
-
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
 import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_CLOSE_ITEM_LIST, EVENT_EXPORT_OBJ, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_OPTIONS, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from './controllerevents';
 import { Controller } from './controller';
@@ -56,7 +53,6 @@ documentStyle(itemListCSS);*/
 import english from '../json/i18n/english.json';
 import french from '../json/i18n/french.json';
 import optionsmanager from '../json/optionsmanager.json';
-import { NotificationManager } from 'harmony-browser-utils/src/notificationManager';
 import { setTimeoutPromise } from 'harmony-utils';
 import { Export3DPopover } from './view/export3dpopover';
 import { UnitSelector } from './view/unitselector';
@@ -99,16 +95,16 @@ class Application {
 	}
 
 	#initOptions() {
-		OptionsManager.addEventListener('app.lang', event => I18n.setLang((event as CustomEvent).detail.value));
-		OptionsManager.addEventListener('app.backgroundcolor', event => this.backGroundColor = (event as CustomEvent).detail.value);
+		new OptionsManager().addEventListener('app.lang', event => I18n.setLang((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('app.backgroundcolor', event => this.backGroundColor = (event as CustomEvent).detail.value);
 
-		OptionsManager.addEventListener('app.cameras.orbit.position', event => loadoutCamera.position = stringToVec3((event as CustomEvent).detail.value));
-		OptionsManager.addEventListener('app.cameras.orbit.target', event => this.#appViewer.setCameraTarget(stringToVec3((event as CustomEvent).detail.value)));
-		OptionsManager.addEventListener('app.cameras.orbit.verticalfov', event => loadoutCamera.verticalFov = Number((event as CustomEvent).detail.value));
-		OptionsManager.addEventListener('app.cameras.orbit.polarrotation', event => this.#appViewer.setPolarRotation((event as CustomEvent).detail.value));
-		OptionsManager.addEventListener('app.cameras.default.orthographic', event => loadoutCamera.setProjection((event as CustomEvent).detail.value ? CameraProjection.Orthographic : CameraProjection.Perspective));
+		new OptionsManager().addEventListener('app.cameras.orbit.position', event => loadoutCamera.position = stringToVec3((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('app.cameras.orbit.target', event => this.#appViewer.setCameraTarget(stringToVec3((event as CustomEvent).detail.value)));
+		new OptionsManager().addEventListener('app.cameras.orbit.verticalfov', event => loadoutCamera.verticalFov = Number((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('app.cameras.orbit.polarrotation', event => this.#appViewer.setPolarRotation((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('app.cameras.default.orthographic', event => loadoutCamera.setProjection((event as CustomEvent).detail.value ? CameraProjection.Orthographic : CameraProjection.Perspective));
 
-		OptionsManager.addEventListener('app.itemselector.hideitemname', event => {
+		new OptionsManager().addEventListener('app.itemselector.hideitemname', event => {
 			if ((event as CustomEvent).detail.value) {
 				document.body.classList.add('hide-item-name');
 			} else {
@@ -116,14 +112,14 @@ class Application {
 			}
 		});
 
-		OptionsManager.addEventListener('app.market.automarket', event => {
+		new OptionsManager().addEventListener('app.market.automarket', event => {
 			if ((event as CustomEvent).detail.value) {
 				show(this.#appMarketPrices.htmlElement);
 			} else {
 				hide(this.#appMarketPrices.htmlElement);
 			}
 		});
-		OptionsManager.addEventListener('app.market.currency', async event => {
+		new OptionsManager().addEventListener('app.market.currency', async event => {
 			await MarketPrice.setCurrency((event as CustomEvent).detail.value);
 			CharacterManager.refreshMarketPrices();
 		});
@@ -131,19 +127,19 @@ class Application {
 		let a: EventListenerOrEventListenerObject;
 		let b: EventListener;
 
-		OptionsManager.addEventListener('app.itemselector.columns', event => document.body.style.cssText = '--item-selector-columns: ' + (event as CustomEvent).detail.value);
+		new OptionsManager().addEventListener('app.itemselector.columns', event => document.body.style.cssText = '--item-selector-columns: ' + (event as CustomEvent).detail.value);
 
-		OptionsManager.addEventListener('engine.render.silhouettemode', event => this.#setSilhouetteMode((event as CustomEvent).detail.value));
-		OptionsManager.addEventListener('engine.render.silhouettecolor', event => this.#setSilhouetteColor((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('engine.render.silhouettemode', event => this.#setSilhouetteMode((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('engine.render.silhouettecolor', event => this.#setSilhouetteColor((event as CustomEvent).detail.value));
 
-		OptionsManager.addEventListener('app.shortcuts.*', event => {
-			new ShortcutHandler().setShortcut((event as CustomEvent).detail.name, (event as CustomEvent).detail.value);
+		new OptionsManager().addEventListener('app.shortcuts.*', event => {
+			new ShortcutHandler().setShortcut('*', (event as CustomEvent).detail.name, (event as CustomEvent).detail.value);
 		});
 
-		OptionsManager.addEventListener('app.lights.ambient.color', event => this.#ambientLight.color = hexToRgb((event as CustomEvent).detail.value));
-		OptionsManager.addEventListener('app.lights.ambient.intensity', event => this.#ambientLight.intensity = (event as CustomEvent).detail.value);
+		new OptionsManager().addEventListener('app.lights.ambient.color', event => this.#ambientLight.color = hexToRgb((event as CustomEvent).detail.value));
+		new OptionsManager().addEventListener('app.lights.ambient.intensity', event => this.#ambientLight.intensity = (event as CustomEvent).detail.value);
 
-		OptionsManager.addEventListener('app.lights.pointlights.*', event => {
+		new OptionsManager().addEventListener('app.lights.pointlights.*', event => {
 			let lightParams = (event as CustomEvent).detail.name.replace('app.lights.pointlights.', '').split('.');
 			let light = this.#pointLights[lightParams[0]];
 			if (light) {
@@ -163,7 +159,7 @@ class Application {
 			}
 		});
 
-		OptionsManager.init({ json: optionsmanager });
+		new OptionsManager().init({ json: optionsmanager });
 	}
 
 	#initListeners() {
@@ -188,7 +184,7 @@ class Application {
 
 		Controller.addEventListener(EVENT_PANEL_OPTIONS_OPENED, () => Controller.dispatchEvent(new CustomEvent(EVENT_CLOSE_ITEM_LIST)));
 		Controller.addEventListener(EVENT_PANEL_OPTIONS_CLOSED, () => Controller.dispatchEvent(new CustomEvent(EVENT_OPEN_ITEM_LIST)));
-		Controller.addEventListener(EVENT_TOOLBAR_ADVANCED_OPTIONS, () => OptionsManager.showOptionsManager());
+		Controller.addEventListener(EVENT_TOOLBAR_ADVANCED_OPTIONS, () => new OptionsManager().showOptionsManager());
 
 		Controller.addEventListener(EVENT_RESET_CAMERA, () => this.#resetCamera());
 	}
@@ -285,9 +281,9 @@ class Application {
 	}
 
 	#beforeUnload() {
-		if (OptionsManager.getItem('app.cameras.perspective.saveposition')) {
-			OptionsManager.setItem('app.cameras.orbit.position', loadoutCamera.position.join(' '));
-			OptionsManager.setItem('app.cameras.orbit.target', this.#appViewer.getCameraTarget().join(' '));
+		if (new OptionsManager().getItem('app.cameras.perspective.saveposition')) {
+			new OptionsManager().setItem('app.cameras.orbit.position', loadoutCamera.position.join(' '));
+			new OptionsManager().setItem('app.cameras.orbit.target', this.#appViewer.getCameraTarget().join(' '));
 		}
 	}
 
@@ -406,7 +402,7 @@ class Application {
 	}
 
 	#getPictureSize() {
-		let option = OptionsManager.getItem('app.picture.size');
+		let option = new OptionsManager().getItem('app.picture.size');
 		if (option) {
 			let regexSize = /(\d*)[\*|x|X](\d*)/i;
 			var result = regexSize.exec(option);
@@ -429,7 +425,7 @@ class Application {
 
 	async #export3D() {
 		if (ENABLE_PATREON_POWERUSER) {
-			if (supportsPopover() && OptionsManager.getItem('app.objexporter.askoptions')) {
+			if (supportsPopover() && new OptionsManager().getItem('app.objexporter.askoptions')) {
 				this.#appExport3DPopover?.show();
 			} else {
 				this.#export3D2();
@@ -445,16 +441,16 @@ class Application {
 			return;
 		}
 		let subdivisions = 0;
-		if (OptionsManager.getItem('app.objexporter.subdivide')) {
-			subdivisions = OptionsManager.getItem('app.objexporter.subdivide.iterations');
+		if (new OptionsManager().getItem('app.objexporter.subdivide')) {
+			subdivisions = new OptionsManager().getItem('app.objexporter.subdivide.iterations');
 		}
 		let files = await ObjExporter.exportMeshes({
 			meshes: loadoutScene.getMeshList(),
-			exportTexture: OptionsManager.getItem('app.objexporter.exporttextures'),
-			singleMesh: OptionsManager.getItem('app.objexporter.singlemesh'),
+			exportTexture: new OptionsManager().getItem('app.objexporter.exporttextures'),
+			singleMesh: new OptionsManager().getItem('app.objexporter.singlemesh'),
 			digits: 4,
 			subdivisions: subdivisions,
-			mergeTolerance: OptionsManager.getItem('app.objexporter.mergevertices') ? 0.001 : 0,
+			mergeTolerance: new OptionsManager().getItem('app.objexporter.mergevertices') ? 0.001 : 0,
 		});
 
 		for (let file of files) {
@@ -464,9 +460,9 @@ class Application {
 	}
 
 	#resetCamera() {
-		OptionsManager.resetItem('app.cameras.orbit.position');
-		OptionsManager.resetItem('app.cameras.orbit.quaternion');
-		OptionsManager.resetItem('app.cameras.orbit.target');
+		new OptionsManager().resetItem('app.cameras.orbit.position');
+		new OptionsManager().resetItem('app.cameras.orbit.quaternion');
+		new OptionsManager().resetItem('app.cameras.orbit.target');
 		loadoutScene.addChild(loadoutCamera);
 	}
 

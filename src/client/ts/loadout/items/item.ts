@@ -2,7 +2,7 @@ import { vec3 } from 'gl-matrix';
 import { Source2ModelManager, Source2ParticleManager, Entity, Source2ModelInstance } from 'harmony-3d';
 import { AssetModifier } from '../assetmodifier';
 import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
-import { OptionsManager } from 'harmony-browser-utils/src/optionsmanager';
+import { OptionsManager } from 'harmony-browser-utils';
 import { getPersonaId } from '../../utils/persona';
 
 export class Item {
@@ -174,7 +174,7 @@ export class Item {
 		const model = await this.getModel();
 		if (model) {
 			this.#model.skin = this.skin;
-			this.#model.setAttribute('desaturate', OptionsManager.getItem('app.items.desaturate'));
+			this.#model.setAttribute('desaturate', new OptionsManager().getItem('app.items.desaturate'));
 		}
 
 		const modifiers = this.getAssetModifiers();
@@ -186,7 +186,7 @@ export class Item {
 		for (const modifier of modifiers) {
 			switch (modifier.type) {
 				case MODIFIER_PARTICLE_CREATE:
-					if (!OptionsManager.getItem('app.showeffects')) {
+					if (!new OptionsManager().getItem('app.showeffects')) {
 						break;
 					}
 					const systemName = replacements.get(modifier.modifier) ?? modifier.modifier;
