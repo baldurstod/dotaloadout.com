@@ -333,7 +333,7 @@ class Application {
 		const result = await this.#uploadLoadout(loadout);
 
 		if (!result) {
-			NotificationManager.addNotification(I18n.getString('#failed_to_upload_this_loadout'), 'error', 5);
+			new NotificationManager().addNotification(I18n.getString('#failed_to_upload_this_loadout'), 'error', 5);
 			return;
 		}
 
@@ -342,11 +342,11 @@ class Application {
 		let notificationText = `${I18n.getString('#share_this_loadout')}<input value='${loadoutUrl}'>`;
 		try {
 			navigator.clipboard.writeText(loadoutUrl).then(
-				() => NotificationManager.addNotification(I18n.getString('#share_link_clipboard_ok'), 'info', 5),
-				() => NotificationManager.addNotification(notificationText, 'info', 15)
+				() => new NotificationManager().addNotification(I18n.getString('#share_link_clipboard_ok'), 'info', 5),
+				() => new NotificationManager().addNotification(notificationText, 'info', 15)
 			);
 		} catch (e) {
-			NotificationManager.addNotification(notificationText, 'info', 15);
+			new NotificationManager().addNotification(notificationText, 'info', 15);
 		}
 	}
 
@@ -418,7 +418,7 @@ class Application {
 			let binaryFBX = await exportToBinaryFBX(loadoutScene);
 			SaveFile(new File([binaryFBX], 'dotaloadout.com.fbx'));
 		} else {
-			NotificationManager.addNotification(I18n.getString('#feature_patreon'), 'warning', 10);
+			new NotificationManager().addNotification(I18n.getString('#feature_patreon'), 'warning', 10);
 		}
 	}
 
@@ -431,7 +431,7 @@ class Application {
 				this.#export3D2();
 			}
 		} else {
-			NotificationManager.addNotification(I18n.getString('#feature_patreon'), 'warning', 10);
+			new NotificationManager().addNotification(I18n.getString('#feature_patreon'), 'warning', 10);
 		}
 	}
 

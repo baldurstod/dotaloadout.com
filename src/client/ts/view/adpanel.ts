@@ -19,7 +19,7 @@ export class AdPanel {
 						createElement('div', {i18n: '#how_to_remove'}),
 					],
 					events: {
-						click: () => NotificationManager.addNotification(I18n.getString('#feature_patreon'), 'warning', 10)
+						click: () => new NotificationManager().addNotification(I18n.getString('#feature_patreon'), 'warning', 10)
 					}
 				}),
 				this.#htmlAdContent = createElement('div', {
