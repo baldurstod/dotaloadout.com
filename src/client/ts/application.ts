@@ -1,4 +1,4 @@
-import { AmbientLight, Graphics, Group, ObjExporter, PointLight, Repositories, Repository, Source2ModelManager, Source2ParticleManager, exportToBinaryFBX, stringToVec3, CameraProjection } from 'harmony-3d';
+import { AmbientLight, Graphics, Group, ObjExporter, PointLight, Repositories, Source2ModelManager, Source2ParticleManager, exportToBinaryFBX, stringToVec3, CameraProjection, WebRepository } from 'harmony-3d';
 import { NotificationManager, OptionsManager, SaveFile, ShortcutHandler, supportsPopover } from 'harmony-browser-utils';
 import { createElement, hide, show, documentStyle, shadowRootStyle, I18n } from 'harmony-ui';
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
@@ -245,7 +245,7 @@ class Application {
 	}
 
 	#iniRepositories() {
-		new Repositories().addRepository(new Repository('dota2', DOTA2_REPOSITORY));
+		new Repositories().addRepository(new WebRepository('dota2', DOTA2_REPOSITORY));
 		Source2ModelManager.loadManifest('dota2');
 		Source2ParticleManager.loadManifests('dota2');
 	}
