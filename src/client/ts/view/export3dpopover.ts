@@ -1,5 +1,4 @@
-import { createElement, show } from 'harmony-ui';
-import 'harmony-ui/dist/define/harmony-switch';
+import { createElement, defineHarmonySwitch, show } from 'harmony-ui';
 import { OptionsManager } from 'harmony-browser-utils/';
 import { Controller } from '../controller';
 import { EVENT_EXPORT_OBJ } from '../controllerevents';
@@ -13,6 +12,7 @@ export class Export3DPopover {
 	#html3DShowDialog;
 
 	#initHTML() {
+		defineHarmonySwitch();
 		this.#htmlElement = createElement('div', {
 			class: 'export-3d-popover',
 			popover: 'auto',

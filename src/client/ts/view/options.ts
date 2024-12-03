@@ -1,8 +1,6 @@
 import { SceneExplorer, ShaderEditor } from 'harmony-3d';
 import { OptionsManager } from 'harmony-browser-utils';
-import { createElement, hide, toggle, isVisible, shadowRootStyle } from 'harmony-ui';
-import 'harmony-ui/dist/define/harmony-tab';
-import 'harmony-ui/dist/define/harmony-tab-group';
+import { createElement, hide, toggle, isVisible, shadowRootStyle, defineHarmonyTab, defineHarmonyTabGroup } from 'harmony-ui';
 
 import { Controller } from '../controller';
 import { EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_OPTIONS } from '../controllerevents';
@@ -22,6 +20,8 @@ export class Options {
 	#shaderEditor = new ShaderEditor();
 
 	#initHTML() {
+		defineHarmonyTab();
+		defineHarmonyTabGroup();
 		this.#htmlElement = createElement('div', {
 			hidden: true,
 			class: 'options',
