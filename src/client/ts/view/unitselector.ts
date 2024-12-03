@@ -1,4 +1,4 @@
-import { createElement, I18n } from 'harmony-ui';
+import { createElement, createShadowRoot, I18n } from 'harmony-ui';
 import { OptionsManager } from 'harmony-browser-utils';
 import { Controller } from '../controller';
 import { EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
@@ -8,7 +8,7 @@ import unitSelectorCSS from '../../css/unitselector.css';
 import { Character } from '../loadout/characters/character';
 
 export class UnitSelector {
-	#htmlElement: HTMLElement;
+	#shadowRoot?: ShadowRoot;
 	#htmlUnits: HTMLElement;
 	#character?: Character;
 	#items = new Map();
@@ -77,18 +77,17 @@ export class UnitSelector {
 	}
 
 	#initHTML() {
-		this.#htmlElement = createElement('div', {
-			attachShadow: { mode: 'closed' },
+		this.#shadowRoot = createShadowRoot('div', {
 			adoptStyle: unitSelectorCSS,
 			childs: [
 				this.#htmlUnits = createElement('div', { class: 'units' }),
 			]
 		});
-		I18n.observeElement(this.#htmlElement);
-		return this.#htmlElement;
+		I18n.observeElement(this.#shadowRoot);
+		return this.#shadowRoot.host;
 	}
 
 	get htmlElement() {
-		return this.#htmlElement ?? this.#initHTML();
+		return this.#shadowRoot?.host ?? this.#initHTML();
 	}
 }
