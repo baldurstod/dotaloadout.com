@@ -4,10 +4,12 @@ import { AssetModifier } from '../assetmodifier';
 import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
 import { OptionsManager } from 'harmony-browser-utils';
 import { getPersonaId } from '../../utils/persona';
+import { ItemTemplate } from './itemtemplate';
+import { Character } from '../characters/character';
 
 export class Item {
-	#template;
-	#character;
+	#template: ItemTemplate;
+	#character: Character;
 	#model;
 	#childEntities = new Set<Entity>();
 	#extraEntities = new Set<Entity>();
@@ -15,7 +17,7 @@ export class Item {
 	#alternateModelName;
 	#style = 0;
 	#characterSkin;
-	constructor(template, character) {
+	constructor(template: ItemTemplate, character: Character) {
 		this.#template = template;
 		this.#character = character;
 	}
@@ -165,10 +167,10 @@ export class Item {
 		this.#extraEntities.clear();
 	}
 
-	async processModifiers(replacements) {
+	async processModifiers(replacements, characterModelId: number) {
 		this.#clearExtraEntities();
 
-		const originalModelName = this.#template.getModelName(this.#style);
+		const originalModelName = this.#template.getModelName(this.#style, characterModelId);
 		await this.#setItemModel(replacements.get(originalModelName) ?? originalModelName);
 
 		const model = await this.getModel();

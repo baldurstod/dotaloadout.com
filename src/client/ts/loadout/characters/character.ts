@@ -352,7 +352,7 @@ export class Character {
 		}
 
 		for (const [_, item] of this.#items) {
-			await item.processModifiers(replacements);
+			await item.processModifiers(replacements, this.#modelId);
 			for (const entity of item.getExtraEntities()) {
 				await this.#addChild(entity);
 			}

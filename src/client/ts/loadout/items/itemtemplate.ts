@@ -81,9 +81,13 @@ export class ItemTemplate {
 		return this.#definition.id;
 	}
 
-	getModelName(styleId) {
+	getModelName(styleId: number, model: number = 0) {
 		const style = this.#definition.styles?.[styleId];
-		return style?.model_player ?? this.#definition.modelPlayer;
+		if (model == 0) {
+			return style?.model_player ?? this.#definition.modelPlayer;
+		} else {
+			return style?.['model_player' + model]  ?? style?.model_player ?? this.#definition['modelPlayer' + model] ?? this.#definition.modelPlayer;
+		}
 	}
 
 	get redSkin() {
@@ -243,7 +247,7 @@ export class ItemTemplate {
 
 	getStyles() {
 		const ret = new Map();
-		const styles =  this.#definition.styles;
+		const styles = this.#definition.styles;
 		if (styles) {
 			for (const styleId in styles) {
 				ret.set(styleId, styles[styleId]);
