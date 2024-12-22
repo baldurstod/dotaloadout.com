@@ -6,7 +6,7 @@ import { ItemTemplates } from '../items/itemtemplates';
 import { CharacterTemplates } from './charactertemplates';
 import { Units } from '../misc/units';
 import { loadoutScene } from '../scene';
-import { MODIFIER_ACTIVITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
+import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
 import { DEFAULT_ACTIVITY } from '../../constants';
 import { OptionsManager } from 'harmony-browser-utils/';
 import { AssetModifier } from '../assetmodifier';
@@ -261,6 +261,7 @@ export class Character {
 		let alternateModelName;
 		const replacements = new Map();
 		let skin = 0;
+		let arcanaLevel: number = 0;
 
 		this.#activityModifiers.clear();
 
@@ -311,6 +312,9 @@ export class Character {
 						}
 					}
 					break;
+				case MODIFIER_ARCANA_LEVEL:
+					arcanaLevel = modifier.level;
+					break;
 				default:
 					console.warn('character_unknown_modifier_type', modifier.type);
 					break;
@@ -324,6 +328,7 @@ export class Character {
 		await this.#setCharacterModel(alternateModelName);
 		const model = await this.#getModel();
 		this.#setSkin(skin);
+		this.#setArcanaLevel(arcanaLevel);
 
 		this.#group.addChild(this.#pedestalModel);
 		this.#group.addChild(this.#petModel);
@@ -436,6 +441,18 @@ export class Character {
 		model.skin = skin;
 		for (const [_, item] of this.#items) {
 			item.setCharacterSkin(skin);
+		}
+	}
+
+	async #setArcanaLevel(arcanaLevel: number) {
+		const model = await this.#getModel();
+		if (!model) {
+			return;
+		}
+		//model.skin = skin;
+		this.#model.setBodyGroup('arcana', arcanaLevel);
+		for (const [_, item] of this.#items) {
+			item.setArcanaLevel(arcanaLevel);
 		}
 	}
 

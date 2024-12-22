@@ -37,4 +37,9 @@ export class AssetModifier {
 	get loadoutDefaultOffset() {
 		return this.#definition.loadout_default_offset;
 	}
+
+	get level() {
+		return this.#definition.level;
+	}
+
 }

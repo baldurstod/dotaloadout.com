@@ -17,6 +17,8 @@ export class Item {
 	#alternateModelName;
 	#style = 0;
 	#characterSkin;
+	#arcanaLevel?: number;
+
 	constructor(template: ItemTemplate, character: Character) {
 		this.#template = template;
 		this.#character = character;
@@ -177,6 +179,8 @@ export class Item {
 		if (model) {
 			this.#model.skin = this.skin;
 			this.#model.setAttribute('desaturate', new OptionsManager().getItem('app.items.desaturate'));
+
+			this.#model.setBodyGroup('arcana', this.#arcanaLevel ?? 0);
 		}
 
 		const modifiers = this.getAssetModifiers();
@@ -304,6 +308,10 @@ export class Item {
 		if (!this.#template.isBaseItem) {
 			this.#characterSkin = skin;
 		}
+	}
+
+	setArcanaLevel(arcanaLevel: number | undefined) {
+		this.#arcanaLevel = arcanaLevel;
 	}
 
 	async #resetModel() {
