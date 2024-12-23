@@ -1,15 +1,16 @@
-import { createElement, hide, show } from 'harmony-ui';
+import { createElement, display, hide, show } from 'harmony-ui';
 
 import { Controller } from '../controller';
 import { ItemManager } from '../loadout/items/itemmanager';
 import { ItemTemplates } from '../loadout/items/itemtemplates';
 import { getimageinventory } from '../utils/getimageinventory';
-import { EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK } from '../controllerevents';
+import { EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK } from '../controllerevents';
+import { getPersonaId } from '../utils/persona';
 
 export class ItemList {
 	#htmlElement;
 	#htmlItemsHeader;
-	#htmlItemsSlotFilter;
+	#htmlItemsSlotFilter: HTMLSelectElement;
 	#htmlItemsRarityFilter;
 	#htmlRarityOptions = new Map();
 	#htmlItemsList;
@@ -24,6 +25,8 @@ export class ItemList {
 		});
 		Controller.addEventListener(EVENT_CLOSE_ITEM_LIST, () => hide(this.#htmlElement));
 		Controller.addEventListener(EVENT_OPEN_ITEM_LIST, () => show(this.#htmlElement));
+
+		Controller.addEventListener(EVENT_CHARACTER_PERSONA_CHANGED, event => this.#handlePersonaChanged((event as CustomEvent).detail));
 	}
 
 	#initHTML() {
@@ -39,7 +42,7 @@ export class ItemList {
 								change: event => this.#setSlotFilter(event.target.value),
 								keyup: event => this.#setSlotFilter(event.target.value)
 							}
-						}),
+						}) as HTMLSelectElement,
 						createElement('input', {
 							class: 'item-list-header-slot-filter',
 							events: {
@@ -237,5 +240,16 @@ export class ItemList {
 			}
 		}
 		return true;
+	}
+
+	#handlePersonaChanged(personaId: number) {
+		for (const htmlOption of this.#htmlItemsSlotFilter.options) {
+			if (htmlOption.value == 'persona_selector' || htmlOption.value == 'none' || htmlOption.value == '') {
+				// Always display persona selector
+				show(htmlOption);
+			} else {
+				display(htmlOption, personaId == getPersonaId(htmlOption.value));
+			}
+		}
 	}
 }
