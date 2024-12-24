@@ -106,9 +106,9 @@ class Application {
 
 		new OptionsManager().addEventListener('app.itemselector.hideitemname', event => {
 			if ((event as CustomEvent).detail.value) {
-				document.body.classList.add('hide-item-name');
+				document.documentElement.style.setProperty('--hide-item-name', 'none');
 			} else {
-				document.body.classList.remove('hide-item-name');
+				document.documentElement.style.removeProperty('--hide-item-name');
 			}
 		});
 
