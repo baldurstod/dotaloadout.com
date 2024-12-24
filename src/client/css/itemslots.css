@@ -1,9 +1,9 @@
-.item-slots{
+.item-slots {
 	display: flex;
 	flex-direction: column;
 }
 
-.item-slots-character{
+.item-slots-character {
 	overflow: hidden;
 	position: relative;
 	width: var(--hero-icon-width);
@@ -11,13 +11,13 @@
 	flex-shrink: 0;
 }
 
-.item-slots-list{
+.item-slots-list {
 	width: 100%;
 	overflow: hidden auto;
 	flex: 1;
 }
 
-.item-slot{
+.item-slot {
 	position: relative;
 	width: 100%;
 	cursor: pointer;
@@ -26,10 +26,11 @@
 }
 
 
-.item-slot-img{
+.item-slot-img {
 	width: 100%;
 }
-.item-name{
+
+.item-name {
 	position: absolute;
 	bottom: 0px;
 	background-color: rgb(var(--theme-text-bg-color) / 0.5);
@@ -39,10 +40,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.item-slot-remove{
+
+.item-slot-remove {
 	position: absolute;
 	top: 0px;
 }
-.hide-item-name .item-name{
-	display:none;
+
+.hide-item-name .item-name {
+	display: none;
 }
