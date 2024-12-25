@@ -39,7 +39,7 @@
 	text-align: center;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	display: var(--hide-item-name, 'unset');
+	display: var(--hide-item-name, block);
 }
 
 .item-slot-remove {
