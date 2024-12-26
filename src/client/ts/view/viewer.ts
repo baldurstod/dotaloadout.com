@@ -11,7 +11,7 @@ export class Viewer {
 	#composer: Composer;
 	constructor() {
 		this.#initHTML();
-		this.#orbitControl = new OrbitControl(loadoutCamera, this.#htmlCanvas);
+		this.#orbitControl = new OrbitControl(loadoutCamera);
 		loadoutCamera.position = [100, 0, 40];
 		this.#orbitControl.setTargetPosition([0, 0, 40]);
 		this.#initRenderer();
