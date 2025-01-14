@@ -133,7 +133,7 @@ class Application {
 		new OptionsManager().addEventListener('engine.render.silhouettecolor', event => this.#setSilhouetteColor((event as CustomEvent).detail.value));
 
 		new OptionsManager().addEventListener('app.shortcuts.*', event => {
-			new ShortcutHandler().setShortcut('*', (event as CustomEvent).detail.name, (event as CustomEvent).detail.value);
+			ShortcutHandler.setShortcut('*', (event as CustomEvent).detail.name, (event as CustomEvent).detail.value);
 		});
 
 		new OptionsManager().addEventListener('app.lights.ambient.color', event => this.#ambientLight.color = hexToRgb((event as CustomEvent).detail.value));
