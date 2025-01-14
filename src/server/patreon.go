@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/baldurstod/patreon-go"
+	"github.com/baldurstod/patreon-go/resources"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
@@ -152,8 +153,35 @@ func (pm *patreonMiddleware) redirectPatreon(c *gin.Context) {
 	}
 }
 
+func GetMembership(c *patreon.PatreonClient) (*resources.User, *resources.Member, *resources.Tier, error) {
+	userResponse, err := c.FetchUser(
+		patreon.WithIncludes("memberships", "memberships.currently_entitled_tiers"),
+		patreon.WithFields("user", resources.UserFields...),
+		patreon.WithFields("member", resources.MemberFields...),
+		patreon.WithFields("tier", resources.TierFields...),
+	)
+
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	var member *resources.Member
+	var tier *resources.Tier
+	items := userResponse.Included.Items
+	for _, item := range items {
+		switch t := item.(type) {
+		case *resources.Member:
+			member = t
+		case *resources.Tier:
+			tier = t
+		}
+	}
+
+	return &userResponse.Data, member, tier, nil
+}
+
 func (pm *patreonMiddleware) refreshCredentials(patreonClient *patreon.PatreonClient, session sessions.Session) {
-	user, member, err := patreonClient.GetMembership()
+	user, member, tier, err := GetMembership(patreonClient)
 	if err != nil {
 		log.Println(err)
 		return
@@ -163,6 +191,12 @@ func (pm *patreonMiddleware) refreshCredentials(patreonClient *patreon.PatreonCl
 	if member != nil {
 		currentlyEntitledAmountCents = member.Attributes.CurrentlyEntitledAmountCents
 	}
+	if tier != nil {
+		if tier.Attributes.AmountCents > currentlyEntitledAmountCents {
+			currentlyEntitledAmountCents = tier.Attributes.AmountCents
+		}
+	}
+
 	if user.ID == pm.creatorID {
 		currentlyEntitledAmountCents = 10000
 	}
