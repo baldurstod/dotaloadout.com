@@ -30,10 +30,12 @@ export class Viewer {
 	#initRenderer() {
 		this.#renderer = new Graphics().initCanvas({
 			canvas: this.#htmlCanvas,
-			alpha: true,
 			autoResize: true,
-			preserveDrawingBuffer: true,
-			premultipliedAlpha: false
+			webGL: {
+				alpha: true,
+				preserveDrawingBuffer: true,
+				premultipliedAlpha: false
+			}
 		});
 
 		this.#renderer.clearColor([0.5, 0.5, 0.5, 1]);

@@ -398,7 +398,7 @@ class Application {
 
 	#savePicture() {
 		const value = this.#getPictureSize();
-		new Graphics().savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', value.w, value.h);
+		new Graphics().savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', Number(value.w), Number(value.h));
 	}
 
 	#getPictureSize() {
