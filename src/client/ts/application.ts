@@ -191,7 +191,7 @@ class Application {
 
 	#initHTML() {
 		this.#shadowRoot = createShadowRoot('div', {
-			className: 'application',
+			class: 'application',
 			parent: document.body,
 		});
 		//this.#shadowRoot = this.#htmlElement.attachShadow({ mode: 'closed' });
@@ -201,7 +201,7 @@ class Application {
 		this.#shadowRoot.append(
 			this.#appToolbar.htmlElement,
 			createElement('div', {
-				className: 'maincontent',
+				class: 'maincontent',
 				childs: [
 					this.#appOptions.htmlElement,
 					this.#appItemSlots.htmlElement,

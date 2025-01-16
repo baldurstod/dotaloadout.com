@@ -105,7 +105,7 @@ export class Toolbar {
 			createElement('option', {
 				parent: this.#htmlActivitySelector,
 				value: activityName,
-				innerHTML: `${activityLabel}`,
+				innerText: `${activityLabel}`,
 			});
 		}
 
