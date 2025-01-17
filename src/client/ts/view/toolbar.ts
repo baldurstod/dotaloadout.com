@@ -9,7 +9,7 @@ import { ENABLE_PATREON_POWERUSER } from '../bundleoptions';
 function createButton(svg, eventName, i18n) {
 	return createElement('div', {
 		class: 'toolbar-button',
-		'i18n-title': i18n,
+		i18n: { title: i18n, },
 		innerHTML: svg,
 		events: {
 			click: () => Controller.dispatchEvent(new CustomEvent(eventName)),
