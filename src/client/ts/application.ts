@@ -475,7 +475,7 @@ class Application {
 	}
 
 	#setupAnalytics() {
-		if (PRODUCTION) {
+		if (PRODUCTION && ENABLE_PATREON_BASE) {
 			createElement('script', {
 				src: `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`,
 				parent: document.body,
