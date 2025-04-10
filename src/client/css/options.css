@@ -1,21 +1,32 @@
-.options select{
+.options select {
 	cursor: pointer;
 }
-.camera-options, .items-options{
+
+.camera-options,
+.items-options {
 	display: flex;
 	flex-direction: column;
 	padding: 1rem;
 }
-.options-currencies{
+
+.options-currencies {
 	font-size: 1.5rem;
 }
+
 .option-button {
 	background-color: var(--main-bg-color-bright);
 	color: var(--main-text-color-dark2);
 	border-radius: 1px;
-	display:inline-block;
-	cursor:pointer;
+	display: inline-block;
+	cursor: pointer;
 	padding: 4px;
-	pointer-events:all;
+	pointer-events: all;
 	margin: 4px;
+}
+
+.misc {
+	display: flex;
+	flex-direction: column;
+	padding: 5px;
+	overflow: hidden;
 }
