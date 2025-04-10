@@ -30,12 +30,12 @@
 		--main-bg-color-bright: #D7D3CB;
 		--main-bg-color-dark: #DEDAD4;
 
-		--theme-context-menu-bg-color: #ccc;
-		--theme-context-menu-item-bg-color: #ccc;
-		--theme-context-menu-item-selected-bg-color: #ccc;
-		--theme-context-menu-submenu-bg-color: #ccc;
-		--theme-context-menu-submenu-fg-color: #777;
-		--theme-context-menu-item-hover-bg-color: #fff;
+		--theme-menu-bg-color: #ccc;
+		--theme-menu-item-bg-color: #ccc;
+		--theme-menu-item-selected-bg-color: #ccc;
+		--theme-menu-submenu-bg-color: #ccc;
+		--theme-menu-submenu-fg-color: #777;
+		--theme-menu-item-hover-bg-color: #fff;
 
 		--theme-scene-explorer-bg-color: #ddd;
 		--theme-scene-explorer-entity-selected-bg-color: #fff;
@@ -76,12 +76,12 @@
 		--main-bg-color-bright: #41454d;
 		--main-bg-color-dark: #21252b;
 
-		--theme-context-menu-bg-color: #333333;
-		--theme-context-menu-item-bg-color: #333333;
-		--theme-context-menu-item-selected-bg-color: #333333;
-		--theme-context-menu-submenu-bg-color: #333333;
-		--theme-context-menu-submenu-fg-color: #888888;
-		--theme-context-menu-item-hover-bg-color: #000000;
+		--theme-menu-bg-color: #333333;
+		--theme-menu-item-bg-color: #333333;
+		--theme-menu-item-selected-bg-color: #333333;
+		--theme-menu-submenu-bg-color: #333333;
+		--theme-menu-submenu-fg-color: #888888;
+		--theme-menu-item-hover-bg-color: #000000;
 
 		--theme-scene-explorer-bg-color: #222222;
 		--theme-scene-explorer-entity-selected-bg-color: #000000;
