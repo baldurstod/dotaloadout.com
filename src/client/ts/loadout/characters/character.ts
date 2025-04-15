@@ -11,16 +11,7 @@ import { DEFAULT_ACTIVITY } from '../../constants';
 import { OptionsManager } from 'harmony-browser-utils/';
 import { AssetModifier } from '../assetmodifier';
 import { CharacterTemplate } from './charactertemplate';
-
-const UNIT_PLACEMENT = [
-	[0, 0, 0],
-	[0, -200, 0],
-	[0, 200, 0],
-	[0, -400, 0],
-	[0, 400, 0],
-	[0, -600, 0],
-	[0, 600, 0],
-]
+import { vec3 } from 'gl-matrix';
 
 export class Character {
 	#characterId;
@@ -401,8 +392,8 @@ export class Character {
 			}
 			this.#units.get(modifierAsset)?.remove();
 			this.#units.delete(modifierAsset);
-			model.position = UNIT_PLACEMENT[this.#units.size + (this.getModelName() ? 1 : 0)];
-			model.visible = new OptionsManager().getSubItem('app.units.display', modifierAsset) ? undefined : false;
+			model.position = getUnitPlacement(this.#units.size + (this.getModelName() ? 1 : 0));
+			model.visible = await new OptionsManager().getSubItem('app.units.display', modifierAsset) ? undefined : false;
 
 			new OptionsManager().addEventListener('app.units.display', (event: CustomEvent) => {
 				model.visible = event.detail.value[modifierAsset] ? undefined : false;
@@ -423,7 +414,7 @@ export class Character {
 		for (const [unitId, model] of this.#units) {
 			console.info(unitId, model);
 			if (display[unitId]) {
-				model.position = UNIT_PLACEMENT[unit];
+				model.position = getUnitPlacement(unit);
 				++unit;
 			}
 		}
@@ -539,4 +530,8 @@ export class Character {
 	getUnits() {
 		return this.#units;
 	}
+}
+
+function getUnitPlacement(i: number): vec3 {
+	return vec3.fromValues(0, 400 * (i % 2 - 0.5) * Math.floor((i + 1) / 2), 0);
 }
