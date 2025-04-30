@@ -43,9 +43,9 @@ export class Viewer {
 		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: CustomEvent) => {
 			WebGLStats.tick();
 			if (this.#composer?.enabled) {
-				this.#composer.render(event.detail.delta);
+				this.#composer.render(event.detail.delta, {});
 			} else {
-				new Graphics().render(loadoutScene, loadoutScene.activeCamera, event.detail.delta);
+				new Graphics().render(loadoutScene, loadoutScene.activeCamera, event.detail.delta, {});
 			}
 		});
 
