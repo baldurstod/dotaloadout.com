@@ -220,8 +220,11 @@ class Application {
 			}),
 			//this.#appStatusbar.htmlElement,
 			this.#appCharacterSelector.htmlElement,
-			ENABLE_PATREON_POWERUSER ? this.#appExport3DPopover?.htmlElement : null,
 		);
+
+		if (ENABLE_PATREON_POWERUSER) {
+			this.#shadowRoot.append(this.#appExport3DPopover?.htmlElement);
+		}
 
 		this.#appToolbar.setMode();
 		if (ENABLE_PATREON_BASE) {
@@ -425,7 +428,7 @@ class Application {
 
 	async #export3D() {
 		if (ENABLE_PATREON_POWERUSER) {
-			if (supportsPopover() && new OptionsManager().getItem('app.objexporter.askoptions')) {
+			if (new OptionsManager().getItem('app.objexporter.askoptions')) {
 				this.#appExport3DPopover?.show();
 			} else {
 				this.#export3D2();
