@@ -31,7 +31,7 @@ export class AdPanel {
 		});
 
 		const ad = createElement('div', {
-			style: 'width:300px; height:auto;position:absolute;top:10rem;right:0;z-index:500;',
+			style: 'width:300px; height:auto;top:10rem;right:0;z-index:500;',
 			class: 'application',
 			innerHTML: ADSBYGOOGLE_INS,
 		});

@@ -24,6 +24,7 @@ body{
 	flex-direction: column;
 	height:100%;
 	width:100%;
+	position: absolute;
 
 	--mini-character-icon-width: 60px;
 	--item-icon-width: 150px;
