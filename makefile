@@ -1,3 +1,5 @@
+.PHONY: build clean
+
 BINARY_NAME=dotaloadout.com
 
 build:
