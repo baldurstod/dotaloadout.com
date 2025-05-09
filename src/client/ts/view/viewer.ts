@@ -1,14 +1,16 @@
-import { AmbientLight, Camera, ContextObserver, GraphicsEvent, Graphics, GraphicsEvents, HALF_PI, OrbitControl, WebGLStats, Composer } from 'harmony-3d';
+import { AmbientLight, Camera, ContextObserver, GraphicsEvent, Graphics, GraphicsEvents, HALF_PI, OrbitControl, WebGLStats, Composer, GraphicTickEvent } from 'harmony-3d';
 import { createElement } from 'harmony-ui';
 import { Controller } from '../controller';
 import { loadoutCamera, loadoutScene } from '../loadout/scene';
+import { vec3 } from 'gl-matrix';
 
 export class Viewer {
-	#htmlElement;
-	#htmlCanvas;
-	#renderer;
+	#htmlElement!: HTMLElement;
+	#htmlCanvas!: HTMLCanvasElement;
+	#renderer!: Graphics;
 	#orbitControl;
-	#composer: Composer;
+	#composer?: Composer;
+
 	constructor() {
 		this.#initHTML();
 		this.#orbitControl = new OrbitControl(loadoutCamera);
@@ -21,7 +23,7 @@ export class Viewer {
 		this.#htmlElement = createElement('div', {
 			class: 'viewer',
 			childs: [
-				this.#htmlCanvas = createElement('canvas'),
+				this.#htmlCanvas = createElement('canvas') as HTMLCanvasElement,
 			],
 		})
 		return this.#htmlElement;
@@ -40,12 +42,12 @@ export class Viewer {
 
 		this.#renderer.clearColor([0.5, 0.5, 0.5, 1]);
 
-		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: CustomEvent) => {
+		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: Event) => {
 			WebGLStats.tick();
 			if (this.#composer?.enabled) {
-				this.#composer.render(event.detail.delta, {});
+				this.#composer.render((event as CustomEvent<GraphicTickEvent>).detail.delta, {});
 			} else {
-				new Graphics().render(loadoutScene, loadoutScene.activeCamera, event.detail.delta, {});
+				new Graphics().render(loadoutScene, loadoutScene.activeCamera!, (event as CustomEvent<GraphicTickEvent>).detail.delta, {});
 			}
 		});
 
@@ -57,7 +59,7 @@ export class Viewer {
 		return this.#htmlElement;
 	}
 
-	setCameraTarget(target) {
+	setCameraTarget(target: vec3) {
 		this.#orbitControl.target.position = target;
 	}
 
@@ -65,7 +67,7 @@ export class Viewer {
 		return this.#orbitControl.target.position;
 	}
 
-	setPolarRotation(polarRotation) {
+	setPolarRotation(polarRotation: boolean) {
 		if (polarRotation) {
 			this.#orbitControl.minPolarAngle = -Infinity;
 			this.#orbitControl.maxPolarAngle = Infinity;
