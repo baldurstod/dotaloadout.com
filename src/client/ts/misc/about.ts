@@ -1,5 +1,5 @@
 import { I18n } from 'harmony-ui';
-import { addNotification } from 'harmony-browser-utils/';
+import { addNotification, NotificationType } from 'harmony-browser-utils/';
 import { TF2_GROUP_URL } from '../constants';
 
 export function showAboutLayer() {
@@ -10,10 +10,10 @@ export function showAboutLayer() {
 	${I18n.getString('#valve_tf_trademarks')}`;
 
 	addNotification(html, 'info', 15);*/
-	addNotification(I18n.getString('#loadout_about_content'), 'info', 15);
+	addNotification(I18n.getString('#loadout_about_content'), NotificationType.Info, 15);
 }
 
 export function showBugNotification() {
 	let html = '<a href="' + TF2_GROUP_URL + '" target="_blank" class="i18n" data-i18n="#get_assistance_on_steam"></a><br><a href="https://discord.gg/7EhW2WCWyQ" target="_blank" class="i18n" data-i18n="#get_assistance_on_discord"></a>';
-	addNotification(html, 'info', 15);
+	addNotification(html, NotificationType.Info, 15);
 }

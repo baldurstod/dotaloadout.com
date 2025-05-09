@@ -1,4 +1,4 @@
-import { addNotification } from 'harmony-browser-utils';
+import { addNotification, NotificationType } from 'harmony-browser-utils';
 import { createElement, I18n } from 'harmony-ui';
 import { ADSBYGOOGLE_INS, ADSBYGOOGLE_SRC } from '../googleconstants';
 
@@ -19,7 +19,7 @@ export class AdPanel {
 						createElement('div', {i18n: '#how_to_remove'}),
 					],
 					events: {
-						click: () => addNotification(I18n.getString('#feature_patreon'), 'warning', 10)
+						click: () => addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10)
 					}
 				}),
 				this.#htmlAdContent = createElement('div', {
