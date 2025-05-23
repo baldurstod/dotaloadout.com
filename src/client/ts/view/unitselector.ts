@@ -1,4 +1,4 @@
-import { createElement, createShadowRoot, I18n } from 'harmony-ui';
+import { createElement, createShadowRoot, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
 import { OptionsManager } from 'harmony-browser-utils';
 import { Controller } from '../controller';
 import { EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
@@ -41,15 +41,18 @@ export class UnitSelector {
 	}
 
 	#createUnitSelector(unitID) {
-		createElement('harmony-switch', {
+		const sw = createElement('harmony-switch', {
 			class: 'unit',
 			'data-i18n': Units.getName(unitID),
 			parent: this.#htmlUnits,
 			events: {
 				change: event => new OptionsManager().setSubItem('app.units.display', unitID, event.target.checked),
 			},
-			checked: new OptionsManager().getSubItem('app.units.display', unitID),
-		});
+		}) as HTMLHarmonySwitchElement;
+
+		(async () => {
+			sw.checked = (await new OptionsManager().getSubItem('app.units.display', unitID)) as boolean;
+		})()
 	}
 
 	#createModelSelector(modelCount: number) {
