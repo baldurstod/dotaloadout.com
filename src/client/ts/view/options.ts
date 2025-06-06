@@ -193,7 +193,7 @@ export class Options {
 
 	async #importModels2(file: File, overrideModels: boolean) {
 		//TODO: check zip
-		const dota2Repository = new Repositories().getRepository('dota2') as MergeRepository;
+		const dota2Repository = Repositories.getRepository('dota2') as MergeRepository;
 		let localRepo: Repository;
 
 		if (file.name.endsWith('.zip')) {
@@ -209,7 +209,7 @@ export class Options {
 			dota2Repository.unshiftRepository(localRepo);
 		} else {
 			const repo = new ManifestRepository(new MergeRepository(file.name, localRepo, dota2Repository));
-			new Repositories().addRepository(repo);
+			Repositories.addRepository(repo);
 			await repo.generateModelManifest();
 			this.#addRepo(repo);
 			Source2ModelManager.loadManifest(file.name);

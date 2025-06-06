@@ -248,7 +248,7 @@ class Application {
 	}
 
 	#iniRepositories() {
-		new Repositories().addRepository(new MergeRepository('dota2', new WebRepository('dota2', DOTA2_REPOSITORY)));
+		Repositories.addRepository(new MergeRepository('dota2', new WebRepository('dota2', DOTA2_REPOSITORY)));
 		Source2ModelManager.loadManifest('dota2');
 		Source2ParticleManager.loadManifests('dota2');
 	}
