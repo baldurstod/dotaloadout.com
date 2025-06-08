@@ -1,5 +1,5 @@
 import { AmbientLight, Graphics, Group, ObjExporter, PointLight, Repositories, Source2ModelManager, Source2ParticleManager, exportToBinaryFBX, stringToVec3, CameraProjection, WebRepository, MergeRepository } from 'harmony-3d';
-import { addNotification, NotificationType, OptionsManager, SaveFile, ShortcutHandler, supportsPopover } from 'harmony-browser-utils';
+import { addNotification, NotificationType, OptionsManager, saveFile, ShortcutHandler, supportsPopover } from 'harmony-browser-utils';
 import { createElement, hide, show, documentStyle, shadowRootStyle, I18n, createShadowRoot } from 'harmony-ui';
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
 import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_CLOSE_ITEM_LIST, EVENT_EXPORT_OBJ, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_OPTIONS, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from './controllerevents';
@@ -419,7 +419,7 @@ class Application {
 	async #exportToFBX() {
 		if (ENABLE_PATREON_POWERUSER) {
 			let binaryFBX = await exportToBinaryFBX(loadoutScene);
-			SaveFile(new File([binaryFBX], 'dotaloadout.com.fbx'));
+			saveFile(new File([binaryFBX], 'dotaloadout.com.fbx'));
 		} else {
 			addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10);
 		}
@@ -457,7 +457,7 @@ class Application {
 		});
 
 		for (let file of files) {
-			SaveFile(file);
+			saveFile(file);
 			await setTimeoutPromise(200);
 		}
 	}
