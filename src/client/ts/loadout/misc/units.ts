@@ -1,5 +1,13 @@
+export type Unit = {
+	name: string;
+	Model?: string;
+	include_keys_from?: string;
+	IsNeutralUnitType?: string;
+	ConsideredHero?: string;
+}
+
 export class Units {
-	static #units = new Map();
+	static #units = new Map<string, Unit>();
 
 	static addUnit(id, unit) {
 		this.#units.set(id, unit);
@@ -19,7 +27,7 @@ export class Units {
 	static getModel(id) {
 		let unit = this.#units.get(id);
 		if (!unit) {
-			for (const [ i, u ] of this.#units) {
+			for (const [i, u] of this.#units) {
 				if (i.startsWith(id)) {
 					unit = u;
 					break;
@@ -43,7 +51,7 @@ export class Units {
 	static getName(id) {
 		let unit = this.#units.get(id);
 		if (!unit) {
-			for (const [ i, u ] of this.#units) {
+			for (const [i, u] of this.#units) {
 				if (i.startsWith(id)) {
 					//return u;
 					unit = u;

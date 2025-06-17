@@ -11,7 +11,7 @@ export class ItemSlots {
 	#htmlCharacterIcon;
 	#htmlCharacterName;
 	#htmlSlotsContainer;
-	#htmlSlots = new Map();
+	#htmlSlots = new Map<string, HTMLElement>();
 	#currentCharacter;
 
 	constructor() {

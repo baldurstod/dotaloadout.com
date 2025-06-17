@@ -1,19 +1,20 @@
-import { CharacterTemplates } from './charactertemplates';
+import { OptionsManager } from 'harmony-browser-utils/';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { Controller } from '../../controller';
 import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEM_CLICK, EVENT_REMOVE_ITEM, EVENT_SET_MARKET_PRICES, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED } from '../../controllerevents';
-import { Character } from './character';
 import { ItemManager } from '../items/itemmanager';
 import { ItemTemplates } from '../items/itemtemplates';
-import { Units } from '../misc/units';
 import { MarketPrice } from '../marketprice';
-import { OptionsManager } from 'harmony-browser-utils/';
+import { Units } from '../misc/units';
+import { Character } from './character';
+import { CharacterTemplates } from './charactertemplates';
 
 import world from '../../../json/datas/world.json';
+import { Item } from '../items/item';
 
 export class CharacterManager {
 	static #characterTemplates = new Map();
-	static #characters = new Map();
+	static #characters = new Map<string, Character>();
 	static #currentCharacter;
 
 	static {
@@ -156,7 +157,7 @@ export class CharacterManager {
 		}
 
 		const items = currentCharacter.getItemsWithBundle();
-		const prices = new Map();
+		const prices = new Map<Item, string>();
 		for (const [itemId, item] of items) {
 			let price = await MarketPrice.getPrice(itemId);
 			if (price) {
@@ -167,7 +168,7 @@ export class CharacterManager {
 	}
 
 	static exportLoadout() {
-		const loadoutJSON = { characters:[] };
+		const loadoutJSON = { characters: [] };
 
 		for (let [_, character] of this.#characters) {
 			const loadout = character.exportLoadout();

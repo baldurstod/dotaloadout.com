@@ -1,19 +1,17 @@
+import { OptionsManager } from 'harmony-browser-utils/';
 import { createElement, hide, show } from 'harmony-ui';
-
-import { CharacterManager } from '../loadout/characters/charactermanager';
-import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { Controller } from '../controller';
 import { EVENT_CHARACTER_SELECTED } from '../controllerevents';
-import { DOTA2_HEROES_IMG } from '../constants';
+import { CharacterTemplate } from '../loadout/characters/charactertemplate';
+import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { createCharacterElement } from './utils/createcharacterelement';
-import { OptionsManager } from 'harmony-browser-utils/';
 
 const FILTER_METHOD = 'app.heroselector.filter.method'
 const SORT_FIELD = 'app.heroselector.sort.field'
 
 export class CharacterSelector {
 	#htmlElement;
-	#htmlCharacters = new Map();
+	#htmlCharacters = new Map<CharacterTemplate, HTMLElement>();
 	#characters = new Set();
 	#filters = { name: '' };
 	#htmlCharactersContainer;

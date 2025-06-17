@@ -1,10 +1,9 @@
 import { createElement, display, hide, show } from 'harmony-ui';
-
 import { Controller } from '../controller';
+import { EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK } from '../controllerevents';
 import { ItemManager } from '../loadout/items/itemmanager';
 import { ItemTemplates } from '../loadout/items/itemtemplates';
 import { getimageinventory } from '../utils/getimageinventory';
-import { EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK } from '../controllerevents';
 import { getPersonaId } from '../utils/persona';
 
 export class ItemList {
@@ -12,9 +11,9 @@ export class ItemList {
 	#htmlItemsHeader;
 	#htmlItemsSlotFilter: HTMLSelectElement;
 	#htmlItemsRarityFilter;
-	#htmlRarityOptions = new Map();
+	#htmlRarityOptions = new Map<string, HTMLOptionElement>();
 	#htmlItemsList;
-	#htmlItems = new Map();
+	#htmlItems = new Map<ItemTemplates, HTMLElement>();
 	#currentCharacter;
 	#filters: any = {};
 
@@ -183,8 +182,7 @@ export class ItemList {
 		const htmlRarityOption = createElement('option', {
 			parent: this.#htmlItemsRarityFilter,
 			innerText: rarity,
-
-		});
+		}) as HTMLOptionElement;
 		this.#htmlRarityOptions.set(rarity, htmlRarityOption);
 	}
 

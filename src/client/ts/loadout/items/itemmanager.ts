@@ -9,7 +9,7 @@ export class ItemManager {
 	static #characterTemplates = new Map();
 	static #characters = new Map();
 	static #currentCharacter;
-	static #itemsPerCharacter = new Map();
+	static #itemsPerCharacter = new Map<string, Promise<Set<string>>>();
 	static #lang = 'english';
 
 	static async #loadItems(characterId) {
@@ -30,7 +30,7 @@ export class ItemManager {
 				return false;
 			}
 
-			const characterItems = new Set();
+			const characterItems = new Set<string>();
 
 			for (const item of itemsJSON) {
 				ItemTemplates.addTemplate(item);
@@ -48,7 +48,7 @@ export class ItemManager {
 	}
 
 	static async #loadNeutralCreeps(characterId) {
-		const items = new Set();
+		const items = new Set<string>();
 		for (const [key, unit] of Units.getUnits()) {
 			if (unit.IsNeutralUnitType == '1' && unit.ConsideredHero != '1') {
 				const item = {

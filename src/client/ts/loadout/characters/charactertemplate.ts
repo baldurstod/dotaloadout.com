@@ -1,3 +1,11 @@
+export type CharacterSlot = {
+	DisplayInLoadout: string,
+	SlotIndex: string,
+	SlotName: string,
+	SlotText: string,
+	GeneratesUnits: { [key: string]: string }/*TODO: fix type*/,
+}
+
 export class CharacterTemplate {
 	#definition;
 	constructor(definition) {
@@ -22,7 +30,7 @@ export class CharacterTemplate {
 			return;
 		}
 
-		const slots = new Map();
+		const slots = new Map<string, CharacterSlot>();
 
 		for (const slotName in itemSlots) {
 			const slot = itemSlots[slotName];

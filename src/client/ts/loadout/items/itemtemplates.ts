@@ -1,8 +1,8 @@
 import { ItemTemplate } from './itemtemplate.js';
 
 export class ItemTemplates {
-	static #templates = new Map();
-	static #templatesByName = new Map();
+	static #templates = new Map<string, ItemTemplate>();
+	static #templatesByName = new Map<string, string>();
 
 	static addTemplate(templateJSON) {
 		this.#templates.set(templateJSON.id, new ItemTemplate(templateJSON));

@@ -2,16 +2,16 @@ import { createElement } from 'harmony-ui';
 import { Controller } from '../controller';
 import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_SELECTED } from '../controllerevents';
 import { CharacterManager } from '../loadout/characters/charactermanager';
+import { Item } from '../loadout/items/item';
 
 export class StyleSelector {
 	#htmlElement;
-	#items = new Map();
+	#items = new Map<Item, HTMLElement>();
 
 	constructor() {
 		Controller.addEventListener(EVENT_CHARACTER_ITEM_ADDED, event => this.#addItem((event as CustomEvent).detail));
 		Controller.addEventListener(EVENT_CHARACTER_ITEM_REMOVED, event => this.#removeItem((event as CustomEvent).detail));
 		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent).detail.characterId));
-
 	}
 
 	#addItem(item) {

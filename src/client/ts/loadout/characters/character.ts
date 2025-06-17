@@ -1,24 +1,24 @@
-import { Group, Source2ModelManager, stringToVec3 } from 'harmony-3d';
+import { vec3 } from 'gl-matrix';
+import { Group, Source2ModelInstance, Source2ModelManager, stringToVec3 } from 'harmony-3d';
+import { OptionsManager } from 'harmony-browser-utils/';
+import { DEFAULT_ACTIVITY } from '../../constants';
 import { Controller } from '../../controller';
 import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CHARACTER_UNITS_CHANGED } from '../../controllerevents';
+import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
 import { ItemTemplates } from '../items/itemtemplates';
-import { CharacterTemplates } from './charactertemplates';
 import { Units } from '../misc/units';
-import { loadoutScene } from '../scene';
 import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
-import { DEFAULT_ACTIVITY } from '../../constants';
-import { OptionsManager } from 'harmony-browser-utils/';
-import { AssetModifier } from '../assetmodifier';
+import { loadoutScene } from '../scene';
 import { CharacterTemplate } from './charactertemplate';
-import { vec3 } from 'gl-matrix';
+import { CharacterTemplates } from './charactertemplates';
 
 export class Character {
 	#characterId;
 	#modelId = 0;
 	#template: CharacterTemplate;
-	#items = new Map();
-	#itemsPerSlot = new Map();
+	#items = new Map<string, Item>();
+	#itemsPerSlot = new Map<string, Item>();
 	bundleItem = null;
 	//#name = '';
 	//#displayName = '';
@@ -34,7 +34,8 @@ export class Character {
 	#metamorphosisModel;
 	#activity = DEFAULT_ACTIVITY;
 	#modifiers = [];
-	#units = new Map();
+	#units = new Map<string, Source2ModelInstance>();
+
 	constructor(characterId) {
 		this.#characterId = characterId;
 		this.#template = CharacterTemplates.getTemplate(characterId);
@@ -250,7 +251,7 @@ export class Character {
 
 		//this.usePersonaModel(this.#personaId);
 		let alternateModelName;
-		const replacements = new Map();
+		const replacements = new Map<string, string>();
 		let skin = 0;
 		let arcanaLevel: number = 0;
 

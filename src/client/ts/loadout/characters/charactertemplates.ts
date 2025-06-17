@@ -1,8 +1,8 @@
 import { CharacterTemplate } from './charactertemplate';
 
 export class CharacterTemplates {
-	static #templates = new Map();
-	 static heroCount = 0;
+	static #templates = new Map<string, CharacterTemplate>();
+	static heroCount = 0;
 
 	static addTemplate(templateJSON) {
 		const template = new CharacterTemplate(templateJSON)

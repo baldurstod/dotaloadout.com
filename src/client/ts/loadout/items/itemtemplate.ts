@@ -86,7 +86,7 @@ export class ItemTemplate {
 		if (model == 0) {
 			return style?.model_player ?? this.#definition.modelPlayer;
 		} else {
-			return style?.['model_player' + model]  ?? style?.model_player ?? this.#definition['modelPlayer' + model] ?? this.#definition.modelPlayer;
+			return style?.['model_player' + model] ?? style?.model_player ?? this.#definition['modelPlayer' + model] ?? this.#definition.modelPlayer;
 		}
 	}
 
@@ -246,7 +246,7 @@ export class ItemTemplate {
 	}
 
 	getStyles() {
-		const ret = new Map();
+		const ret = new Map<string, string>();
 		const styles = this.#definition.styles;
 		if (styles) {
 			for (const styleId in styles) {
