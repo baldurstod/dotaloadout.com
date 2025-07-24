@@ -3,7 +3,7 @@
 BINARY_NAME=dotaloadout.com
 
 build:
-	go build -ldflags="-X dotaloadout.com/src/server/server.UseEmbed=false" -o dist/${BINARY_NAME} ./src/server/
+	go build -ldflags="-X main.ReleaseMode=false" -o dist/${BINARY_NAME} ./src/server/
 
 run: build
 	dist/${BINARY_NAME}
