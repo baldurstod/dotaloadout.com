@@ -115,6 +115,7 @@
 		"#display_manipulator": "Display manipulator",
 		"#display_skeleton": "Display skeleton",
 		"#display_properties": "Display properties",
+		"#properties": "Propriétés",
 		"#id": "Id",
 		"#quaternion": "Quaternion",
 		"#position": "Position",
