@@ -308,7 +308,7 @@ export class Character {
 					arcanaLevel = modifier.level;
 					break;
 				default:
-					console.warn('character_unknown_modifier_type', modifier.type);
+					console.warn('character_unknown_modifier_type', modifier.type, modifier);
 					break;
 			}
 		}
