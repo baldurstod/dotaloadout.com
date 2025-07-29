@@ -1,4 +1,4 @@
-import { I18n } from 'harmony-ui';
+import { createElement, I18n } from 'harmony-ui';
 import { addNotification, NotificationType } from 'harmony-browser-utils/';
 import { TF2_GROUP_URL } from '../constants';
 
@@ -14,6 +14,22 @@ export function showAboutLayer() {
 }
 
 export function showBugNotification() {
-	let html = '<a href="' + TF2_GROUP_URL + '" target="_blank" class="i18n" data-i18n="#get_assistance_on_steam"></a><br><a href="https://discord.gg/7EhW2WCWyQ" target="_blank" class="i18n" data-i18n="#get_assistance_on_discord"></a>';
+	//let html = '<a href="' + TF2_GROUP_URL + '" target="_blank" class="i18n" data-i18n="#get_assistance_on_steam"></a><br><a href="https://discord.gg/7EhW2WCWyQ" target="_blank" class="i18n" data-i18n="#get_assistance_on_discord"></a>';
+	const html = createElement('div', {
+		childs: [
+			createElement('a', {
+				style: 'color:white;display:block;',
+				href: TF2_GROUP_URL,
+				target: '_blank',
+				i18n: '#get_assistance_on_steam',
+			}),
+			createElement('a', {
+				style: 'color:white;display:block;',
+				href: 'https://discord.gg/7EhW2WCWyQ',//TODO: const
+				target: '_blank',
+				i18n: '#get_assistance_on_discord',
+			}),
+		]
+	});
 	addNotification(html, NotificationType.Info, 15);
 }
