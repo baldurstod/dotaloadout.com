@@ -1,18 +1,18 @@
-import replace from '@rollup/plugin-replace';
-import nodeResolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
-import copy from 'rollup-plugin-copy'
+import nodeResolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
-import css from 'rollup-plugin-import-css';
 import typescript from '@rollup/plugin-typescript';
 import wasm from '@rollup/plugin-wasm';
+import copy from 'rollup-plugin-copy';
+import css from 'rollup-plugin-import-css';
 
 const isProduction = process.env.BUILD === 'production';
 
 const BUILD_OPTIONS = [
-	{ mode: 2, output: "application_poweruser.js"},
-	{ mode: 0, output: "application.js"},
-	{ mode: 1, output: "application_supporter.js"},
+	{ mode: 2, output: "application_poweruser.js" },
+	{ mode: 0, output: "application.js" },
+	{ mode: 1, output: "application_supporter.js" },
 ];
 
 const BUILDS = [];
@@ -23,7 +23,8 @@ for (const buildOption of BUILD_OPTIONS) {
 			input: './src/client/ts/application.ts',
 			output: {
 				file: `./build/client/js/${buildOption.output}`,
-				format: 'esm'
+				format: 'esm',
+				sourcemap: isProduction,
 			},
 			plugins: [
 				replace({
@@ -48,8 +49,8 @@ for (const buildOption of BUILD_OPTIONS) {
 				isProduction ? terser() : null,
 				copy({
 					targets: [
-						{src: 'src/client/index.html', dest: 'build/client/'},
-						{src: 'src/client/ads.txt', dest: 'build/client/'},
+						{ src: 'src/client/index.html', dest: 'build/client/' },
+						{ src: 'src/client/ads.txt', dest: 'build/client/' },
 					]
 				}),
 			]
