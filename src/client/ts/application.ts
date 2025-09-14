@@ -1,9 +1,23 @@
-import { AmbientLight, Graphics, Group, ObjExporter, PointLight, Repositories, Source2ModelManager, Source2ParticleManager, exportToBinaryFBX, stringToVec3, CameraProjection, WebRepository, MergeRepository } from 'harmony-3d';
-import { addNotification, NotificationType, OptionsManager, saveFile, ShortcutHandler, supportsPopover } from 'harmony-browser-utils';
-import { createElement, hide, show, documentStyle, shadowRootStyle, I18n, createShadowRoot } from 'harmony-ui';
+import { AmbientLight, CameraProjection, Graphics, Group, MergeRepository, ObjExporter, PointLight, Repositories, Source2ModelManager, Source2ParticleManager, WebRepository, exportToBinaryFBX, stringToVec3 } from 'harmony-3d';
+import { NotificationType, OptionsManager, ShortcutHandler, addNotification, saveFile } from 'harmony-browser-utils';
+import { I18n, createElement, createShadowRoot, documentStyle, hide, shadowRootStyle, show } from 'harmony-ui';
+import applicationCSS from '../css/application.css';
+import characterSelectorCSS from '../css/characterselector.css';
+import export3dPopoverCSS from '../css/export3dpopover.css';
+import htmlCSS from '../css/html.css';
+import itemListCSS from '../css/itemlist.css';
+import itemListItemCSS from '../css/itemlistitem.css';
+import itemSlotsCSS from '../css/itemslots.css';
+import loadoutCSS from '../css/loadout.css';
+import marketPricesCSS from '../css/marketprices.css';
+import statusbarCSS from '../css/statusbar.css';
+import styleSelectorCSS from '../css/styleselector.css';
+import toolbarCSS from '../css/toolbar.css';
+import varsCSS from '../css/vars.css';
+import viewerCSS from '../css/viewer.css';
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
-import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_CLOSE_ITEM_LIST, EVENT_EXPORT_OBJ, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_OPTIONS, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from './controllerevents';
 import { Controller } from './controller';
+import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_CLOSE_ITEM_LIST, EVENT_EXPORT_OBJ, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from './controllerevents';
 import { CharacterManager } from './loadout/characters/charactermanager';
 import { MarketPrice } from './loadout/marketprice';
 import { loadoutCamera, loadoutColorBackground, loadoutScene } from './loadout/scene';
@@ -18,21 +32,6 @@ import { Options } from './view/options';
 import { StyleSelector } from './view/styleselector';
 import { Toolbar } from './view/toolbar';
 import { Viewer } from './view/viewer';
-
-import htmlCSS from '../css/html.css';
-import applicationCSS from '../css/application.css';
-import varsCSS from '../css/vars.css';
-import loadoutCSS from '../css/loadout.css';
-import characterSelectorCSS from '../css/characterselector.css';
-import export3dPopoverCSS from '../css/export3dpopover.css';
-import viewerCSS from '../css/viewer.css';
-import toolbarCSS from '../css/toolbar.css';
-import styleSelectorCSS from '../css/styleselector.css';
-import statusbarCSS from '../css/statusbar.css';
-import marketPricesCSS from '../css/marketprices.css';
-import itemSlotsCSS from '../css/itemslots.css';
-import itemListItemCSS from '../css/itemlistitem.css';
-import itemListCSS from '../css/itemlist.css';
 
 documentStyle(htmlCSS);
 documentStyle(varsCSS);
@@ -50,14 +49,14 @@ documentStyle(itemSlotsCSS);
 documentStyle(itemListItemCSS);
 documentStyle(itemListCSS);*/
 
+import { setTimeoutPromise } from 'harmony-utils';
 import english from '../json/i18n/english.json';
 import french from '../json/i18n/french.json';
 import optionsmanager from '../json/optionsmanager.json';
-import { setTimeoutPromise } from 'harmony-utils';
-import { Export3DPopover } from './view/export3dpopover';
-import { UnitSelector } from './view/unitselector';
 import { ENABLE_PATREON_BASE, ENABLE_PATREON_POWERUSER, PATREON_IS_LOGGED, PRODUCTION } from './bundleoptions';
 import { GOOGLE_ANALYTICS_ID } from './googleconstants';
+import { Export3DPopover } from './view/export3dpopover';
+import { UnitSelector } from './view/unitselector';
 
 class Application {
 	#appAdPanel = new AdPanel();
@@ -169,8 +168,8 @@ class Application {
 		Controller.addEventListener(EVENT_OPEN_CHARACTER_SELECTOR, () => this.#appCharacterSelector.show());
 		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#characterSelected((event as CustomEvent).detail.characterId));
 
-		Controller.addEventListener(EVENT_TOOLBAR_PLAY, () => new Graphics().speed = 1.0);
-		Controller.addEventListener(EVENT_TOOLBAR_PAUSE, () => new Graphics().speed = 0.0);
+		Controller.addEventListener(EVENT_TOOLBAR_PLAY, () => Graphics.speed = 1.0);
+		Controller.addEventListener(EVENT_TOOLBAR_PAUSE, () => Graphics.speed = 0.0);
 		Controller.addEventListener(EVENT_TOOLBAR_SHARE, () => this.#shareLoadout());
 		Controller.addEventListener(EVENT_TOOLBAR_PICTURE, () => this.#savePicture());
 		Controller.addEventListener(EVENT_TOOLBAR_EXPORT_FBX, () => this.#exportToFBX());
@@ -267,7 +266,7 @@ class Application {
 	set backGroundColor(hex) {
 		if (hex) {
 			let rgb = hexToRgb(hex);
-			new Graphics().clearColor(rgb);
+			Graphics.clearColor(rgb);
 			loadoutColorBackground.setColor(rgb);
 
 			(this.#shadowRoot.host as HTMLElement).style.backgroundColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ', 1.0)';
@@ -292,15 +291,15 @@ class Application {
 
 	#setSilhouetteMode(silhouetteMode) {
 		if (silhouetteMode) {
-			new Graphics().setIncludeCode('silhouetteMode', '#define SILHOUETTE_MODE');
+			Graphics.setIncludeCode('silhouetteMode', '#define SILHOUETTE_MODE');
 		} else {
-			new Graphics().setIncludeCode('silhouetteMode', '#undef SILHOUETTE_MODE');
+			Graphics.setIncludeCode('silhouetteMode', '#undef SILHOUETTE_MODE');
 		}
 	}
 
 	#setSilhouetteColor(silhouetteColor) {
 		let rgb = hexToRgb(silhouetteColor);
-		new Graphics().setIncludeCode('silhouetteColor', `#define SILHOUETTE_COLOR vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
+		Graphics.setIncludeCode('silhouetteColor', `#define SILHOUETTE_COLOR vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
 	}
 
 	#initLights() {
@@ -401,7 +400,7 @@ class Application {
 
 	#savePicture() {
 		const value = this.#getPictureSize();
-		new Graphics().savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', Number(value.w), Number(value.h));
+		Graphics.savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', Number(value.w), Number(value.h));
 	}
 
 	#getPictureSize() {

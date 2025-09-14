@@ -1,13 +1,11 @@
-import { AmbientLight, Camera, ContextObserver, GraphicsEvent, Graphics, GraphicsEvents, HALF_PI, OrbitControl, WebGLStats, Composer, GraphicTickEvent } from 'harmony-3d';
-import { createElement } from 'harmony-ui';
-import { Controller } from '../controller';
-import { loadoutCamera, loadoutScene } from '../loadout/scene';
 import { vec3 } from 'gl-matrix';
+import { Composer, ContextObserver, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, WebGLStats } from 'harmony-3d';
+import { createElement } from 'harmony-ui';
+import { loadoutCamera, loadoutScene } from '../loadout/scene';
 
 export class Viewer {
 	#htmlElement!: HTMLElement;
 	#htmlCanvas!: HTMLCanvasElement;
-	#renderer!: Graphics;
 	#orbitControl;
 	#composer?: Composer;
 
@@ -30,7 +28,7 @@ export class Viewer {
 	}
 
 	#initRenderer() {
-		this.#renderer = new Graphics().initCanvas({
+		Graphics.initCanvas({
 			canvas: this.#htmlCanvas,
 			autoResize: true,
 			webGL: {
@@ -40,19 +38,19 @@ export class Viewer {
 			}
 		});
 
-		this.#renderer.clearColor([0.5, 0.5, 0.5, 1]);
+		Graphics.clearColor([0.5, 0.5, 0.5, 1]);
 
 		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: Event) => {
 			WebGLStats.tick();
 			if (this.#composer?.enabled) {
 				this.#composer.render((event as CustomEvent<GraphicTickEvent>).detail.delta, {});
 			} else {
-				new Graphics().render(loadoutScene, loadoutScene.activeCamera!, (event as CustomEvent<GraphicTickEvent>).detail.delta, {});
+				Graphics.render(loadoutScene, loadoutScene.activeCamera!, (event as CustomEvent<GraphicTickEvent>).detail.delta, {});
 			}
 		});
 
 		ContextObserver.observe(GraphicsEvents, loadoutCamera);
-		this.#renderer.play();
+		Graphics.play();
 	}
 
 	get htmlElement() {
