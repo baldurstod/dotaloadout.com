@@ -8,7 +8,7 @@ import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
 import { ItemTemplates } from '../items/itemtemplates';
 import { Units } from '../misc/units';
-import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
+import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_BODYGROUP_VISIBILITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
 import { loadoutScene } from '../scene';
 import { CharacterTemplate } from './charactertemplate';
 import { CharacterTemplates } from './charactertemplates';
@@ -214,8 +214,8 @@ export class Character {
 		return items;
 	}
 
-	async getAssetModifiers() {
-		let modifiers = [];
+	async getAssetModifiers(): Promise<AssetModifier[]> {
+		let modifiers: AssetModifier[] = [];
 		for (const [_, item] of this.#items) {
 			const itemModifiers = item.getAssetModifiers();
 			if (itemModifiers) {
@@ -257,6 +257,8 @@ export class Character {
 
 		this.#activityModifiers.clear();
 
+		const bodygroups = new Map<string, number>();
+
 		for (const modifier of modifiers) {
 			switch (modifier.type) {
 				case MODIFIER_PERSONA:
@@ -279,6 +281,10 @@ export class Character {
 					break;
 				case MODIFIER_MODEL_SKIN:
 					skin = modifier.skin;
+					break;
+				case MODIFIER_BODYGROUP_VISIBILITY:
+					// TODO: use modifier.asset to determine the model to replace
+					bodygroups.set(modifier.modifier, modifier.value);
 					break;
 				case MODIFIER_ACTIVITY:
 					this.#activityModifiers.add(modifier);
@@ -319,6 +325,7 @@ export class Character {
 
 		await this.#setCharacterModel(alternateModelName);
 		const model = await this.#getModel();
+		model.resetBodyGroups();
 		this.#setSkin(skin);
 		this.#setArcanaLevel(arcanaLevel);
 
@@ -353,6 +360,10 @@ export class Character {
 			for (const entity of item.getExtraEntities()) {
 				await this.#addChild(entity);
 			}
+		}
+
+		for (const [name, value] of bodygroups) {
+			model.setBodyGroup(name, value);
 		}
 
 		await this.#reparentItems();

@@ -13,3 +13,4 @@ export const MODIFIER_COURIER = 'courier';
 export const MODIFIER_COURIER_FLYING = 'courier_flying';
 export const MODIFIER_ENTITY_CLIENTSIDE_MODEL = 'entity_clientside_model';
 export const MODIFIER_ARCANA_LEVEL = 'arcana_level';
+export const MODIFIER_BODYGROUP_VISIBILITY = 'bodygroup_visibility';

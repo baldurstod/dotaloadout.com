@@ -42,4 +42,7 @@ export class AssetModifier {
 		return this.#definition.level;
 	}
 
+	get value() {
+		return this.#definition.value;
+	}
 }
