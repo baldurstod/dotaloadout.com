@@ -4,7 +4,7 @@ import { OptionsManager } from 'harmony-browser-utils';
 import { getPersonaId } from '../../utils/persona';
 import { AssetModifier } from '../assetmodifier';
 import { Character } from '../characters/character';
-import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
+import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_PARTICLE_CREATE } from '../modifiers';
 import { ItemTemplate } from './itemtemplate';
 
 export class Item {
@@ -101,6 +101,16 @@ export class Item {
 	}
 
 	get modelName() {
+		const modifiers = this.getAssetModifiers();
+		if (modifiers) {
+			// Some metamorphosis items also have a model_player attribute. This, is wrong, discard model_player
+			for (const modifier of modifiers) {
+				if (modifier.type == MODIFIER_HERO_MODEL_CHANGE) {
+					return null;
+				}
+			}
+		}
+
 		return this.#alternateModelName ?? this.#template.getModelName(this.#style);
 	}
 
