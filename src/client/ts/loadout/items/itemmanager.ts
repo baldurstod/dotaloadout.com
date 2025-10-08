@@ -1,7 +1,8 @@
 import { DOTA2_REPOSITORY, ITEM_GAME_PATH } from '../../constants';
 import { Controller } from '../../controller';
-import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEMS_LOADED } from '../../controllerevents';
+import { EVENT_ITEMS_LOADED } from '../../controllerevents';
 import { Units } from '../misc/units';
+import { MODIFIER_ENTITY_MODEL } from '../modifiers';
 import { ItemTemplates } from './itemtemplates';
 
 
@@ -55,11 +56,11 @@ export class ItemManager {
 					id: key,
 					name: unit.name,
 					slot: 'neutral_creeps',
-					assetmodifiers:[
+					assetmodifiers: [
 						{
 							"asset": characterId,
 							"modifier": unit.Model,
-							"type": "entity_model"
+							"type": MODIFIER_ENTITY_MODEL,
 						},
 					],
 				}
