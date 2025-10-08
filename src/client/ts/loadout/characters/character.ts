@@ -385,7 +385,7 @@ export class Character {
 						const unitID = itemSlot.GeneratesUnits[i];
 						const model = Units.getModel(unitID);
 						if (model) {
-							this.#setUnit({ asset: unitID, modifier: model });
+							this.#setUnit(new AssetModifier(null, { asset: unitID, modifier: model }));
 						}
 					}
 				}
@@ -393,7 +393,7 @@ export class Character {
 		}
 	}
 
-	async #setUnit(modifier) {
+	async #setUnit(modifier: AssetModifier) {
 		let modifierAsset = modifier.asset;
 		const modifierType = modifier.type;
 		if (modifierType == MODIFIER_COURIER || modifierType == MODIFIER_COURIER_FLYING) {
@@ -402,6 +402,7 @@ export class Character {
 		const modelName = modifier.modifier;
 		const model = await Source2ModelManager.createInstance('dota2', modelName, true);
 		if (model) {
+			this.#group.addChild(model);
 			model.visible = this.#visible;
 			model.skin = modifier.skin ?? modifier.item?.skin ?? 0;
 			const loadoutDefaultOffset = modifier.loadoutDefaultOffset;
@@ -410,6 +411,7 @@ export class Character {
 			}
 			this.#units.get(modifierAsset)?.remove();
 			this.#units.delete(modifierAsset);
+			this.#units.set(modifierAsset, model);
 			model.position = getUnitPlacement(this.#units.size + (this.getModelName() ? 1 : 0));
 			model.visible = await new OptionsManager().getSubItem('app.units.display', modifierAsset) ? undefined : false;
 
@@ -417,10 +419,8 @@ export class Character {
 				model.visible = event.detail.value[modifierAsset] ? undefined : false;
 			});
 
-			this.#units.set(modifierAsset, model);
 			Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_UNITS_CHANGED));
 
-			this.#group.addChild(model);
 		}
 		await this.#positionUnits();
 	}
