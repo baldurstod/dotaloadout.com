@@ -1,72 +1,12 @@
 export class ItemTemplate {
 	#definition;
+
 	constructor(definition) {
 		this.#definition = definition;
 	}
 
 	get name() {
 		return this.#definition.name;
-	}
-
-	getModel(npc) {
-		function convertDemo(npc) {
-			if (npc == 'demoman') {
-				return 'demo';
-			} else {
-				return npc;
-			}
-		}
-		npc = npc.replace(/bot_/, '');
-
-		let modelPlayerPerClass = this.#definition.model_player_per_class;
-
-		if (modelPlayerPerClass) {
-			if (modelPlayerPerClass[npc]) {
-				return modelPlayerPerClass[npc];
-			}
-
-			let basename = modelPlayerPerClass['basename'];
-			if (basename) {
-				let usedByClasses = this.#definition.used_by_classes;
-				if (usedByClasses) {
-					if (usedByClasses[npc] == 1) {
-						return basename.replace(/%s/g, convertDemo(npc));
-					} else {
-						let arr = Object.keys(usedByClasses);
-						if (arr.length > 0) {
-							return basename.replace(/%s/g, convertDemo(arr[0]));
-						}
-					}
-				}
-			}
-		}
-
-		let modelPlayer = this.#definition.model_player;
-		if (modelPlayer) {
-			return modelPlayer;
-		}
-
-		let customTauntPropPerClass = this.#definition.custom_taunt_prop_per_class;
-		if (customTauntPropPerClass?.[npc]) {
-			return customTauntPropPerClass[npc];
-		}
-
-		// Look for the first model_player_per_class
-		if (modelPlayerPerClass) {
-			let arr = Object.keys(modelPlayerPerClass);
-			if (arr.length > 0) {
-				return modelPlayerPerClass[arr[0]];
-			}
-		}
-		return null;
-	}
-
-	getModelBlue(npc) {
-		let modelPlayerPerClassBlue = this.#definition.model_player_per_class_blue;
-
-		if (modelPlayerPerClassBlue) {
-			return modelPlayerPerClassBlue[npc];
-		}
 	}
 
 	get imageInventory() {
