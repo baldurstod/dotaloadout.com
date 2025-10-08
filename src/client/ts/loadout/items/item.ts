@@ -1,16 +1,16 @@
 import { vec3 } from 'gl-matrix';
-import { Source2ModelManager, Source2ParticleManager, Entity, Source2ModelInstance } from 'harmony-3d';
-import { AssetModifier } from '../assetmodifier';
-import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
+import { Entity, Source2ModelInstance, Source2ModelManager, Source2ParticleManager } from 'harmony-3d';
 import { OptionsManager } from 'harmony-browser-utils';
 import { getPersonaId } from '../../utils/persona';
-import { ItemTemplate } from './itemtemplate';
+import { AssetModifier } from '../assetmodifier';
 import { Character } from '../characters/character';
+import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
+import { ItemTemplate } from './itemtemplate';
 
 export class Item {
 	#template: ItemTemplate;
 	#character: Character;
-	#model;
+	#model: Source2ModelInstance | null;
 	#childEntities = new Set<Entity>();
 	#extraEntities = new Set<Entity>();
 	#visible;
@@ -24,7 +24,7 @@ export class Item {
 		this.#character = character;
 	}
 
-	async getModel() {
+	async getModel(): Promise<Source2ModelInstance | null> {
 		if (this.#model) {
 			return this.#model;
 		}
@@ -172,7 +172,17 @@ export class Item {
 	async processModifiers(replacements, characterModelId: number) {
 		this.#clearExtraEntities();
 
-		const originalModelName = this.#template.getModelName(this.#style, characterModelId);
+		const modifiers = this.getAssetModifiers();
+		let originalModelName = this.#template.getModelName(this.#style, characterModelId);
+		if (!originalModelName && modifiers) {
+			for (const modifier of modifiers) {
+				if (modifier.type == MODIFIER_ENTITY_MODEL && modifier.asset.endsWith(`_variant_${characterModelId}`)) {
+					originalModelName = modifier.modifier;
+					break;
+				}
+			}
+		}
+
 		await this.#setItemModel(replacements.get(originalModelName) ?? originalModelName);
 
 		const model = await this.getModel();
@@ -183,7 +193,6 @@ export class Item {
 			this.#model.setBodyGroup('arcana', this.#arcanaLevel ?? 0);
 		}
 
-		const modifiers = this.getAssetModifiers();
 		if (!modifiers) {
 			return;
 		}

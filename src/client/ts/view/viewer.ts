@@ -49,7 +49,7 @@ export class Viewer {
 			}
 		});
 
-		ContextObserver.observe(GraphicsEvents, loadoutCamera);
+		//ContextObserver.observe(GraphicsEvents, loadoutCamera);
 		Graphics.play();
 	}
 

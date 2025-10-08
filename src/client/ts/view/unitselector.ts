@@ -70,7 +70,7 @@ export class UnitSelector {
 					steap: 1,
 					value: this.#character.getModelId(),
 					events: {
-						change: (event: Event) => this.#character.setModelId(Number((event.target as HTMLInputElement).value)),
+						input: (event: Event) => this.#character.setModelId(Number((event.target as HTMLInputElement).value)),
 						//OptionsManager.setSubItem('app.units.display', unitID, event.target.checked),
 					},
 					//checked: OptionsManager.getSubItem('app.units.display', unitID),
