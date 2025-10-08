@@ -1,26 +1,34 @@
 import { createElement, display, hide, show } from 'harmony-ui';
 import { Controller } from '../controller';
-import { EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK } from '../controllerevents';
+import { EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK, SlotClick } from '../controllerevents';
+import { Character } from '../loadout/characters/character';
 import { ItemManager } from '../loadout/items/itemmanager';
+import { ItemTemplate } from '../loadout/items/itemtemplate';
 import { ItemTemplates } from '../loadout/items/itemtemplates';
 import { getimageinventory } from '../utils/getimageinventory';
 import { getPersonaId } from '../utils/persona';
 
+type Filters = {
+	name?: string;
+	slot?: string;
+	rarity?: string;
+}
+
 export class ItemList {
-	#htmlElement;
-	#htmlItemsHeader;
-	#htmlItemsSlotFilter: HTMLSelectElement;
-	#htmlItemsRarityFilter;
+	#htmlElement?: HTMLElement;
+	#htmlItemsSlotFilter?: HTMLSelectElement;
+	#htmlItemsRarityFilter?: HTMLSelectElement;
 	#htmlRarityOptions = new Map<string, HTMLOptionElement>();
-	#htmlItemsList;
-	#htmlItems = new Map<ItemTemplates, HTMLElement>();
-	#currentCharacter;
-	#filters: any = {};
+	#htmlItemsList?: HTMLElement;
+	#htmlItems = new Map<ItemTemplate, HTMLElement>();
+	#filters: Filters = {};
 
 	constructor() {
 		Controller.addEventListener(EVENT_SLOT_CLICK, event => {
-			this.#setSlotFilter((event as CustomEvent).detail);
-			this.#htmlItemsSlotFilter.value = (event as CustomEvent).detail;
+			this.#setSlotFilter((event as CustomEvent<SlotClick>).detail);
+			if (this.#htmlItemsSlotFilter) {
+				this.#htmlItemsSlotFilter.value = (event as CustomEvent<SlotClick>).detail;
+			}
 		});
 		Controller.addEventListener(EVENT_CLOSE_ITEM_LIST, () => hide(this.#htmlElement));
 		Controller.addEventListener(EVENT_OPEN_ITEM_LIST, () => show(this.#htmlElement));
@@ -32,31 +40,31 @@ export class ItemList {
 		this.#htmlElement = createElement('div', {
 			class: 'item-list',
 			childs: [
-				this.#htmlItemsHeader = createElement('div', {
+				createElement('div', {
 					class: 'item-list-header',
 					childs: [
 						this.#htmlItemsSlotFilter = createElement('select', {
 							class: 'item-list-header-slot-filter',
 							events: {
-								change: event => this.#setSlotFilter(event.target.value),
-								keyup: event => this.#setSlotFilter(event.target.value)
+								change: (event: InputEvent) => this.#setSlotFilter((event.target as HTMLSelectElement).value),
+								keyup: (event: InputEvent) => this.#setSlotFilter((event.target as HTMLSelectElement).value),
 							}
 						}) as HTMLSelectElement,
 						createElement('input', {
 							class: 'item-list-header-slot-filter',
 							events: {
-								change: event => this.#setNameFilter(event.target.value),
-								keyup: event => this.#setNameFilter(event.target.value)
+								change: (event: InputEvent) => this.#setNameFilter((event.target as HTMLSelectElement).value),
+								keyup: (event: InputEvent) => this.#setNameFilter((event.target as HTMLSelectElement).value),
 							}
 						}),
 						this.#htmlItemsRarityFilter = createElement('select', {
 							class: 'item-list-header-slot-filter',
 							child: createElement('option'),
 							events: {
-								change: event => this.#setRarityFilter(event.target.value),
-								keyup: event => this.#setRarityFilter(event.target.value)
+								change: (event: InputEvent) => this.#setRarityFilter((event.target as HTMLSelectElement).value),
+								keyup: (event: InputEvent) => this.#setRarityFilter((event.target as HTMLSelectElement).value),
 							}
-						}),
+						}) as HTMLSelectElement,
 					],
 				}),
 				createElement('div', {
@@ -116,27 +124,23 @@ export class ItemList {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	async setCharacter(character) {
-		if (!character) {
-			return;
-		}
-
+	async setCharacter(character: Character) {
 		const itemSlots = character.itemSlots;
 		if (itemSlots) {
-			this.#htmlItemsSlotFilter.innerHTML = '<option/><option value="none">Bundle</option>';
+			this.#htmlItemsSlotFilter!.innerHTML = '<option/><option value="none">Bundle</option>';
 			for (const [_, slot] of itemSlots) {
-				if ((slot?.DisplayInLoadout ?? 1) == 0) {
+				if ((slot?.DisplayInLoadout ?? '1') == '0') {
 					continue;
 				}
 				createElement('option', { value: slot.SlotName, innerHTML: `${slot.SlotText} (${slot.SlotName})`, parent: this.#htmlItemsSlotFilter });
 			}
 		}
 
-		this.#currentCharacter = character;
-		this.#htmlItemsList.innerText = '';
+		//this.#currentCharacter = character;
+		this.#htmlItemsList!.innerText = '';
 		this.#htmlItems.clear();
-		this.#setSlotFilter(null);
-		this.#setRarityFilter(null);
+		this.#setSlotFilter();
+		this.#setRarityFilter();
 
 		const itemIds = await ItemManager.getItems(character.id);
 
@@ -144,11 +148,13 @@ export class ItemList {
 		this.#htmlRarityOptions.clear();
 		for (const itemId of itemIds) {
 			const itemTemplate = ItemTemplates.getTemplate(itemId);
-			this.#addItem(character, itemTemplate);
+			if (itemTemplate) {
+				this.#addItem(character, itemTemplate);
+			}
 		}
 	}
 
-	async #addItem(character, itemTemplate) {
+	async #addItem(character: Character, itemTemplate: ItemTemplate) {
 		const htmlItemSlot = createElement('div', {
 			class: `item-list-item item-rarity-${itemTemplate.rarity}`,
 			parent: this.#htmlItemsList,
@@ -175,7 +181,7 @@ export class ItemList {
 		this.#addRarity(itemTemplate.rarity);
 	}
 
-	#addRarity(rarity) {
+	#addRarity(rarity: string) {
 		if (this.#htmlRarityOptions.has(rarity)) {
 			return;
 		}
@@ -186,21 +192,21 @@ export class ItemList {
 		this.#htmlRarityOptions.set(rarity, htmlRarityOption);
 	}
 
-	#setSlotFilter(slot) {
+	#setSlotFilter(slot?: string) {
 		this.#filters.slot = slot;
 		this.#updateFilters();
 	}
 
-	#setRarityFilter(rarity) {
+	#setRarityFilter(rarity?: string) {
 		this.#filters.rarity = rarity;
 		this.#updateFilters();
 	}
 
-	#setNameFilter(name) {
+	#setNameFilter(name?: string) {
 		if (name) {
 			this.#filters.name = name.toLowerCase().trim();
 		} else {
-			this.#filters.name = null;
+			this.#filters.name = name;
 		}
 		this.#updateFilters();
 	}
@@ -215,7 +221,7 @@ export class ItemList {
 		}
 	}
 
-	#matchFilter(itemTemplate) {
+	#matchFilter(itemTemplate: ItemTemplate) {
 		const slotFilter = this.#filters.slot;
 		if (slotFilter) {
 			if (itemTemplate.slot != slotFilter) {
@@ -241,6 +247,9 @@ export class ItemList {
 	}
 
 	#handlePersonaChanged(personaId: number) {
+		if (!this.#htmlItemsSlotFilter) {
+			return;
+		}
 		for (const htmlOption of this.#htmlItemsSlotFilter.options) {
 			if (htmlOption.value == 'persona_selector' || htmlOption.value == 'none' || htmlOption.value == '') {
 				// Always display persona selector

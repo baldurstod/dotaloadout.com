@@ -1,22 +1,24 @@
 import { closeSVG } from 'harmony-svg';
-import { createElement, hide, show, display } from 'harmony-ui';
+import { createElement, display, hide, show } from 'harmony-ui';
 import { DOTA2_DEFAULT_ECON_URL, DOTA2_ECON_URL } from '../constants';
 import { Controller } from '../controller';
-import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_REMOVE_ITEM, EVENT_SLOT_CLICK } from '../controllerevents';
+import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_REMOVE_ITEM, EVENT_SLOT_CLICK, PersonaChanged, SlotClick } from '../controllerevents';
+import { Character } from '../loadout/characters/character';
 import { CharacterTemplates } from '../loadout/characters/charactertemplates';
+import { Item } from '../loadout/items/item';
 import { getPersonaId } from '../utils/persona';
 
 export class ItemSlots {
-	#htmlElement;
-	#htmlCharacterIcon;
-	#htmlCharacterName;
-	#htmlSlotsContainer;
+	#htmlElement?: HTMLElement;
+	#htmlCharacterIcon?: HTMLElement;
+	#htmlCharacterName?: HTMLElement;
+	#htmlSlotsContainer?: HTMLElement;
 	#htmlSlots = new Map<string, HTMLElement>();
-	#currentCharacter;
+	#currentCharacter: Character | null = null;
 
 	constructor() {
 		Controller.addEventListener(EVENT_CHARACTER_ITEM_ADDED, event => this.#handleItemAdded((event as CustomEvent).detail));
-		Controller.addEventListener(EVENT_CHARACTER_PERSONA_CHANGED, event => this.#handlePersonaChanged((event as CustomEvent).detail));
+		Controller.addEventListener(EVENT_CHARACTER_PERSONA_CHANGED, event => this.#handlePersonaChanged((event as CustomEvent<PersonaChanged>).detail));
 
 		Controller.addEventListener(EVENT_CLOSE_ITEM_LIST, () => hide(this.#htmlElement));
 		Controller.addEventListener(EVENT_OPEN_ITEM_LIST, () => show(this.#htmlElement));
@@ -55,13 +57,13 @@ export class ItemSlots {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	setCharacter(character) {
+	setCharacter(character: Character) {
 		if (!character || character == this.#currentCharacter) {
 			return;
 		}
 		this.#currentCharacter = character;
 
-		this.#htmlSlotsContainer.innerText = '';
+		this.#htmlSlotsContainer!.innerText = '';
 		this.#htmlSlots.clear();
 
 		const heroCount = CharacterTemplates.heroCount;
@@ -69,12 +71,12 @@ export class ItemSlots {
 		// Hero order id starts at 1
 		// we use heroCount - 1 to acknowledge the fact that 0% means top is aligned with top edge and 100% bottom is aligned with bottom edge
 		if (character.isHero()) {
-			this.#htmlCharacterIcon.className = 'hero-icon';
-			this.#htmlCharacterIcon.style = `background-position-y:${(character.heroOrderId - 1) / (heroCount - 1) * 100}%`;
+			this.#htmlCharacterIcon!.className = 'hero-icon';
+			this.#htmlCharacterIcon!.style = `background-position-y:${(character.heroOrderId - 1) / (heroCount - 1) * 100}%`;
 		} else {
-			this.#htmlCharacterIcon.className = `world-slot-${character.id}`;
+			this.#htmlCharacterIcon!.className = `world-slot-${character.id}`;
 		}
-		this.#htmlCharacterName.innerText = character.name;
+		this.#htmlCharacterName!.innerText = character.name;
 
 		const itemSlots = character.itemSlots;
 		if (itemSlots) {
@@ -95,11 +97,13 @@ export class ItemSlots {
 							class: 'item-slot-remove',
 							innerHTML: closeSVG,
 							events: {
-								click: (event) => {
-									Controller.dispatchEvent(new CustomEvent(EVENT_REMOVE_ITEM, { detail: {
-										character: this.#currentCharacter,
-										itemID: Number(htmlItemSlot.getAttribute('item-id')),
-									} }));
+								click: (event: Event) => {
+									Controller.dispatchEvent(new CustomEvent(EVENT_REMOVE_ITEM, {
+										detail: {
+											character: this.#currentCharacter,
+											itemID: Number(htmlItemSlot.getAttribute('item-id')),
+										}
+									}));
 									event.stopPropagation();
 								}
 								//click: () => console.log(htmlItemSlot.getAttribute('item-id'))//Controller.dispatchEvent(new CustomEvent(EVENT_SLOT_CLICK, { detail: itemSlot.SlotName })),
@@ -107,10 +111,10 @@ export class ItemSlots {
 						}),
 					],
 					events: {
-						click: () => Controller.dispatchEvent(new CustomEvent(EVENT_SLOT_CLICK, { detail: itemSlot.SlotName })),
+						click: () => Controller.dispatchEvent(new CustomEvent<SlotClick>(EVENT_SLOT_CLICK, { detail: itemSlot.SlotName })),
 					},
 				});
-				if ((itemSlot?.DisplayInLoadout ?? 1) == 0) {
+				if ((itemSlot?.DisplayInLoadout ?? '1') == '0') {
 					hide(htmlItemSlot);
 				} else {
 					this.#htmlSlots.set(itemSlot.SlotName, htmlItemSlot);
@@ -123,7 +127,7 @@ export class ItemSlots {
 		}
 	}
 
-	#handleItemAdded(item) {
+	#handleItemAdded(item: Item) {
 		if (item.character == this.#currentCharacter) {
 			const itemSlot = item.slot;
 			const htmlSlot = this.#htmlSlots.get(itemSlot);
@@ -132,19 +136,21 @@ export class ItemSlots {
 				const htmlImg = htmlSlot.getElementsByTagName('img')[0];
 				const htmlName = htmlSlot.getElementsByTagName('div')[0];
 
-				const imageInventory = item.imageInventory;
-				if (imageInventory) {
-					htmlImg.src = DOTA2_ECON_URL + item.imageInventory + '.png';
-				} else {
-					htmlImg.src = DOTA2_DEFAULT_ECON_URL;
+				if (htmlImg && htmlName) {
+					const imageInventory = item.imageInventory;
+					if (imageInventory) {
+						htmlImg.src = DOTA2_ECON_URL + item.imageInventory + '.png';
+					} else {
+						htmlImg.src = DOTA2_DEFAULT_ECON_URL;
+					}
+					htmlName.innerText = item.name;
 				}
-				htmlName.innerText = item.name;
 			}
 		}
 	}
 
-	#handlePersonaChanged(personaId) {
-		for (const[name, html] of this.#htmlSlots) {
+	#handlePersonaChanged(personaId: number) {
+		for (const [name, html] of this.#htmlSlots) {
 			if (name == 'persona_selector') {
 				// Always display persona selector
 				show(html);

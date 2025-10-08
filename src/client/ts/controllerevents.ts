@@ -26,7 +26,7 @@ export const EVENT_TOOLBAR_BUG = 'toolbar-bug';
 export const EVENT_TOOLBAR_ABOUT = 'toolbar-about';
 export const EVENT_TOOLBAR_PLAY = 'toolbar-play';
 export const EVENT_TOOLBAR_PAUSE = 'toolbar-pause';
-export const EVENT_TOOLBAR_PATREON  = 'toolbar-patreon';
+export const EVENT_TOOLBAR_PATREON = 'toolbar-patreon';
 export const EVENT_TOOLBAR_ACTIVITY_SELECTED = 'toolbar-activity-selected';
 export const EVENT_TOOLBAR_ACTIVITY_MODIFIERS = 'toolbar-activity-modifiers';
 
@@ -37,4 +37,8 @@ export const EVENT_RESET_CAMERA = 'reset-camera';
 
 export type CharacterSelected = {
 	characterId: string,
-}
+};
+
+export type PersonaChanged = number;
+
+export type SlotClick = string;

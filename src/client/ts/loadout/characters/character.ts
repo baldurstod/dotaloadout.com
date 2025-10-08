@@ -3,7 +3,7 @@ import { Group, Source2ModelInstance, Source2ModelManager, stringToVec3 } from '
 import { OptionsManager } from 'harmony-browser-utils/';
 import { DEFAULT_ACTIVITY } from '../../constants';
 import { Controller } from '../../controller';
-import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CHARACTER_UNITS_CHANGED } from '../../controllerevents';
+import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CHARACTER_UNITS_CHANGED, PersonaChanged } from '../../controllerevents';
 import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
 import { ItemTemplates } from '../items/itemtemplates';
@@ -492,7 +492,7 @@ export class Character {
 		for (const [_, item] of this.#items) {
 			item.setVisible(personaId == item.getPersonaId());
 		}
-		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_PERSONA_CHANGED, { detail: personaId }));
+		Controller.dispatchEvent(new CustomEvent<PersonaChanged>(EVENT_CHARACTER_PERSONA_CHANGED, { detail: personaId }));
 	}
 
 	async setActivity(activity) {
