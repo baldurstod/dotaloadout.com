@@ -1,23 +1,23 @@
 import { Entity, ManifestRepository, MergeRepository, Repositories, Repository, RepositoryEntry, SceneExplorer, ShaderEditor, Source2ModelManager, VpkRepository, ZipRepository } from 'harmony-3d';
-import { OptionsManager } from 'harmony-browser-utils';
-import { createElement, hide, toggle, isVisible, shadowRootStyle, defineHarmonyTab, defineHarmonyTabGroup, HTMLHarmonySwitchElement, HTMLHarmonyFileInputElement, HTMLHarmonyTabElement, I18n, defineHarmonyFileInput } from 'harmony-ui';
-import { Controller } from '../controller';
-import { EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_OPTIONS } from '../controllerevents';
 import { defineRepository, HTMLRepositoryElement } from 'harmony-3d-utils';
+import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
+import { createElement, defineHarmonyFileInput, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, hide, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
 import optionsCSS from '../../css/options.css';
 import repositoryEntryCSS from '../../css/repositoryentry.css';
+import { Controller } from '../controller';
+import { EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_OPTIONS } from '../controllerevents';
 import { loadoutScene } from '../loadout/scene';
 
 export class Options {
-	#htmlElement;
-	#htmlFreeRotation;
-	#htmlOrthoCam;
-	#htmlHideItemsName;
-	#htmlShowPedestal;
-	#htmlShowMetamorphosis;
-	#htmlShowPrices;
-	#htmlShowEffects;
-	#htmlCurrency;
+	#htmlElement?: HTMLElement;
+	#htmlFreeRotation?: HTMLHarmonySwitchElement;
+	#htmlOrthoCam?: HTMLHarmonySwitchElement;
+	#htmlHideItemsName?: HTMLHarmonySwitchElement;
+	#htmlShowPedestal?: HTMLHarmonySwitchElement;
+	#htmlShowMetamorphosis?: HTMLHarmonySwitchElement;
+	#htmlShowPrices?: HTMLHarmonySwitchElement;
+	#htmlShowEffects?: HTMLHarmonySwitchElement;
+	#htmlCurrency?: HTMLSelectElement;
 	#shaderEditor = new ShaderEditor();
 	#htmlTabImport?: HTMLHarmonyTabElement;
 
@@ -42,16 +42,16 @@ export class Options {
 										class: 'large',
 										'data-i18n': '#free_rotation',
 										events: {
-											change: event => new OptionsManager().setItem('app.cameras.orbit.polarrotation', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.cameras.orbit.polarrotation', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 									this.#htmlOrthoCam = createElement('harmony-switch', {
 										class: 'large',
 										'data-i18n': '#orthographic_camera',
 										events: {
-											change: event => new OptionsManager().setItem('app.cameras.default.orthographic', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.cameras.default.orthographic', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 									createElement('div', {
 										class: 'option-button',
 										i18n: '#reset_camera',
@@ -68,43 +68,43 @@ export class Options {
 										class: 'large',
 										'data-i18n': '#hideitemname',
 										events: {
-											change: event => new OptionsManager().setItem('app.itemselector.hideitemname', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.itemselector.hideitemname', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 									this.#htmlShowPedestal = createElement('harmony-switch', {
 										class: 'large',
 										'data-i18n': '#show_pedestal',
 										events: {
-											change: event => new OptionsManager().setItem('app.showpedestal', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.showpedestal', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 									this.#htmlShowMetamorphosis = createElement('harmony-switch', {
 										class: 'large',
 										'data-i18n': '#show_metamorphosis',
 										events: {
-											change: event => new OptionsManager().setItem('app.showmetamorphosis', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.showmetamorphosis', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 									this.#htmlShowPrices = createElement('harmony-switch', {
 										class: 'large',
 										'data-i18n': '#get_market_prices',
 										events: {
-											change: event => new OptionsManager().setItem('app.market.automarket', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.market.automarket', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 									this.#htmlCurrency = createElement('select', {
 										class: 'options-currencies',
 										events: {
-											change: event => new OptionsManager().setItem('app.market.currency', event.target.value)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.market.currency', event.detail.value)
 										}
-									}),
+									}) as HTMLSelectElement,
 									this.#htmlShowEffects = createElement('harmony-switch', {
 										class: 'large',
 										'data-i18n': '#show_effects',
 										events: {
-											change: event => new OptionsManager().setItem('app.showeffects', event.target.state)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.showeffects', event.detail.state)
 										}
-									}),
+									}) as HTMLHarmonySwitchElement,
 								],
 							}),
 						]
@@ -116,9 +116,9 @@ export class Options {
 					createElement('harmony-tab', {
 						'data-i18n': '#shader_editor',
 						events: {
-							activated: event => {
+							activated: (event: Event) => {
 								this.#shaderEditor.initEditor({ aceUrl: './assets/js/ace-builds/src-min/ace.js', displayCustomShaderButtons: true });
-								event.target.append(this.#shaderEditor);
+								(event.target as HTMLHarmonyTabElement).append(this.#shaderEditor);
 							},
 						},
 					}),
@@ -142,7 +142,7 @@ export class Options {
 									htmlOverrideGameModels = createElement('harmony-switch', {
 										'data-i18n': '#override_game_models',
 										events: {
-											change: (event: Event) => new OptionsManager().setItem('app.repositories.import.overridemodels', htmlOverrideGameModels.state),
+											change: (event: Event) => OptionsManager.setItem('app.repositories.import.overridemodels', htmlOverrideGameModels.state),
 										},
 									}) as HTMLHarmonySwitchElement,
 								],
@@ -154,8 +154,8 @@ export class Options {
 			}),
 		});
 
-		new OptionsManager().getList('app.market.currency').then(currencyList => {
-			if (currencyList) {
+		OptionsManager.getList('app.market.currency').then(currencyList => {
+			if (currencyList && this.#htmlCurrency) {
 				this.#htmlCurrency.innerText = '';
 				for (let currency of currencyList) {
 					createElement('option', {
@@ -163,21 +163,21 @@ export class Options {
 						innerText: currency,
 					})
 				}
-				this.#htmlCurrency.value = new OptionsManager().getItem('app.market.currency');
+				this.#htmlCurrency.value = OptionsManager.getItem('app.market.currency');
 			}
 		});
 
 		Controller.addEventListener('closeoptions', () => hide(this.#htmlElement));
 		Controller.addEventListener(EVENT_TOOLBAR_OPTIONS, () => this.#toggle());
 
-		new OptionsManager().addEventListener('app.cameras.orbit.polarrotation', (event: CustomEvent) => this.#htmlFreeRotation.state = event.detail.value);
-		new OptionsManager().addEventListener('app.cameras.default.orthographic', (event: CustomEvent) => this.#htmlOrthoCam.state = event.detail.value);
-		new OptionsManager().addEventListener('app.itemselector.hideitemname', (event: CustomEvent) => this.#htmlHideItemsName.state = event.detail.value);
-		new OptionsManager().addEventListener('app.showpedestal', (event: CustomEvent) => this.#htmlShowPedestal.state = event.detail.value);
-		new OptionsManager().addEventListener('app.showmetamorphosis', (event: CustomEvent) => this.#htmlShowMetamorphosis.state = event.detail.value);
-		new OptionsManager().addEventListener('app.market.automarket', (event: CustomEvent) => this.#htmlShowPrices.state = event.detail.value);
-		new OptionsManager().addEventListener('app.showeffects', (event: CustomEvent) => this.#htmlShowEffects.state = event.detail.value);
-		new OptionsManager().addEventListener('app.market.currency', (event: CustomEvent) => this.#htmlCurrency.value = event.detail.value);
+		OptionsManagerEvents.addEventListener('app.cameras.orbit.polarrotation', (event: Event) => this.#htmlFreeRotation!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.cameras.default.orthographic', (event: Event) => this.#htmlOrthoCam!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.itemselector.hideitemname', (event: Event) => this.#htmlHideItemsName!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.showpedestal', (event: Event) => this.#htmlShowPedestal!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.showmetamorphosis', (event: Event) => this.#htmlShowMetamorphosis!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.market.automarket', (event: Event) => this.#htmlShowPrices!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.showeffects', (event: Event) => this.#htmlShowEffects!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.market.currency', (event: Event) => this.#htmlCurrency!.value = (event as CustomEvent<OptionsManagerEvent>).detail.value as string);
 
 		return this.#htmlElement;
 	}
@@ -273,7 +273,7 @@ export class Options {
 		toggle(this.#htmlElement);
 
 		let event;
-		if (isVisible(this.#htmlElement)) {
+		if (isVisible(this.#htmlElement!)) {
 			event = EVENT_PANEL_OPTIONS_OPENED;
 		} else {
 			event = EVENT_PANEL_OPTIONS_CLOSED;

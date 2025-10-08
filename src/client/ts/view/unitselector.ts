@@ -1,5 +1,5 @@
 import { OptionsManager } from 'harmony-browser-utils';
-import { createElement, createShadowRoot, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
+import { createElement, createShadowRoot, HarmonySwitchChange, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
 import unitSelectorCSS from '../../css/unitselector.css';
 import { Controller } from '../controller';
 import { CharacterSelected, EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
@@ -46,12 +46,12 @@ export class UnitSelector {
 			'data-i18n': Units.getName(unitID),
 			parent: this.#htmlUnits,
 			events: {
-				change: (event: InputEvent) => new OptionsManager().setSubItem('app.units.display', unitID, (event.target as HTMLHarmonySwitchElement).checked),
+				change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setSubItem('app.units.display', unitID, event.detail.state),
 			},
 		}) as HTMLHarmonySwitchElement;
 
 		(async () => {
-			sw.checked = (await new OptionsManager().getSubItem('app.units.display', unitID)) as boolean;
+			sw.checked = (await OptionsManager.getSubItem('app.units.display', unitID)) as boolean;
 		})()
 	}
 

@@ -1,12 +1,12 @@
 import { bugReportSVG, manufacturingSVG, moreHorizSVG, patreonLogoSVG, pauseSVG, photoCameraSVG, playSVG, print3dSVG, settingsSVG, shareSVG, viewInArSVG } from 'harmony-svg';
 import { createElement, hide, show } from 'harmony-ui';
+import { JSONObject } from 'harmony-utils';
+import activities from '../../json/activities.json';
+import { ENABLE_PATREON_POWERUSER } from '../bundleoptions';
 import { Controller } from '../controller';
 import { EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_OPTIONS, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from '../controllerevents';
 
-import activities from '../../json/activities.json';
-import { ENABLE_PATREON_POWERUSER } from '../bundleoptions';
-
-function createButton(svg, eventName, i18n) {
+function createButton(svg: string, eventName: string, i18n: string) {
 	return createElement('div', {
 		class: 'toolbar-button',
 		i18n: { title: i18n, },
@@ -18,13 +18,14 @@ function createButton(svg, eventName, i18n) {
 }
 
 export class Toolbar {
-	#htmlElement;
-	#htmlPlay;
-	#htmlPause;
-	#htmlExportFBXButton;
-	#htmlExportOBJButton;
-	#htmlActivitySelector;
-	#htmlActivityModifiers;
+	#htmlElement?: HTMLElement;
+	#htmlPlay?: HTMLElement;
+	#htmlPause?: HTMLElement;
+	#htmlExportFBXButton?: HTMLElement;
+	#htmlExportOBJButton?: HTMLElement;
+	#htmlActivitySelector?: HTMLSelectElement;
+	#htmlActivityModifiers?: HTMLInputElement;
+
 	constructor() {
 		this.#initListeners();
 	}
@@ -68,17 +69,17 @@ export class Toolbar {
 						this.#htmlActivitySelector = createElement('select', {
 							class: 'toolbar-activity-selector',
 							events: {
-								change: event => this.#handleActivitySelected(event.target.value),
+								change: (event: InputEvent) => this.#handleActivitySelected((event.target as HTMLSelectElement).value),
 							},
-						}),
+						}) as HTMLSelectElement,
 						this.#htmlActivityModifiers = createElement('input', {
 							class: 'toolbar-activity-modifiers',
 							placeholder: 'loadout injured haste aggressive',
 							events: {
-								change: event => this.#handleActivityModifiersChanged(event.target.value),
-								keyup: event => this.#handleActivityModifiersChanged(event.target.value),
+								change: (event: InputEvent) => this.#handleActivityModifiersChanged((event.target as HTMLSelectElement).value),
+								keyup: (event: InputEvent) => this.#handleActivityModifiersChanged((event.target as HTMLSelectElement).value),
 							},
-						}),
+						}) as HTMLInputElement,
 					],
 				}),
 				createElement('div', {
@@ -101,7 +102,7 @@ export class Toolbar {
 		});
 
 		for (const activityName in activities) {
-			const activityLabel = activities[activityName];
+			const activityLabel = (activities as JSONObject)[activityName];
 			createElement('option', {
 				parent: this.#htmlActivitySelector,
 				value: activityName,
@@ -119,27 +120,31 @@ export class Toolbar {
 
 	setMode() {
 		if (ENABLE_PATREON_POWERUSER) {
-			this.#htmlExportOBJButton.classList.remove('disabled');
-			this.#htmlExportFBXButton.classList.remove('disabled');
+			this.#htmlExportOBJButton?.classList.remove('disabled');
+			this.#htmlExportFBXButton?.classList.remove('disabled');
 		} else {
-			this.#htmlExportOBJButton.classList.add('disabled');
-			this.#htmlExportFBXButton.classList.add('disabled');
+			this.#htmlExportOBJButton?.classList.add('disabled');
+			this.#htmlExportFBXButton?.classList.add('disabled');
 		}
 	}
 
-	#handleActivitySelected(activity) {
+	#handleActivitySelected(activity: string) {
 		Controller.dispatchEvent(new CustomEvent(EVENT_TOOLBAR_ACTIVITY_SELECTED, { detail: activity }));
 	}
 
-	#handleActivityModifiersChanged(modifiers) {
+	#handleActivityModifiersChanged(modifiers: string) {
 		Controller.dispatchEvent(new CustomEvent(EVENT_TOOLBAR_ACTIVITY_MODIFIERS, { detail: modifiers.split(' ') }));
 	}
 
-	setActivity(activity) {
-		this.#htmlActivitySelector.value = activity;
+	setActivity(activity: string) {
+		if (this.#htmlActivitySelector) {
+			this.#htmlActivitySelector.value = activity;
+		}
 	}
 
-	setModifiers(modifiers) {
-		this.#htmlActivityModifiers.value = modifiers.join(' ');
+	setModifiers(modifiers: string[]) {
+		if (this.#htmlActivityModifiers) {
+			this.#htmlActivityModifiers.value = modifiers.join(' ');
+		}
 	}
 }
