@@ -1,7 +1,7 @@
 import { OptionsManager } from 'harmony-browser-utils/';
 import { createElement, hide, show } from 'harmony-ui';
 import { Controller } from '../controller';
-import { EVENT_CHARACTER_SELECTED } from '../controllerevents';
+import { CharacterSelected, EVENT_CHARACTER_SELECTED } from '../controllerevents';
 import { CharacterTemplate } from '../loadout/characters/charactertemplate';
 import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { createCharacterElement } from './utils/createcharacterelement';
@@ -86,8 +86,8 @@ export class CharacterSelector {
 		this.#sort();
 	}
 
-	#selectCharacter(characterId) {
-		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_SELECTED, { detail: { characterId: characterId } }));
+	#selectCharacter(characterId: string) {
+		Controller.dispatchEvent(new CustomEvent<CharacterSelected>(EVENT_CHARACTER_SELECTED, { detail: { characterId: characterId } }));
 		this.hide();
 	}
 

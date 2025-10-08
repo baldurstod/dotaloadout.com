@@ -1,21 +1,21 @@
-import { createElement, createShadowRoot, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
 import { OptionsManager } from 'harmony-browser-utils';
+import { createElement, createShadowRoot, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
+import unitSelectorCSS from '../../css/unitselector.css';
 import { Controller } from '../controller';
-import { EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
+import { CharacterSelected, EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
+import { Character } from '../loadout/characters/character';
 import { CharacterManager } from '../loadout/characters/charactermanager';
 import { Units } from '../loadout/misc/units';
-import unitSelectorCSS from '../../css/unitselector.css';
-import { Character } from '../loadout/characters/character';
 
 export class UnitSelector {
 	#shadowRoot?: ShadowRoot;
-	#htmlUnits: HTMLElement;
+	#htmlUnits?: HTMLElement;
 	#character?: Character;
 	#items = new Map();
 
 	constructor() {
-		Controller.addEventListener(EVENT_CHARACTER_UNITS_CHANGED, event => this.#refreshUnits());
-		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent).detail.characterId));
+		Controller.addEventListener(EVENT_CHARACTER_UNITS_CHANGED, () => this.#refreshUnits());
+		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
 	#refreshUnits() {
@@ -24,7 +24,7 @@ export class UnitSelector {
 		}
 
 		const units = this.#character.getUnits();
-		this.#htmlUnits.replaceChildren();
+		this.#htmlUnits?.replaceChildren();
 		for (const [unitID, _] of units) {
 			this.#createUnitSelector(unitID);
 		}
@@ -35,18 +35,18 @@ export class UnitSelector {
 		}
 	}
 
-	#handleCharacterSelected(characterId) {
+	#handleCharacterSelected(characterId: string) {
 		this.#character = CharacterManager.getCharacter(characterId);
 		this.#refreshUnits();
 	}
 
-	#createUnitSelector(unitID) {
+	#createUnitSelector(unitID: string): void {
 		const sw = createElement('harmony-switch', {
 			class: 'unit',
 			'data-i18n': Units.getName(unitID),
 			parent: this.#htmlUnits,
 			events: {
-				change: event => new OptionsManager().setSubItem('app.units.display', unitID, event.target.checked),
+				change: (event: InputEvent) => new OptionsManager().setSubItem('app.units.display', unitID, (event.target as HTMLHarmonySwitchElement).checked),
 			},
 		}) as HTMLHarmonySwitchElement;
 
@@ -68,9 +68,9 @@ export class UnitSelector {
 					min: 0,
 					max: modelCount - 1,
 					steap: 1,
-					value: this.#character.getModelId(),
+					value: this.#character?.getModelId(),
 					events: {
-						input: (event: Event) => this.#character.setModelId(Number((event.target as HTMLInputElement).value)),
+						input: (event: Event) => this.#character?.setModelId(Number((event.target as HTMLInputElement).value)),
 						//OptionsManager.setSubItem('app.units.display', unitID, event.target.checked),
 					},
 					//checked: OptionsManager.getSubItem('app.units.display', unitID),

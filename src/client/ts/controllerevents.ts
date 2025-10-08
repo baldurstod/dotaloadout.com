@@ -34,3 +34,7 @@ export const EVENT_PANEL_OPTIONS_OPENED = 'panel-options-opened';
 export const EVENT_PANEL_OPTIONS_CLOSED = 'panel-options-closed';
 
 export const EVENT_RESET_CAMERA = 'reset-camera';
+
+export type CharacterSelected = {
+	characterId: string,
+}
