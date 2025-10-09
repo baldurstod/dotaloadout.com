@@ -101,16 +101,6 @@ export class Item {
 	}
 
 	get modelName() {
-		const modifiers = this.getAssetModifiers();
-		if (modifiers) {
-			// Some metamorphosis items also have a model_player attribute. This, is wrong, discard model_player
-			for (const modifier of modifiers) {
-				if (modifier.type == MODIFIER_HERO_MODEL_CHANGE) {
-					return null;
-				}
-			}
-		}
-
 		return this.#alternateModelName ?? this.#template.getModelName(this.#style);
 	}
 
