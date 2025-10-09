@@ -21,31 +21,31 @@ export class Export3DPopover {
 				this.#html3DExportTexture = createElement('harmony-switch', {
 					'data-i18n': '#export_textures',
 					events: {
-						change: event => new OptionsManager().setItem('app.objexporter.exporttextures', event.target.state),
+						change: event => OptionsManager.setItem('app.objexporter.exporttextures', event.target.state),
 					}
 				}),
 				this.#html3DSingleMesh = createElement('harmony-switch', {
 					'data-i18n': '#single_mesh',
 					events: {
-						change: event => new OptionsManager().setItem('app.objexporter.singlemesh', event.target.state),
+						change: event => OptionsManager.setItem('app.objexporter.singlemesh', event.target.state),
 					}
 				}),
 				this.#html3DSmoothMesh = createElement('harmony-switch', {
 					'data-i18n': '#smooth_mesh',
 					events: {
-						change: event => new OptionsManager().setItem('app.objexporter.subdivide', event.target.state),
+						change: event => OptionsManager.setItem('app.objexporter.subdivide', event.target.state),
 					}
 				}),
 				this.#html3DMerge = createElement('harmony-switch', {
 					'data-i18n': '#merge_vertices',
 					events: {
-						change: event => new OptionsManager().setItem('app.objexporter.mergevertices', event.target.state),
+						change: event => OptionsManager.setItem('app.objexporter.mergevertices', event.target.state),
 					}
 				}),
 				this.#html3DShowDialog = createElement('harmony-switch', {
 					'data-i18n': '#show_this_dialog',
 					events: {
-						change: event => new OptionsManager().setItem('app.objexporter.askoptions', event.target.state),
+						change: event => OptionsManager.setItem('app.objexporter.askoptions', event.target.state),
 					}
 				}),
 				createElement('button', {
@@ -74,10 +74,10 @@ export class Export3DPopover {
 	}
 
 	show() {
-		this.#html3DExportTexture.state = new OptionsManager().getItem('app.objexporter.exporttextures');
-		this.#html3DSingleMesh.state = new OptionsManager().getItem('app.objexporter.singlemesh');
-		this.#html3DSmoothMesh.state = new OptionsManager().getItem('app.objexporter.subdivide');
-		this.#html3DShowDialog.state = new OptionsManager().getItem('app.objexporter.askoptions');
+		this.#html3DExportTexture.state = OptionsManager.getItem('app.objexporter.exporttextures');
+		this.#html3DSingleMesh.state = OptionsManager.getItem('app.objexporter.singlemesh');
+		this.#html3DSmoothMesh.state = OptionsManager.getItem('app.objexporter.subdivide');
+		this.#html3DShowDialog.state = OptionsManager.getItem('app.objexporter.askoptions');
 
 		show(this.#htmlElement);
 		this.#htmlElement.showPopover();

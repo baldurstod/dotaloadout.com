@@ -198,7 +198,7 @@ export class Item {
 		const model = await this.getModel();
 		if (model) {
 			this.#model.skin = this.skin;
-			this.#model.setAttribute('desaturate', new OptionsManager().getItem('app.items.desaturate'));
+			this.#model.setAttribute('desaturate', OptionsManager.getItem('app.items.desaturate'));
 
 			this.#model.setBodyGroup('arcana', this.#arcanaLevel ?? 0);
 		}
@@ -211,7 +211,7 @@ export class Item {
 		for (const modifier of modifiers) {
 			switch (modifier.type) {
 				case MODIFIER_PARTICLE_CREATE:
-					if (!new OptionsManager().getItem('app.showeffects')) {
+					if (!OptionsManager.getItem('app.showeffects')) {
 						break;
 					}
 					const systemName = replacements.get(modifier.modifier) ?? modifier.modifier;

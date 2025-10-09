@@ -40,7 +40,7 @@ export class MarketPrice {
 	}
 
 	static async getPrice(id) {
-		if (!new OptionsManager().getItem('app.market.automarket')) {
+		if (!OptionsManager.getItem('app.market.automarket')) {
 			return;
 		}
 		await this.#requestPrices();

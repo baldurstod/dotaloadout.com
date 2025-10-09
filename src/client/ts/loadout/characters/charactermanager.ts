@@ -1,4 +1,4 @@
-import { OptionsManager } from 'harmony-browser-utils/';
+import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { Controller } from '../../controller';
 import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEM_CLICK, EVENT_REMOVE_ITEM, EVENT_SET_MARKET_PRICES, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED } from '../../controllerevents';
@@ -24,12 +24,12 @@ export class CharacterManager {
 		Controller.addEventListener(EVENT_TOOLBAR_ACTIVITY_SELECTED, event => this.#currentCharacter?.setActivity((event as CustomEvent).detail));
 		Controller.addEventListener(EVENT_TOOLBAR_ACTIVITY_MODIFIERS, event => this.#currentCharacter?.setModifiers((event as CustomEvent).detail));
 
-		new OptionsManager().addEventListener('app.characters.desaturate', () => this.#currentCharacter?.processModifiers());
-		new OptionsManager().addEventListener('app.items.desaturate', () => this.#currentCharacter?.processModifiers());
-		new OptionsManager().addEventListener('app.loadout.pedestalmodel', () => this.#currentCharacter?.processModifiers());
-		new OptionsManager().addEventListener('app.showpedestal', () => this.#currentCharacter?.processModifiers());
-		new OptionsManager().addEventListener('app.showmetamorphosis', () => this.#currentCharacter?.processModifiers());
-		new OptionsManager().addEventListener('app.showeffects', () => this.#currentCharacter?.processModifiers());
+		OptionsManagerEvents.addEventListener('app.characters.desaturate', () => this.#currentCharacter?.processModifiers());
+		OptionsManagerEvents.addEventListener('app.items.desaturate', () => this.#currentCharacter?.processModifiers());
+		OptionsManagerEvents.addEventListener('app.loadout.pedestalmodel', () => this.#currentCharacter?.processModifiers());
+		OptionsManagerEvents.addEventListener('app.showpedestal', () => this.#currentCharacter?.processModifiers());
+		OptionsManagerEvents.addEventListener('app.showmetamorphosis', () => this.#currentCharacter?.processModifiers());
+		OptionsManagerEvents.addEventListener('app.showeffects', () => this.#currentCharacter?.processModifiers());
 	}
 
 	static async loadCharacters() {
@@ -131,7 +131,7 @@ export class CharacterManager {
 	}
 
 	static async #equipDefaultItems(character, itemIds) {
-		if (!new OptionsManager().getItem('app.characters.equipdefaultitems')) {
+		if (!OptionsManager.getItem('app.characters.equipdefaultitems')) {
 			character.processModifiers();
 			return;
 		}

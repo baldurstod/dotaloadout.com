@@ -1,4 +1,4 @@
-import { OptionsManager } from 'harmony-browser-utils/';
+import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { createElement, hide, show } from 'harmony-ui';
 import { Controller } from '../controller';
 import { CharacterSelected, EVENT_CHARACTER_SELECTED } from '../controllerevents';
@@ -23,11 +23,11 @@ export class CharacterSelector {
 	#sortField;
 	#htmlSortField;
 	constructor() {
-		this.#setFilterMethod(new OptionsManager().getItem(FILTER_METHOD));
-		new OptionsManager().addEventListener(FILTER_METHOD, (event: CustomEvent) => this.#setFilterMethod(event.detail.value));
+		this.#setFilterMethod(OptionsManager.getItem(FILTER_METHOD));
+		OptionsManagerEvents.addEventListener(FILTER_METHOD, (event: CustomEvent) => this.#setFilterMethod(event.detail.value));
 
-		this.#setSortField(new OptionsManager().getItem(SORT_FIELD));
-		new OptionsManager().addEventListener(SORT_FIELD, (event: CustomEvent) => this.#setSortField(event.detail.value));
+		this.#setSortField(OptionsManager.getItem(SORT_FIELD));
+		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: CustomEvent) => this.#setSortField(event.detail.value));
 	}
 
 	#initHTML() {
@@ -53,7 +53,7 @@ export class CharacterSelector {
 							],
 							value: this.#sortField,
 							events: {
-								change: event => new OptionsManager().setItem(SORT_FIELD, event.target.value),//this.#setNameFilter(event.target.value)
+								change: event => OptionsManager.setItem(SORT_FIELD, event.target.value),//this.#setNameFilter(event.target.value)
 							},
 						}),
 					],
