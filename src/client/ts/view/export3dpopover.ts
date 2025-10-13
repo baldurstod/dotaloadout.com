@@ -1,15 +1,15 @@
-import { createElement, defineHarmonySwitch, show } from 'harmony-ui';
 import { OptionsManager } from 'harmony-browser-utils/';
+import { createElement, defineHarmonySwitch, HTMLHarmonySwitchElement, show } from 'harmony-ui';
 import { Controller } from '../controller';
 import { EVENT_EXPORT_OBJ } from '../controllerevents';
 
 export class Export3DPopover {
-	#htmlElement;
-	#html3DExportTexture;
-	#html3DSingleMesh;
-	#html3DSmoothMesh;
-	#html3DMerge;
-	#html3DShowDialog;
+	#htmlElement?: HTMLElement;
+	#html3DExportTexture?: HTMLHarmonySwitchElement;
+	#html3DSingleMesh?: HTMLHarmonySwitchElement;
+	#html3DSmoothMesh?: HTMLHarmonySwitchElement;
+	#html3DMerge?: HTMLHarmonySwitchElement;
+	#html3DShowDialog?: HTMLHarmonySwitchElement;
 
 	#initHTML() {
 		defineHarmonySwitch();
@@ -21,33 +21,33 @@ export class Export3DPopover {
 				this.#html3DExportTexture = createElement('harmony-switch', {
 					'data-i18n': '#export_textures',
 					events: {
-						change: event => OptionsManager.setItem('app.objexporter.exporttextures', event.target.state),
+						change: (event: Event) => OptionsManager.setItem('app.objexporter.exporttextures', (event.target as HTMLHarmonySwitchElement).state),
 					}
-				}),
+				}) as HTMLHarmonySwitchElement,
 				this.#html3DSingleMesh = createElement('harmony-switch', {
 					'data-i18n': '#single_mesh',
 					events: {
-						change: event => OptionsManager.setItem('app.objexporter.singlemesh', event.target.state),
+						change: (event: Event) => OptionsManager.setItem('app.objexporter.singlemesh', (event.target as HTMLHarmonySwitchElement).state),
 					}
-				}),
+				}) as HTMLHarmonySwitchElement,
 				this.#html3DSmoothMesh = createElement('harmony-switch', {
 					'data-i18n': '#smooth_mesh',
 					events: {
-						change: event => OptionsManager.setItem('app.objexporter.subdivide', event.target.state),
+						change: (event: Event) => OptionsManager.setItem('app.objexporter.subdivide', (event.target as HTMLHarmonySwitchElement).state),
 					}
-				}),
+				}) as HTMLHarmonySwitchElement,
 				this.#html3DMerge = createElement('harmony-switch', {
 					'data-i18n': '#merge_vertices',
 					events: {
-						change: event => OptionsManager.setItem('app.objexporter.mergevertices', event.target.state),
+						change: (event: Event) => OptionsManager.setItem('app.objexporter.mergevertices', (event.target as HTMLHarmonySwitchElement).state),
 					}
-				}),
+				}) as HTMLHarmonySwitchElement,
 				this.#html3DShowDialog = createElement('harmony-switch', {
 					'data-i18n': '#show_this_dialog',
 					events: {
-						change: event => OptionsManager.setItem('app.objexporter.askoptions', event.target.state),
+						change: (event: Event) => OptionsManager.setItem('app.objexporter.askoptions', (event.target as HTMLHarmonySwitchElement).state),
 					}
-				}),
+				}) as HTMLHarmonySwitchElement,
 				createElement('button', {
 					i18n: '#export_for_3d_print',
 					events: {
@@ -74,6 +74,9 @@ export class Export3DPopover {
 	}
 
 	show() {
+		if (!this.#html3DExportTexture || !this.#html3DSingleMesh || !this.#html3DSmoothMesh || !this.#html3DShowDialog || !this.#htmlElement) {
+			return;
+		}
 		this.#html3DExportTexture.state = OptionsManager.getItem('app.objexporter.exporttextures');
 		this.#html3DSingleMesh.state = OptionsManager.getItem('app.objexporter.singlemesh');
 		this.#html3DSmoothMesh.state = OptionsManager.getItem('app.objexporter.subdivide');
@@ -84,6 +87,8 @@ export class Export3DPopover {
 	}
 
 	#hide() {
-		this.#htmlElement.hidePopover();
+		if (this.#htmlElement) {
+			this.#htmlElement.hidePopover();
+		}
 	}
 }
