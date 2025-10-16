@@ -1,7 +1,8 @@
 import { createElement } from 'harmony-ui';
+import { CharacterTemplate } from '../../loadout/characters/charactertemplate';
 import { CharacterTemplates } from '../../loadout/characters/charactertemplates';
 
-export function createCharacterElement(characterTemplate) {
+export function createCharacterElement(characterTemplate: CharacterTemplate): HTMLElement {
 	const heroCount = CharacterTemplates.heroCount;
 	return createElement('div', {
 		class: 'character-selector-character',
