@@ -1,26 +1,26 @@
 import { createElement } from 'harmony-ui';
 import { Controller } from '../controller';
-import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_SELECTED } from '../controllerevents';
+import { CharacterSelected, EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_SELECTED } from '../controllerevents';
 import { CharacterManager } from '../loadout/characters/charactermanager';
 import { Item } from '../loadout/items/item';
 
 export class StyleSelector {
-	#htmlElement;
+	#htmlElement?: HTMLElement;
 	#items = new Map<Item, HTMLElement>();
 
 	constructor() {
-		Controller.addEventListener(EVENT_CHARACTER_ITEM_ADDED, event => this.#addItem((event as CustomEvent).detail));
-		Controller.addEventListener(EVENT_CHARACTER_ITEM_REMOVED, event => this.#removeItem((event as CustomEvent).detail));
-		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent).detail.characterId));
+		Controller.addEventListener(EVENT_CHARACTER_ITEM_ADDED, event => this.#addItem((event as CustomEvent<Item>).detail));
+		Controller.addEventListener(EVENT_CHARACTER_ITEM_REMOVED, event => this.#removeItem((event as CustomEvent<Item>).detail));
+		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
-	#addItem(item) {
+	#addItem(item: Item) {
 		if (item.hasStyles()) {
 			this.#items.set(item, this.#createItemSelector(item));
 		}
 	}
 
-	#removeItem(item) {
+	#removeItem(item: Item) {
 		const html = this.#items.get(item);
 		if (html) {
 			html.remove();
@@ -28,7 +28,7 @@ export class StyleSelector {
 		}
 	}
 
-	#handleCharacterSelected(characterId) {
+	#handleCharacterSelected(characterId:string) {
 		const character = CharacterManager.getCharacter(characterId);
 		if (!character) {
 			return;
@@ -39,7 +39,7 @@ export class StyleSelector {
 		character.getItems().forEach(item => this.#addItem(item));
 	}
 
-	#createItemSelector(item) {
+	#createItemSelector(item: Item) {
 		let htmlItemStyles;
 		const htmlSelector = createElement('div', {
 			class: 'style-selector-item',

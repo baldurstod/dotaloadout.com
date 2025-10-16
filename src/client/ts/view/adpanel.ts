@@ -5,18 +5,18 @@ import { ADSBYGOOGLE_INS, ADSBYGOOGLE_SRC } from '../googleconstants';
 const AD_WIDTH = '300px';
 
 export class AdPanel {
-	#htmlElement;
-	#htmlAdContent;
+	#htmlElement?: HTMLElement;
+	#htmlAdContent?: HTMLElement;
 
 	#initHTML() {
 		this.#htmlElement = createElement('div', {
-			style:`display:flex;flex-direction: column;width:${AD_WIDTH}`,
+			style: `display:flex;flex-direction: column;width:${AD_WIDTH}`,
 			childs: [
 				createElement('div', {
 					class: 'loadout-application-advertisement-header',
 					childs: [
-						createElement('div', {i18n: '#advertisement'}),
-						createElement('div', {i18n: '#how_to_remove'}),
+						createElement('div', { i18n: '#advertisement' }),
+						createElement('div', { i18n: '#how_to_remove' }),
 					],
 					events: {
 						click: () => addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10)

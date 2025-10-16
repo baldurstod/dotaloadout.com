@@ -160,7 +160,7 @@ export class Character {
 
 		this.#items.set(itemId, item);
 
-		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_ITEM_ADDED, { detail: item }));
+		Controller.dispatchEvent(new CustomEvent<Item>(EVENT_CHARACTER_ITEM_ADDED, { detail: item }));
 
 		if (item.slot) {
 			this.#replaceSlot(item);
