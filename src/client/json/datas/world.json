@@ -141,5 +141,18 @@
 			}
 		},
 		"Name": "Neutral creeps"
+	},
+	{
+		"HeroID": "1011",
+		"HeroOrderID": "1011",
+		"ID": "wearable",
+		"ItemSlots": {
+			"pet_effigy": {
+				"SlotIndex": "0",
+				"SlotName": "pet_effigy",
+				"SlotText": "Pet effigy"
+			}
+		},
+		"Name": "Wearable"
 	}
 ]
