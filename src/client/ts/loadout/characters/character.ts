@@ -22,8 +22,8 @@ export class Character {
 	bundleItem = null;
 	//#name = '';
 	//#displayName = '';
-	#model;
-	#modelPromise;
+	#model: Source2ModelInstance | null = null;
+	#modelPromise?: Promise<Source2ModelInstance | null>;
 	#visible = false;
 	#personaId = 0;// Base hero
 	#alternateModelName;
@@ -43,7 +43,7 @@ export class Character {
 		OptionsManagerEvents.addEventListener('app.units.display', event => this.#positionUnits(event));
 	}
 
-	async #getModel() {
+	async #getModel(): Promise<Source2ModelInstance | null> {
 		if (this.#model) {
 			return this.#model;
 		}
@@ -331,7 +331,7 @@ export class Character {
 
 		await this.#setCharacterModel(alternateModelName);
 		const model = await this.#getModel();
-		model.resetBodyGroups();
+		model?.resetBodyGroups();
 		this.#setSkin(skin);
 		this.#setArcanaLevel(arcanaLevel);
 
@@ -354,10 +354,10 @@ export class Character {
 		if (this.#metamorphosisModel) {
 			if (OptionsManager.getItem('app.showmetamorphosis')) {
 				this.#metamorphosisModel.visible = undefined;
-				this.#model.visible = false;
+				this.#model?.setVisible(false);
 			} else {
 				this.#metamorphosisModel.visible = false;
-				this.#model.visible = undefined;
+				this.#model?.setVisible(undefined);
 			}
 		}
 
