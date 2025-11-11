@@ -76,6 +76,7 @@ class Application {
 	#ambientLight;
 	#pointLights;
 	#shadowRoot?: ShadowRoot;
+
 	constructor() {
 		I18n.setOptions({ translations: [english, french] });
 		I18n.start();

@@ -1,5 +1,7 @@
+import { JSONObject } from 'harmony-utils';
+
 export type CharacterSlot = {
-	DisplayInLoadout: string,
+	DisplayInLoadout?: string,
 	SlotIndex: string,
 	SlotName: string,
 	SlotText: string,
@@ -7,8 +9,9 @@ export type CharacterSlot = {
 }
 
 export class CharacterTemplate {
-	#definition;
-	constructor(definition) {
+	#definition: JSONObject;
+
+	constructor(definition: JSONObject) {
 		this.#definition = definition;
 	}
 
@@ -25,7 +28,7 @@ export class CharacterTemplate {
 	}
 
 	get itemSlots() {
-		const itemSlots = this.#definition.ItemSlots;
+		const itemSlots = this.#definition.ItemSlots as JSONObject;
 		if (!itemSlots) {
 			return;
 		}
@@ -33,14 +36,14 @@ export class CharacterTemplate {
 		const slots = new Map<string, CharacterSlot>();
 
 		for (const slotName in itemSlots) {
-			const slot = itemSlots[slotName];
-			const slotLowerCase = slot.SlotName.toLowerCase();
+			const slot = itemSlots[slotName] as JSONObject;
+			const slotLowerCase = (slot.SlotName as string).toLowerCase();
 			slots.set(slotLowerCase, {
-				...(slot.DisplayInLoadout !== undefined) && { DisplayInLoadout: slot.DisplayInLoadout },
-				SlotIndex: slot.SlotIndex,
+				...(slot.DisplayInLoadout !== undefined) && { DisplayInLoadout: slot.DisplayInLoadout as string },
+				SlotIndex: slot.SlotIndex as string,
 				SlotName: slotLowerCase,
-				SlotText: slot.SlotText,
-				GeneratesUnits: slot.GeneratesUnits,
+				SlotText: slot.SlotText as string,
+				GeneratesUnits: slot.GeneratesUnits as { [key: string]: string },
 			});
 		}
 		return slots;
@@ -62,7 +65,7 @@ export class CharacterTemplate {
 		return this.#definition[`Model${modelID}`] ?? this.#definition.Model;
 	}
 
-	getAdjective(name) {
-		return this.#definition.Adjectives?.[name];
+	getAdjective(name: string) {
+		return (this.#definition.Adjectives as { [key: string]: string })?.[name];
 	}
 }
