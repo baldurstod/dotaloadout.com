@@ -1,6 +1,6 @@
 import { bugReportSVG, manufacturingSVG, moreHorizSVG, patreonLogoSVG, pauseSVG, photoCameraSVG, playSVG, print3dSVG, settingsSVG, shareSVG, viewInArSVG } from 'harmony-svg';
 import { createElement, hide, show } from 'harmony-ui';
-import { JSONObject } from 'harmony-utils';
+import { JSONObject } from 'harmony-types';
 import activities from '../../json/activities.json';
 import { ENABLE_PATREON_POWERUSER } from '../bundleoptions';
 import { Controller } from '../controller';

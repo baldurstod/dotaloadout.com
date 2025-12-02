@@ -1,4 +1,4 @@
-import { JSONObject } from 'harmony-utils';
+import { JSONObject } from 'harmony-types';
 import { CharacterTemplate } from './charactertemplate';
 
 export class CharacterTemplates {

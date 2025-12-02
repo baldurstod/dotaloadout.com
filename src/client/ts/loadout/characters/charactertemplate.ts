@@ -1,4 +1,4 @@
-import { JSONObject } from 'harmony-utils';
+import { JSONObject } from 'harmony-types';
 
 export type CharacterSlot = {
 	DisplayInLoadout?: string,
@@ -15,8 +15,8 @@ export class CharacterTemplate {
 		this.#definition = definition;
 	}
 
-	get name() {
-		return this.#definition.Name;
+	get name(): string {
+		return this.#definition.Name as string;
 	}
 
 	get id() {
