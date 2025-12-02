@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { Composer, ContextObserver, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, WebGLStats } from 'harmony-3d';
+import { Composer, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, WebGLStats } from 'harmony-3d';
 import { createElement } from 'harmony-ui';
 import { loadoutCamera, loadoutScene } from '../loadout/scene';
 
@@ -14,7 +14,7 @@ export class Viewer {
 		this.#orbitControl = new OrbitControl(loadoutCamera);
 		loadoutCamera.position = [100, 0, 40];
 		this.#orbitControl.setTargetPosition([0, 0, 40]);
-		this.#initRenderer();
+		//this.#initRenderer();
 	}
 
 	#initHTML() {
@@ -27,8 +27,8 @@ export class Viewer {
 		return this.#htmlElement;
 	}
 
-	#initRenderer() {
-		Graphics.initCanvas({
+	async initRenderer() {
+		await Graphics.initCanvas({
 			canvas: this.#htmlCanvas,
 			autoResize: true,
 			webGL: {

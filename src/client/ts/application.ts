@@ -78,6 +78,11 @@ class Application {
 	#shadowRoot?: ShadowRoot;
 
 	constructor() {
+		this.#init();
+	}
+
+	async #init(): Promise<void> {
+		await this.#appViewer.initRenderer();
 		I18n.setOptions({ translations: [english, french] });
 		I18n.start();
 		this.#initListeners();
@@ -419,7 +424,7 @@ class Application {
 	async #exportToFBX() {
 		if (ENABLE_PATREON_POWERUSER) {
 			let binaryFBX = await exportToBinaryFBX(loadoutScene);
-			saveFile(new File([binaryFBX], 'dotaloadout.com.fbx'));
+			saveFile(new File([binaryFBX as ArrayBuffer], 'dotaloadout.com.fbx'));
 		} else {
 			addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10);
 		}
