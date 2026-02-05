@@ -290,7 +290,7 @@ class Application {
 
 	#beforeUnload() {
 		if (OptionsManager.getItem('app.cameras.perspective.saveposition')) {
-			OptionsManager.setItem('app.cameras.orbit.position', loadoutCamera.position.join(' '));
+			OptionsManager.setItem('app.cameras.orbit.position', (loadoutCamera.position as [number, number, number]).join(' '));
 			OptionsManager.setItem('app.cameras.orbit.target', this.#appViewer.getCameraTarget().join(' '));
 		}
 	}
