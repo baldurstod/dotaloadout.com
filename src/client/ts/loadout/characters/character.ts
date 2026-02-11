@@ -6,6 +6,7 @@ import { Controller } from '../../controller';
 import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CHARACTER_UNITS_CHANGED, PersonaChanged } from '../../controllerevents';
 import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
+import { ItemTemplate } from '../items/itemtemplate';
 import { ItemTemplates } from '../items/itemtemplates';
 import { Units } from '../misc/units';
 import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_BODYGROUP_VISIBILITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
@@ -19,7 +20,7 @@ export class Character {
 	#template: CharacterTemplate;
 	#items = new Map<string, Item>();
 	#itemsPerSlot = new Map<string, Item>();
-	bundleItem = null;
+	bundleItem: Item | null = null;
 	//#name = '';
 	//#displayName = '';
 	#model: Source2ModelInstance | null = null;

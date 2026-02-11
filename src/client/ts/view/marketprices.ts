@@ -5,7 +5,7 @@ import { EVENT_SET_MARKET_PRICES } from '../controllerevents';
 import { DOTA2_MARKET_LISTINGS } from '../constants';
 
 export class MarketPrices {
-	#htmlElement;
+	#htmlElement!: HTMLElement;
 
 	constructor() {
 		Controller.addEventListener(EVENT_SET_MARKET_PRICES, event => {

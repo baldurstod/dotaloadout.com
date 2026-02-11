@@ -1,3 +1,5 @@
+import { Character } from "./loadout/characters/character";
+
 export const EVENT_CHARACTERS_LOADED = 'charactersloaded';
 export const EVENT_CHARACTER_SELECTED = 'characterselected';
 export const EVENT_CHARACTER_ITEM_ADDED = 'characteritemadded';
@@ -37,6 +39,11 @@ export const EVENT_RESET_CAMERA = 'reset-camera';
 
 export type CharacterSelected = {
 	characterId: string,
+};
+
+export type ItemClick = {
+	character: Character,
+	itemId: string,
 };
 
 export type PersonaChanged = number;

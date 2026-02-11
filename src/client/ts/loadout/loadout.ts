@@ -1,12 +1,13 @@
 import { customFetch } from 'harmony-3d';
+import { JSONObject } from 'harmony-types';
 import { DOTA2_REPOSITORY, ITEM_GAME_PATH } from '../constants';
 import { Controller } from '../controller';
 
-class LoadoutClass {
-	static #instance;
-	#initItemsPromise;
+class LoadoutClass {// TODO: turn into a static class
+	static #instance: LoadoutClass;
+	#initItemsPromise!: Promise<boolean>;
 	#initialized = false;
-	#json;
+	#json!: JSONObject;
 	#characters = new Set();
 	#lang = 'english';
 	constructor() {
@@ -16,18 +17,18 @@ class LoadoutClass {
 		LoadoutClass.#instance = this;
 	}
 
-	setLang(lang) {
+	setLang(lang: string) {
 		this.#lang = lang;
 	}
 
 	#init() {
 		if (!this.#initItemsPromise) {
 
-			this.#initItemsPromise = new Promise(async (resolve, reject) => {
+			this.#initItemsPromise = new Promise<boolean>(async (resolve, reject) => {
 				const response = await customFetch(new URL(`${ITEM_GAME_PATH}items_${this.#lang}.json`, DOTA2_REPOSITORY));
 
 				if (!response || !response.ok) {
-					resolve(null);
+					resolve(false);
 					return;
 				}
 

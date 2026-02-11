@@ -1,7 +1,7 @@
 import { createElement } from 'harmony-ui';
 
 export class Statusbar {
-	#htmlElement;
+	#htmlElement!: HTMLElement;
 
 	#initHTML() {
 		this.#htmlElement = createElement('div', {

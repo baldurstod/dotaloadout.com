@@ -142,7 +142,7 @@ export class ItemList {
 		this.#setSlotFilter();
 		this.#setRarityFilter();
 
-		const itemIds = await ItemManager.getItems(character.id);
+		const itemIds = await ItemManager.getItems(character.id as string);
 
 		this.#htmlRarityOptions.forEach(html => html.remove());
 		this.#htmlRarityOptions.clear();

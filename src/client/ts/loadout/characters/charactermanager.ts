@@ -1,7 +1,7 @@
 import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { Controller } from '../../controller';
-import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEM_CLICK, EVENT_REMOVE_ITEM, EVENT_SET_MARKET_PRICES, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED } from '../../controllerevents';
+import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEM_CLICK, EVENT_REMOVE_ITEM, EVENT_SET_MARKET_PRICES, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED, ItemClick } from '../../controllerevents';
 import { ItemManager } from '../items/itemmanager';
 import { ItemTemplates } from '../items/itemtemplates';
 import { MarketPrice } from '../marketprice';
@@ -15,11 +15,11 @@ import { Item } from '../items/item';
 export class CharacterManager {
 	static #characterTemplates = new Map();
 	static #characters = new Map<string, Character>();
-	static #currentCharacter;
+	static #currentCharacter?: Character;
 
 	static {
 		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#characterSelected((event as CustomEvent).detail.characterId));
-		Controller.addEventListener(EVENT_ITEM_CLICK, event => this.#handleItemClick((event as CustomEvent).detail));
+		Controller.addEventListener(EVENT_ITEM_CLICK, event => this.#handleItemClick((event as CustomEvent<ItemClick>).detail));
 		Controller.addEventListener(EVENT_REMOVE_ITEM, event => this.#removeItem((event as CustomEvent).detail.character, (event as CustomEvent).detail.itemID));
 		Controller.addEventListener(EVENT_TOOLBAR_ACTIVITY_SELECTED, event => this.#currentCharacter?.setActivity((event as CustomEvent).detail));
 		Controller.addEventListener(EVENT_TOOLBAR_ACTIVITY_MODIFIERS, event => this.#currentCharacter?.setModifiers((event as CustomEvent).detail));
@@ -71,7 +71,7 @@ export class CharacterManager {
 		return this.#characterTemplates;
 	}*/
 
-	static getCharacter(characterId) {
+	static getCharacter(characterId: string): Character {
 		let character = this.#characters.get(characterId);
 		if (!character) {
 			character = new Character(characterId);
@@ -80,7 +80,7 @@ export class CharacterManager {
 		return character;
 	}
 
-	static async #characterSelected(characterId) {
+	static async #characterSelected(characterId: string): Promise<Character> {
 		if (this.#currentCharacter) {
 			this.#currentCharacter.setVisible(false);
 		}
@@ -94,7 +94,7 @@ export class CharacterManager {
 		return character;
 	}
 
-	static async #handleItemClick(detail) {
+	static async #handleItemClick(detail: ItemClick) {
 		const character = detail.character;
 		const itemId = detail.itemId;
 		const item = ItemTemplates.getTemplate(itemId);
@@ -104,7 +104,7 @@ export class CharacterManager {
 
 		const bundle = item.bundle;
 		if (bundle) {
-			character.bundleItem = item;
+			character.bundleItem = new Item(item, character);
 			for (const bundleItemName of bundle) {
 				const bundleItemId = ItemTemplates.getTemplateByName(bundleItemName);
 				if (bundleItemId) {
@@ -126,11 +126,11 @@ export class CharacterManager {
 		character.processModifiers();
 	}
 
-	static async #removeItem(character, itemId) {
+	static async #removeItem(character: Character, itemId: number) {
 		character?.removeItem(itemId);
 	}
 
-	static async #equipDefaultItems(character, itemIds) {
+	static async #equipDefaultItems(character: Character, itemIds: Set<string>) {
 		if (!OptionsManager.getItem('app.characters.equipdefaultitems')) {
 			character.processModifiers();
 			return;

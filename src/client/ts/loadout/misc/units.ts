@@ -9,22 +9,22 @@ export type Unit = {
 export class Units {
 	static #units = new Map<string, Unit>();
 
-	static addUnit(id, unit) {
+	static addUnit(id: string, unit: Unit): void {
 		this.#units.set(id, unit);
 	}
 
-	static addUnits(units) {
+	static addUnits(units: Record<string, Unit>) {
 		for (const id in units) {
-			const unit = units[id];
+			const unit = units[id]!;
 			this.addUnit(id, unit);
 		}
 	}
 
-	static getUnit(id) {
+	static getUnit(id: string): Unit | undefined {
 		return this.#units.get(id);
 	}
 
-	static getModel(id) {
+	static getModel(id: string): string | null {
 		let unit = this.#units.get(id);
 		if (!unit) {
 			for (const [i, u] of this.#units) {
@@ -46,9 +46,10 @@ export class Units {
 		if (unit.include_keys_from) {
 			return this.getModel(unit.include_keys_from);
 		}
+		return null;
 	}
 
-	static getName(id) {
+	static getName(id: string): string | null {
 		let unit = this.#units.get(id);
 		if (!unit) {
 			for (const [i, u] of this.#units) {
@@ -71,6 +72,7 @@ export class Units {
 		if (unit.include_keys_from) {
 			return this.getName(unit.include_keys_from);
 		}
+		return null;
 	}
 
 	static getUnits() {

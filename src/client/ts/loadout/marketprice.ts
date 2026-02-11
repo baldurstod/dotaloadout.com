@@ -1,9 +1,8 @@
 import { OptionsManager } from 'harmony-browser-utils';
-
 import { DOTA2_MARKET_PRICES_PATH } from '../constants';
 
 export class MarketPrice {
-	static #prices = {};
+	static #prices: Record<string, number> = {}//TODO: turn into map;
 	static #currency = 'USD';
 	static #dirtyPrices = true;
 	static #priceTimeout: NodeJS.Timeout;
@@ -20,14 +19,13 @@ export class MarketPrice {
 		}
 	}
 
-	static #initPrices(prices) {
+	static #initPrices(prices: number[][]) {
 		this.#prices = Object.create(null);
 		if (prices) {
-			for (var i = 0; i < prices.length; i++) {
-				var price = prices[i];
+			for (const price of prices) {
 				if (price.length >= 5) {
-					if (price[1] == 4 || this.#prices[price[0]] == undefined) {
-						this.#prices[price[0]] = price[4] / 100;
+					if (price[1] == 4 || this.#prices[price[0]!] == undefined) {
+						this.#prices[price[0]!] = price[4]! / 100;
 					}
 				}
 			}
@@ -39,7 +37,7 @@ export class MarketPrice {
 		await this.#requestPrices(true);
 	}
 
-	static async getPrice(id) {
+	static async getPrice(id: string) {
 		if (!OptionsManager.getItem('app.market.automarket')) {
 			return;
 		}
@@ -52,7 +50,7 @@ export class MarketPrice {
 	}
 
 
-	static formatPrice(price) {
+	static formatPrice(price: number): string | undefined {
 		switch (this.#currency) {
 			case 'EUR':
 				return price + '€';

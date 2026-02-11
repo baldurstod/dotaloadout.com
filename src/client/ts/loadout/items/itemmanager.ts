@@ -48,7 +48,7 @@ export class ItemManager {
 		return items;
 	}
 
-	static async #loadNeutralCreeps(characterId) {
+	static async #loadNeutralCreeps(characterId: string): Promise<Set<string>> {
 		const items = new Set<string>();
 		for (const [key, unit] of Units.getUnits()) {
 			if (unit.IsNeutralUnitType == '1' && unit.ConsideredHero != '1') {
@@ -73,7 +73,7 @@ export class ItemManager {
 		return items;
 	}
 
-	static async getItems(characterId) {
+	static async getItems(characterId: string): Promise<Set<string>> {
 		if (characterId === 'neutralcreeps') {
 			return this.#loadNeutralCreeps(characterId);
 		} else {
