@@ -1,16 +1,16 @@
 import { JSONObject } from 'harmony-types';
-import { ItemTemplate } from './itemtemplate.js';
+import { ItemTemplate } from './itemtemplate';
 
 export class ItemTemplates {
-	static #templates = new Map<string, ItemTemplate>();
-	static #templatesByName = new Map<string, string>();
+	static #templates = new Map<number, ItemTemplate>();
+	static #templatesByName = new Map<string, number>();
 
 	static addTemplate(templateJSON: JSONObject): void {
-		this.#templates.set(templateJSON.id as string, new ItemTemplate(templateJSON));
-		this.#templatesByName.set(templateJSON.name as string, templateJSON.id as string);
+		this.#templates.set(templateJSON.id as number, new ItemTemplate(templateJSON));
+		this.#templatesByName.set(templateJSON.name as string, templateJSON.id as number);
 	}
 
-	static getTemplate(id: string) {
+	static getTemplate(id: number) {
 		return this.#templates.get(id);
 	}
 

@@ -1,7 +1,9 @@
+import { JSONObject } from 'harmony-types';
+
 export class ItemTemplate {
 	#definition;
 
-	constructor(definition) {
+	constructor(definition: JSONObject) {
 		this.#definition = definition;
 	}
 
@@ -13,8 +15,8 @@ export class ItemTemplate {
 		return this.#definition.imageInventory;
 	}
 
-	get slot() {
-		return this.#definition.slot?.toLowerCase();
+	get slot(): string {
+		return (this.#definition.slot as string)?.toLowerCase();
 	}
 
 	get id() {
@@ -22,7 +24,7 @@ export class ItemTemplate {
 	}
 
 	getModelName(styleId: number, model: number = 0) {
-		const style = this.#definition.styles?.[styleId];
+		const style = (this.#definition.styles as JSONObject)?.[styleId] as JSONObject;
 		if (model == 0) {
 			return style?.model_player ?? this.#definition.modelPlayer;
 		} else {
@@ -30,125 +32,8 @@ export class ItemTemplate {
 		}
 	}
 
-	get redSkin() {
-		let skinRed = this.#definition.skin_red;
-		return isNaN(skinRed) ? 0 : Number(skinRed);
-	}
-
-	get bluSkin() {
-		let skinBlu = this.#definition.skin_blu;
-		return isNaN(skinBlu) ? 1 : Number(skinBlu);
-	}
-
-	get playerBodygroups() {
-		return this.#definition.player_bodygroups;
-	}
-
-	get wmBodygroupOverride() {
-		return this.#definition.wm_bodygroup_override;
-	}
-
-	get usePerClassBodygroups() {
-		return this.#definition.use_per_class_bodygroups;
-	}
-
-	get extraWearable() {
-		return this.#definition.extra_wearable;
-	}
-
-	get attachedModels() {
-		return this.#definition.attached_models;
-	}
-
-	get animSlot() {
-		return this.#definition.anim_slot;
-	}
-
-	getItemSlot(npc) {
-		let usedByClasses = this.#definition.used_by_classes;
-		if (usedByClasses) {
-			let usedByClass = usedByClasses[npc];
-			if (usedByClass == 'primary' || usedByClass == 'secondary') {
-				return usedByClass;
-			}
-		}
-		return this.#definition.item_slot;
-	}
-
-	get attachedModelsFestive() {
-		return this.#definition.attached_models_festive;
-	}
-
-	get weaponUsesStattrakModule() {
-		return this.#definition.weapon_uses_stattrak_module;
-	}
-
-	get weaponStattrakModuleScale() {
-		return this.#definition.weapon_stattrak_module_scale;
-	}
-
-	get particleSuffix() {
-		return this.#definition.particle_suffix;
-	}
-
 	get repository() {
 		return this.#definition.repository;
-	}
-
-	get equipRegions() {
-		return this.#definition.equip_regions;
-	}
-
-	get setItemTintRGB() {
-		return this.#definition.set_item_tint_rgb;
-	}
-
-	get setItemTintRGB2() {
-		return this.#definition.set_item_tint_rgb_2 ?? this.#definition.set_item_tint_rgb;
-	}
-
-	get setAttachedParticleStatic() {
-		if (this.#definition.use_smoke_particle_effect == "0") {
-			return null;
-		}
-
-		return this.#definition.set_attached_particle_static;
-	}
-
-	get attachedParticlesystems() {
-		return this.#definition.attached_particlesystems;
-	}
-
-	get customTauntScenePerClass() {
-		return this.#definition.custom_taunt_scene_per_class;
-	}
-
-	get customTauntOutroScenePerClass() {
-		return this.#definition.custom_taunt_outro_scene_per_class;
-	}
-
-	get customTauntPropScenePerClass() {
-		return this.#definition.custom_taunt_prop_scene_per_class;
-	}
-
-	get customTauntPropOutroScenePerClass() {
-		return this.#definition.custom_taunt_prop_outro_scene_per_class;
-	}
-
-	get tauntAttackName() {
-		return this.#definition.taunt_attack_name;
-	}
-
-	get tauntSuccessSoundLoop() {
-		return this.#definition.taunt_success_sound_loop;
-	}
-
-	get tauntSuccessSoundLoopOffset() {
-		return this.#definition.taunt_success_sound_loop_offset;
-	}
-
-	get materialOverride() {
-		return this.#definition.material_override;
 	}
 
 	get isBaseItem() {
@@ -171,8 +56,8 @@ export class ItemTemplate {
 		return this.#definition.skin;
 	}
 
-	getSkin(styleId) {
-		const style = this.#definition.styles?.[styleId];
+	getSkin(styleId: number) {
+		const style = (this.#definition.styles as JSONObject)?.[styleId] as JSONObject;
 		return style?.skin ?? this.#definition.skin;
 
 	}
@@ -181,16 +66,16 @@ export class ItemTemplate {
 		return Object.keys(this.#definition.styles ?? {}).length > 1;
 	}
 
-	getStyle(styleId) {
-		return this.#definition.styles?.[styleId];
+	getStyle(styleId: number) {
+		return (this.#definition.styles as JSONObject)?.[styleId] as JSONObject;
 	}
 
 	getStyles() {
-		const ret = new Map<string, string>();
-		const styles = this.#definition.styles;
+		const ret = new Map<string, JSONObject>();
+		const styles = this.#definition.styles as JSONObject;
 		if (styles) {
 			for (const styleId in styles) {
-				ret.set(styleId, styles[styleId]);
+				ret.set(styleId, styles[styleId] as JSONObject);
 			}
 		}
 		return ret;
