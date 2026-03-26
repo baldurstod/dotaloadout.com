@@ -19,8 +19,8 @@ export class ItemTemplate {
 		return (this.#definition.slot as string)?.toLowerCase();
 	}
 
-	get id() {
-		return this.#definition.id;
+	get id(): string {
+		return String(this.#definition.id);
 	}
 
 	getModelName(styleId: number, model: number = 0) {

@@ -126,7 +126,7 @@ export class CharacterManager {
 		character.processModifiers();
 	}
 
-	static async #removeItem(character: Character, itemId: number) {
+	static async #removeItem(character: Character, itemId: string) {
 		character?.removeItem(itemId);
 	}
 

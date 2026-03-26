@@ -61,8 +61,8 @@ export class CharacterTemplate {
 		return i;
 	}
 
-	getModelName(modelID: number) {
-		return this.#definition[`Model${modelID}`] ?? this.#definition.Model;
+	getModelName(modelID: number): string {
+		return (this.#definition[`Model${modelID}`] as string) ?? this.#definition.Model as string ?? '';
 	}
 
 	getAdjective(name: string) {

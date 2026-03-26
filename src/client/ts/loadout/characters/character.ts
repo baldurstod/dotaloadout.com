@@ -1,12 +1,12 @@
 import { vec3 } from 'gl-matrix';
-import { Group, Source2ModelInstance, Source2ModelManager, stringToVec3 } from 'harmony-3d';
+import { Entity, Group, Source2ModelInstance, Source2ModelManager, stringToVec3 } from 'harmony-3d';
 import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
+import { JSONObject } from 'harmony-types';
 import { DEFAULT_ACTIVITY } from '../../constants';
 import { Controller } from '../../controller';
 import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CHARACTER_UNITS_CHANGED, PersonaChanged } from '../../controllerevents';
 import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
-import { ItemTemplate } from '../items/itemtemplate';
 import { ItemTemplates } from '../items/itemtemplates';
 import { Units } from '../misc/units';
 import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_BODYGROUP_VISIBILITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
@@ -25,23 +25,23 @@ export class Character {
 	//#displayName = '';
 	#model: Source2ModelInstance | null = null;
 	#modelPromise?: Promise<Source2ModelInstance | null>;
-	#visible = false;
+	#visible: boolean | undefined = false;
 	#personaId = 0;// Base hero
-	#alternateModelName;
+	#alternateModelName?: string;
 	#activityModifiers = new Set<AssetModifier>();
 	#group = new Group({ parent: loadoutScene, quaternion: [0, 0, -1, 1] });// Face -Y
-	#pedestalModel;
-	#petModel;
-	#metamorphosisModel;
+	#pedestalModel: Source2ModelInstance | null = null;
+	#petModel: Source2ModelInstance | null = null;
+	#metamorphosisModel: Source2ModelInstance | null = null;
 	#activity = DEFAULT_ACTIVITY;
-	#modifiers = [];
+	#modifiers: string[] = [];
 	#units = new Map<string, Source2ModelInstance>();
 
-	constructor(characterId) {
+	constructor(characterId: string) {
 		this.#characterId = characterId;
-		this.#template = CharacterTemplates.getTemplate(characterId);
+		this.#template = CharacterTemplates.getTemplate(characterId)!;
 		this.#group.name = this.name;
-		OptionsManagerEvents.addEventListener('app.units.display', event => this.#positionUnits(event));
+		OptionsManagerEvents.addEventListener('app.units.display', event => this.#positionUnits(event as CustomEvent));
 	}
 
 	async #getModel(): Promise<Source2ModelInstance | null> {
@@ -91,20 +91,17 @@ export class Character {
 		this.#metamorphosisModel?.playSequence(sequenceName);
 	}
 
-	async setVisible(visible) {
-		if (visible == true) {
-			visible = undefined
-		}
-		this.#visible = visible;
-		this.#group.visible = visible;
+	async setVisible(visible: boolean) {
+		this.#visible = visible === true ? undefined : visible;
+		this.#group.setVisible(visible);
 	}
 
 	get name() {
 		return this.#template.name;
 	}
 
-	get id() {
-		return this.#template.id;
+	get id(): string {
+		return this.#template.id as string;
 	}
 
 	//todo: NameAliases
@@ -124,7 +121,7 @@ export class Character {
 		return this.#template.getModelCount();
 	}
 
-	getModelName() {
+	getModelName(): string {
 		return this.#alternateModelName ?? this.#template.getModelName(this.#modelId);
 	}
 
@@ -140,11 +137,11 @@ export class Character {
 		return this.#modelId;
 	}
 
-	hasItem(itemId) {
+	hasItem(itemId: string) {
 		return this.#items.has(itemId);
 	}
 
-	async addItem(itemId) {
+	async addItem(itemId: string) {
 		if (this.hasItem(itemId)) {
 			return;
 		}
@@ -170,7 +167,7 @@ export class Character {
 		await this.#addChild(await item.getModel());
 	}
 
-	async #addChild(itemModel) {
+	async #addChild(itemModel: Entity | null) {
 		const model = await this.#getModel();
 
 		if (model) {
@@ -178,10 +175,9 @@ export class Character {
 		} else {
 			this.#group.addChild(itemModel);
 		}
-
 	}
 
-	removeItem(itemId) {
+	removeItem(itemId: string): void {
 		const item = this.#items.get(itemId);
 
 		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_ITEM_REMOVED, { detail: item }));
@@ -194,7 +190,7 @@ export class Character {
 		this.#itemsPerSlot.delete(item.slot);
 	}
 
-	#replaceSlot(item) {
+	#replaceSlot(item: Item) {
 		const previousItem = this.#itemsPerSlot.get(item.slot);
 		if (previousItem) {
 			this.removeItem(previousItem.id);
@@ -251,7 +247,7 @@ export class Character {
 		await this.#processGeneratedUnits();
 
 		//this.usePersonaModel(this.#personaId);
-		let alternateModelName;
+		let alternateModelName: string | undefined;
 		const replacements = new Map<string, string>();
 		let skin = 0;
 		let arcanaLevel: number = 0;
@@ -302,7 +298,7 @@ export class Character {
 					const modelName = replacements.get(modifier.asset) ?? modifier.modifier ?? modifier.asset;
 					const model = await Source2ModelManager.createInstance('dota2', modelName, true);
 					if (model) {
-						model.visible = this.#visible;
+						model.setVisible(this.#visible);
 						model.skin = modifier.skin ?? 0;
 						const loadoutDefaultOffset = modifier.loadoutDefaultOffset;
 						if (loadoutDefaultOffset) {
@@ -346,18 +342,18 @@ export class Character {
 
 		if (this.#pedestalModel) {
 			if (OptionsManager.getItem('app.showpedestal')) {
-				this.#pedestalModel.visible = undefined;
+				this.#pedestalModel.setVisible(undefined);
 			} else {
-				this.#pedestalModel.visible = false;
+				this.#pedestalModel.setVisible(false);
 			}
 		}
 
 		if (this.#metamorphosisModel) {
 			if (OptionsManager.getItem('app.showmetamorphosis')) {
-				this.#metamorphosisModel.visible = undefined;
+				this.#metamorphosisModel.setVisible(undefined);
 				this.#model?.setVisible(false);
 			} else {
-				this.#metamorphosisModel.visible = false;
+				this.#metamorphosisModel.setVisible(false);
 				this.#model?.setVisible(undefined);
 			}
 		}
@@ -370,7 +366,7 @@ export class Character {
 		}
 
 		for (const [name, value] of bodygroups) {
-			model.setBodyGroup(name, value);
+			model?.setBodyGroup(name, value);
 		}
 
 		await this.#reparentItems();
@@ -384,6 +380,9 @@ export class Character {
 				if (itemSlot.GeneratesUnits) {
 					for (const i in itemSlot.GeneratesUnits) {
 						const unitID = itemSlot.GeneratesUnits[i];
+						if (!unitID) {
+							continue;
+						}
 						const model = Units.getModel(unitID);
 						if (model) {
 							this.#setUnit(new AssetModifier(null, { asset: unitID, modifier: model }));
@@ -404,20 +403,20 @@ export class Character {
 		const model = await Source2ModelManager.createInstance('dota2', modelName, true);
 		if (model) {
 			this.#group.addChild(model);
-			model.visible = this.#visible;
+			model.setVisible(this.#visible);
 			model.skin = modifier.skin ?? modifier.item?.skin ?? 0;
 			const loadoutDefaultOffset = modifier.loadoutDefaultOffset;
 			if (loadoutDefaultOffset) {
-				model.position = stringToVec3(loadoutDefaultOffset);
+				model.setPosition(stringToVec3(loadoutDefaultOffset));
 			}
 			this.#units.get(modifierAsset)?.remove();
 			this.#units.delete(modifierAsset);
 			this.#units.set(modifierAsset, model);
 			model.position = getUnitPlacement(this.#units.size + (this.getModelName() ? 1 : 0));
-			model.visible = await OptionsManager.getSubItem('app.units.display', modifierAsset) ? undefined : false;
+			model.setVisible(await OptionsManager.getSubItem('app.units.display', modifierAsset) ? undefined : false);
 
-			OptionsManagerEvents.addEventListener('app.units.display', (event: CustomEvent) => {
-				model.visible = event.detail.value[modifierAsset] ? undefined : false;
+			OptionsManagerEvents.addEventListener('app.units.display', (event) => {
+				model.setVisible((event as CustomEvent).detail.value[modifierAsset] ? undefined : false);
 			});
 
 			Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_UNITS_CHANGED));
@@ -426,7 +425,7 @@ export class Character {
 		await this.#positionUnits();
 	}
 
-	async #positionUnits(event?) {
+	async #positionUnits(event?: CustomEvent) {
 		const display = event?.detail?.value ?? OptionsManager.getItem('app.units.display');
 		console.info(display);
 		let unit = this.getModelName() ? 1 : 0;
@@ -443,7 +442,7 @@ export class Character {
 		this.#pedestalModel = await Source2ModelManager.createInstance('dota2', OptionsManager.getItem('app.loadout.pedestalmodel'), true);
 	}
 
-	async #setSkin(skin) {
+	async #setSkin(skin: number) {
 		const model = await this.#getModel();
 		if (!model) {
 			return;
@@ -460,7 +459,7 @@ export class Character {
 			return;
 		}
 		//model.skin = skin;
-		this.#model.setBodyGroup('arcana', arcanaLevel);
+		this.#model?.setBodyGroup('arcana', arcanaLevel);
 		for (const [_, item] of this.#items) {
 			item.setArcanaLevel(arcanaLevel);
 		}
@@ -473,7 +472,7 @@ export class Character {
 		}
 	}
 
-	async #setCharacterModel(modelName) {
+	async #setCharacterModel(modelName: string | undefined) {
 		if (this.#alternateModelName != modelName) {
 			this.#alternateModelName = modelName;
 			await this.#resetModel();
@@ -486,17 +485,17 @@ export class Character {
 			oldModel.remove();
 		}
 		this.#model = null;
-		this.#modelPromise = null;
+		this.#modelPromise = undefined;
 	}
 
-	setPersonaId(personaId) {
+	setPersonaId(personaId: number) {
 		for (const [_, item] of this.#items) {
 			item.setVisible(personaId == item.getPersonaId());
 		}
 		Controller.dispatchEvent(new CustomEvent<PersonaChanged>(EVENT_CHARACTER_PERSONA_CHANGED, { detail: personaId }));
 	}
 
-	async setActivity(activity) {
+	async setActivity(activity: string) {
 		this.#activity = activity;
 		await this.playSequence();
 	}
@@ -505,7 +504,7 @@ export class Character {
 		return this.#activity;
 	}
 
-	async setModifiers(modifiers) {
+	async setModifiers(modifiers: string[]) {
 		this.#modifiers = modifiers;
 		await this.playSequence();
 	}
@@ -535,11 +534,11 @@ export class Character {
 		return json;
 	}
 
-	async importLoadout(characterJSON) {
-		let itemsJSON = characterJSON.items;
+	async importLoadout(characterJSON: JSONObject) {
+		let itemsJSON = characterJSON.items as JSONObject[];
 		if (itemsJSON) {
 			for (let itemJSON of itemsJSON) {
-				const itemId = itemJSON.id;
+				const itemId: string = String(itemJSON.id);
 				const item = await this.addItem(itemId);
 			}
 		}

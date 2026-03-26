@@ -59,7 +59,7 @@ export class StyleSelector {
 			createElement('div', {
 				class: 'style-selector-item-style',
 				parent: htmlItemStyles,
-				innerText: item.getStyle(styleId).name,
+				innerText: item.getStyle(styleId).name as string,
 				events: {
 					click: () => item.setStyle(styleId),
 				},

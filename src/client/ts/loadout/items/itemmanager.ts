@@ -9,17 +9,15 @@ import { ItemTemplates } from './itemtemplates';
 export class ItemManager {
 	static #characterTemplates = new Map();
 	static #characters = new Map();
-	static #currentCharacter;
 	static #itemsPerCharacter = new Map<string, Promise<Set<string>>>();
-	static #lang = 'english';
 
-	static async #loadItems(characterId) {
+	static async #loadItems(characterId: string): Promise<Set<string>> {
 		let items = this.#itemsPerCharacter.get(characterId);
 		if (items) {
 			return items;
 		}
 
-		items = new Promise(async resolve => {
+		items = new Promise<Set<string>>(async resolve => {
 			const response = await fetch(new URL(`${ITEM_GAME_PATH}${characterId}.json`, DOTA2_REPOSITORY));
 
 			if (!response) {
@@ -35,7 +33,7 @@ export class ItemManager {
 
 			for (const item of itemsJSON) {
 				ItemTemplates.addTemplate(item);
-				characterItems.add(item.id);
+				characterItems.add(String(item.id));
 			}
 
 			Controller.dispatchEvent(new CustomEvent(EVENT_ITEMS_LOADED, { detail: { characterId: characterId } }));
@@ -81,7 +79,7 @@ export class ItemManager {
 		}
 	}
 
-	static async getBaseItemId(characterId, slot) {
+	static async getBaseItemId(characterId: string, slot: string): Promise<string> {
 		const items = await this.#loadItems(characterId);
 		if (!items) {
 			return;
