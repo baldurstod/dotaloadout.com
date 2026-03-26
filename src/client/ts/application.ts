@@ -297,15 +297,15 @@ class Application {
 
 	#setSilhouetteMode(silhouetteMode) {
 		if (silhouetteMode) {
-			Graphics.setIncludeCode('silhouetteMode', '#define SILHOUETTE_MODE');
+			Graphics.setDefine('SILHOUETTE_MODE');
 		} else {
-			Graphics.setIncludeCode('silhouetteMode', '#undef SILHOUETTE_MODE');
+			Graphics.removeDefine('SILHOUETTE_MODE');
 		}
 	}
 
 	#setSilhouetteColor(silhouetteColor) {
 		let rgb = hexToRgb(silhouetteColor);
-		Graphics.setIncludeCode('silhouetteColor', `#define SILHOUETTE_COLOR vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
+		Graphics.setDefine('SILHOUETTE_COLOR', `vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
 	}
 
 	#initLights() {
@@ -453,7 +453,7 @@ class Application {
 			subdivisions = OptionsManager.getItem('app.objexporter.subdivide.iterations');
 		}
 		let files = await new ObjExporter().exportMeshes({
-			meshes: loadoutScene.getMeshList(),
+			meshes: loadoutScene.getRenderableList(),
 			exportTexture: OptionsManager.getItem('app.objexporter.exporttextures'),
 			singleMesh: OptionsManager.getItem('app.objexporter.singlemesh'),
 			digits: 4,
