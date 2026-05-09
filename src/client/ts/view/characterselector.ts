@@ -23,10 +23,10 @@ export class CharacterSelector {
 	#htmlSortField?: HTMLSelectElement;
 
 	constructor() {
-		this.#setFilterMethod(OptionsManager.getItem(FILTER_METHOD));
+		this.#setFilterMethod(OptionsManager.getItem(FILTER_METHOD) as string);
 		OptionsManagerEvents.addEventListener(FILTER_METHOD, (event: Event) => this.#setFilterMethod((event as CustomEvent<OptionsManagerEvent>).detail.value as string));
 
-		this.#setSortField(OptionsManager.getItem(SORT_FIELD));
+		this.#setSortField(OptionsManager.getItem(SORT_FIELD) as string);
 		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: Event) => this.#setSortField((event as CustomEvent<OptionsManagerEvent>).detail.value as string));
 	}
 

@@ -413,7 +413,7 @@ class Application {
 		let option = OptionsManager.getItem('app.picture.size');
 		if (option) {
 			let regexSize = /(\d*)[\*|x|X](\d*)/i;
-			var result = regexSize.exec(option);
+			var result = regexSize.exec(option as string);
 			if (result && result[1] && result[2]) {
 				return { w: result[1], h: result[2] };
 			}
@@ -450,12 +450,12 @@ class Application {
 		}
 		let subdivisions = 0;
 		if (OptionsManager.getItem('app.objexporter.subdivide')) {
-			subdivisions = OptionsManager.getItem('app.objexporter.subdivide.iterations');
+			subdivisions = OptionsManager.getItem('app.objexporter.subdivide.iterations') as number;
 		}
 		let files = await new ObjExporter().exportMeshes({
 			meshes: loadoutScene.getRenderableList(),
-			exportTexture: OptionsManager.getItem('app.objexporter.exporttextures'),
-			singleMesh: OptionsManager.getItem('app.objexporter.singlemesh'),
+			exportTexture: OptionsManager.getItem('app.objexporter.exporttextures') as boolean,
+			singleMesh: OptionsManager.getItem('app.objexporter.singlemesh') as boolean,
 			digits: 4,
 			subdivisions: subdivisions,
 			mergeTolerance: OptionsManager.getItem('app.objexporter.mergevertices') ? 0.001 : 0,

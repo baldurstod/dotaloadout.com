@@ -160,10 +160,10 @@ export class Options {
 				for (let currency of currencyList) {
 					createElement('option', {
 						parent: this.#htmlCurrency,
-						innerText: currency,
+						innerText: String(currency),
 					})
 				}
-				this.#htmlCurrency.value = OptionsManager.getItem('app.market.currency');
+				this.#htmlCurrency.value = OptionsManager.getItem('app.market.currency') as string;
 			}
 		});
 

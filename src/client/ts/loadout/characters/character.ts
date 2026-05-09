@@ -439,7 +439,7 @@ export class Character {
 	}
 
 	async #initPedestal() {
-		this.#pedestalModel = await Source2ModelManager.createInstance('dota2', OptionsManager.getItem('app.loadout.pedestalmodel'), true);
+		this.#pedestalModel = await Source2ModelManager.createInstance('dota2', OptionsManager.getItem('app.loadout.pedestalmodel') as string, true);
 	}
 
 	async #setSkin(skin: number) {

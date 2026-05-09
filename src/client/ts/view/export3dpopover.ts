@@ -77,10 +77,10 @@ export class Export3DPopover {
 		if (!this.#html3DExportTexture || !this.#html3DSingleMesh || !this.#html3DSmoothMesh || !this.#html3DShowDialog || !this.#htmlElement) {
 			return;
 		}
-		this.#html3DExportTexture.state = OptionsManager.getItem('app.objexporter.exporttextures');
-		this.#html3DSingleMesh.state = OptionsManager.getItem('app.objexporter.singlemesh');
-		this.#html3DSmoothMesh.state = OptionsManager.getItem('app.objexporter.subdivide');
-		this.#html3DShowDialog.state = OptionsManager.getItem('app.objexporter.askoptions');
+		this.#html3DExportTexture.state = OptionsManager.getItem('app.objexporter.exporttextures') as boolean;
+		this.#html3DSingleMesh.state = OptionsManager.getItem('app.objexporter.singlemesh') as boolean;
+		this.#html3DSmoothMesh.state = OptionsManager.getItem('app.objexporter.subdivide') as boolean;
+		this.#html3DShowDialog.state = OptionsManager.getItem('app.objexporter.askoptions') as boolean;
 
 		show(this.#htmlElement);
 		this.#htmlElement.showPopover();

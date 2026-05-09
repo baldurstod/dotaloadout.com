@@ -68,7 +68,7 @@ export class UnitSelector {
 					min: 0,
 					max: modelCount - 1,
 					steap: 1,
-					value: this.#character?.getModelId(),
+					value: String(this.#character?.getModelId()),
 					events: {
 						input: (event: Event) => this.#character?.setModelId(Number((event.target as HTMLInputElement).value)),
 						//OptionsManager.setSubItem('app.units.display', unitID, event.target.checked),
