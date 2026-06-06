@@ -9,6 +9,7 @@ import itemListCSS from '../css/itemlist.css';
 import itemListItemCSS from '../css/itemlistitem.css';
 import itemSlotsCSS from '../css/itemslots.css';
 import loadoutCSS from '../css/loadout.css';
+import mainCSS from '../css/main.css';
 import marketPricesCSS from '../css/marketprices.css';
 import statusbarCSS from '../css/statusbar.css';
 import styleSelectorCSS from '../css/styleselector.css';
@@ -205,24 +206,29 @@ class Application {
 
 		this.#shadowRoot.append(
 			this.#appToolbar.htmlElement,
-			createElement('div', {
-				class: 'maincontent',
+			createShadowRoot('div', {
+				adoptStyles: [applicationCSS, loadoutCSS, characterSelectorCSS, export3dPopoverCSS, viewerCSS, toolbarCSS, styleSelectorCSS, statusbarCSS, marketPricesCSS, itemSlotsCSS, itemListItemCSS, itemListCSS, mainCSS],
 				childs: [
-					this.#appOptions.htmlElement,
-					this.#appItemSlots.htmlElement,
 					createElement('div', {
-						class: 'viewer-container',
+						class: 'maincontent',
 						childs: [
-							this.#appViewer.htmlElement,
-							this.#appMarketPrices.htmlElement,
-							this.#appStyleSelector.htmlElement,
-							this.#appUnitSelector.htmlElement,
-						],
+							this.#appOptions.htmlElement,
+							this.#appItemSlots.htmlElement,
+							createElement('div', {
+								class: 'viewer-container',
+								childs: [
+									this.#appViewer.htmlElement,
+									this.#appMarketPrices.htmlElement,
+									this.#appStyleSelector.htmlElement,
+									this.#appUnitSelector.htmlElement,
+								],
+							}),
+							this.#appItemList.htmlElement,
+						]
 					}),
-					this.#appItemList.htmlElement,
-					ENABLE_PATREON_BASE ? this.#appAdPanel.htmlElement : null,
-				]
-			}),
+					true || ENABLE_PATREON_BASE ? this.#appAdPanel.getHTMLElement() : null,
+				],
+			}).host,
 			//this.#appStatusbar.htmlElement,
 			this.#appCharacterSelector.htmlElement,
 		);

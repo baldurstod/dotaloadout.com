@@ -1,47 +1,83 @@
 import { addNotification, NotificationType } from 'harmony-browser-utils';
-import { createElement, I18n } from 'harmony-ui';
+import { createElement, createShadowRoot, I18n, I18nEvents } from 'harmony-ui';
+import { setTimeoutPromise } from 'harmony-utils';
+import adCSS from '../../css/ad.css';
+import adContentCSS from '../../css/adcontent.css';
 import { ADSBYGOOGLE_INS, ADSBYGOOGLE_SRC } from '../googleconstants';
 
-const AD_WIDTH = '300px';
+const AD_DELAY = 1000;
 
 export class AdPanel {
-	#htmlElement?: HTMLElement;
-	#htmlAdContent?: HTMLElement;
+	#shadowRoot?: ShadowRoot;
+	#htmlAdContent?: ShadowRoot;
+	#htmlHeader1?: HTMLElement;
+	#htmlHeader2?: HTMLElement;
 
-	#initHTML() {
-		this.#htmlElement = createElement('div', {
-			style: `display:flex;flex-direction: column;width:${AD_WIDTH}`,
+	#initHTML(): HTMLElement {
+		this.#shadowRoot = createShadowRoot('div', {
+			adoptStyles: [adCSS],
 			childs: [
 				createElement('div', {
-					class: 'loadout-application-advertisement-header',
 					childs: [
-						createElement('div', { i18n: '#advertisement' }),
-						createElement('div', { i18n: '#how_to_remove' }),
+						this.#htmlHeader1 = createElement('div'/*, { i18n: '#advertisement', class: 'title' }*/),
+						this.#htmlHeader2 = createElement('div'/*, { i18n: '#how_to_remove' }*/)
 					],
-					events: {
-						click: () => addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10)
-					}
+					$click: () => addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10),
 				}),
-				this.#htmlAdContent = createElement('div', {
-					style: 'flex:1',
-					//innerHTML: ADSBYGOOGLE_INS,
-					child: createElement('script', { src: ADSBYGOOGLE_SRC, async: 1 }),
+				this.#htmlAdContent = createShadowRoot('div', {
+					adoptStyles: [adContentCSS],
 				}),
-			]
+			],
 		});
+		this.#updateStrings();
+		I18n.observeElement(this.#shadowRoot);
+		this.#setupAd();
+
+		try {
+			this.#initObserver();
+		} catch (e) { }
+
+		I18n.addEventListener(I18nEvents.Any, () => this.#updateStrings());
+		return this.#shadowRoot.host as HTMLElement;
+	}
+
+	async #setupAd(): Promise<void> {
+		const sc = createElement('script', { src: ADSBYGOOGLE_SRC, async: 1 });
 
 		const ad = createElement('div', {
-			style: 'width:300px; height:auto;top:10rem;right:0;z-index:500;',
-			class: 'application',
+			style: 'width:300px; height:auto;position:absolute;top:3rem;right:0;z-index:1000;',
+			parent: document.body,
 			innerHTML: ADSBYGOOGLE_INS,
 		});
 
-		Math.random() > 0.5 ? document.body.prepend(ad) : document.body.append(ad);
+		this.#htmlAdContent!.append(sc);
+		((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
 
-		return this.#htmlElement;
+		await setTimeoutPromise(AD_DELAY);
+		this.#htmlAdContent!.replaceChildren(...ad.children);
+		ad.remove();
 	}
 
-	get htmlElement() {
-		return this.#htmlElement ?? this.#initHTML();
+	#initObserver(): void {
+		const config: MutationObserverInit = { attributes: true };
+		const mutationCallback = (mutationsList: MutationRecord[]): void => {
+			for (const mutation of mutationsList) {
+				if (mutation.type === 'attributes') {
+					console.info(mutation);
+				}
+			}
+		};
+
+		const observer = new MutationObserver(mutationCallback);
+		observer.observe(this.#shadowRoot!.host, config);
+	}
+
+	#updateStrings(): void {
+		this.#htmlHeader1!.innerText = I18n.getString('#advertisement');
+		this.#htmlHeader2!.innerText = I18n.getString('#how_to_remove');
+	}
+
+	getHTMLElement(): HTMLElement {
+		return this.#shadowRoot?.host as (HTMLElement | undefined) ?? this.#initHTML();
 	}
 }

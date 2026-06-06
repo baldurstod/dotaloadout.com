@@ -18,6 +18,7 @@ body{
 
 	color: var(--theme-text-color);
 	display: flex;
+	--item-selector-columns: 2;
 }
 .application{
 	display: flex;
@@ -31,5 +32,4 @@ body{
 	--item-icon-height: calc(var(--item-icon-width)*170/256);
 	--hero-icon-width: 150px;
 	--hero-icon-height: calc(var(--hero-icon-width)*144/256);
-	--item-selector-columns: 2;
 }

@@ -1,18 +1,28 @@
-.maincontent{
+.maincontent {
 	display: flex;
 	flex-direction: row;
 	flex: 1;
 	overflow: hidden;
 }
-.maincontent-sceneexplorer{
+
+@media screen and (max-width: 999px) {
+	.maincontent {
+		--item-selector-columns: 1;
+	}
+}
+
+
+.maincontent-sceneexplorer {
 	flex: 1;
 }
-.viewer-container{
+
+.viewer-container {
 	flex: 1;
 	position: relative;
 	display: flex;
 	overflow: hidden;
 }
-.options{
+
+.options {
 	flex: 1;
 }
