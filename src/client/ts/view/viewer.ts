@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { Composer, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, WebGLStats } from 'harmony-3d';
+import { Composer, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, ShaderPrecision, WebGLStats } from 'harmony-3d';
 import { createElement } from 'harmony-ui';
 import { loadoutCamera, loadoutScene } from '../loadout/scene';
 
@@ -38,6 +38,8 @@ export class Viewer {
 			}
 		});
 
+
+		Graphics.setShaderPrecision(ShaderPrecision.High);
 		Graphics.clearColor([0.5, 0.5, 0.5, 1]);
 
 		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: Event) => {
