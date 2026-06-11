@@ -226,7 +226,7 @@ class Application {
 							this.#appItemList.htmlElement,
 						]
 					}),
-					true || ENABLE_PATREON_BASE ? this.#appAdPanel.getHTMLElement() : null,
+					ENABLE_PATREON_BASE ? this.#appAdPanel.getHTMLElement() : null,
 				],
 			}).host,
 			//this.#appStatusbar.htmlElement,
