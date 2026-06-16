@@ -1,16 +1,16 @@
 import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
+import { JSONObject } from 'harmony-types';
+import world from '../../../json/datas/world.json';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { Controller } from '../../controller';
 import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEM_CLICK, EVENT_REMOVE_ITEM, EVENT_SET_MARKET_PRICES, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED, ItemClick } from '../../controllerevents';
+import { Item } from '../items/item';
 import { ItemManager } from '../items/itemmanager';
 import { ItemTemplates } from '../items/itemtemplates';
 import { MarketPrice } from '../marketprice';
 import { Units } from '../misc/units';
 import { Character } from './character';
 import { CharacterTemplates } from './charactertemplates';
-
-import world from '../../../json/datas/world.json';
-import { Item } from '../items/item';
 
 export class CharacterManager {
 	static #characterTemplates = new Map();
@@ -102,7 +102,7 @@ export class CharacterManager {
 			return;
 		}
 
-		const bundle = item.bundle;
+		const bundle = item.bundle as string[];
 		if (bundle) {
 			character.bundleItem = new Item(item, character);
 			for (const bundleItemName of bundle) {
@@ -117,7 +117,10 @@ export class CharacterManager {
 			character.bundleItem = null;
 			if (character.hasItem(itemId)) {
 				character.removeItem(itemId);
-				await character.addItem(await ItemManager.getBaseItemId(character.id, item.slot));
+				const it = await ItemManager.getBaseItemId(character.id, item.slot);
+				if (it) {
+					await character.addItem(it);
+				}
 			} else {
 				await character.addItem(itemId);
 			}
@@ -141,10 +144,12 @@ export class CharacterManager {
 		}
 
 		const slots = character.itemSlots;
-		for (const itemId of itemIds) {
-			const itemTemplate = ItemTemplates.getTemplate(itemId);
-			if (itemTemplate && itemTemplate.isBaseItem && slots.has(itemTemplate.slot)) {
-				await character.addItem(itemId);
+		if (slots) {
+			for (const itemId of itemIds) {
+				const itemTemplate = ItemTemplates.getTemplate(itemId);
+				if (itemTemplate && itemTemplate.isBaseItem && slots.has(itemTemplate.slot)) {
+					await character.addItem(itemId);
+				}
 			}
 		}
 		character.processModifiers();
@@ -168,7 +173,7 @@ export class CharacterManager {
 	}
 
 	static exportLoadout() {
-		const loadoutJSON = { characters: [] };
+		const loadoutJSON: { characters: JSONObject[] } = { characters: [] };
 
 		for (let [_, character] of this.#characters) {
 			const loadout = character.exportLoadout();
@@ -179,16 +184,16 @@ export class CharacterManager {
 		return loadoutJSON;
 	}
 
-	static async importLoadout(loadoutJSON) {
+	static async importLoadout(loadoutJSON: JSONObject) {
 		if (loadoutJSON.characters) {
-			for (let character of loadoutJSON.characters) {
+			for (let character of loadoutJSON.characters as JSONObject[]) {
 				await this.#importLoadoutCharacter(character);
 			}
 		}
 	}
 
-	static async #importLoadoutCharacter(characterJSON) {
-		const character = await this.#characterSelected(characterJSON.npc);
+	static async #importLoadoutCharacter(characterJSON: JSONObject) {
+		const character = await this.#characterSelected(characterJSON.npc as string);
 		if (character) {
 			character.importLoadout(characterJSON);
 			character.setVisible(true);

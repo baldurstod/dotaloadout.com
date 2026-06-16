@@ -143,7 +143,7 @@ export class ItemSlots {
 					} else {
 						htmlImg.src = DOTA2_DEFAULT_ECON_URL;
 					}
-					htmlName.innerText = item.name;
+					htmlName.innerText = item.name as string;
 				}
 			}
 		}

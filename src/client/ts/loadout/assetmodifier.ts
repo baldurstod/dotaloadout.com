@@ -1,7 +1,22 @@
+import { Item } from './items/item';
+
+export type AssetModifierJSON = {
+	modifier?: string,
+	type?: string,
+	style?: string,
+	asset?: string,
+	level?: string,
+	persona?: string,
+	skin?: string,
+	loadout_default_offset?: string,
+	value?: string,
+}
+
 export class AssetModifier {
-	#item;
-	#definition;
-	constructor(item, definition) {
+	#item: Item | null;
+	#definition: AssetModifierJSON;
+
+	constructor(item: Item | null, definition: AssetModifierJSON) {
 		this.#item = item;
 		this.#definition = definition;
 	}

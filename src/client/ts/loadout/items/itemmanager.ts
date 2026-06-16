@@ -79,10 +79,10 @@ export class ItemManager {
 		}
 	}
 
-	static async getBaseItemId(characterId: string, slot: string): Promise<string> {
+	static async getBaseItemId(characterId: string, slot: string): Promise<string | null> {
 		const items = await this.#loadItems(characterId);
 		if (!items) {
-			return;
+			return null;
 		}
 		for (const itemId of items) {
 			const item = ItemTemplates.getTemplate(itemId);
@@ -90,5 +90,6 @@ export class ItemManager {
 				return itemId;
 			}
 		}
+		return null;
 	}
 };

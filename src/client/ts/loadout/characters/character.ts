@@ -76,11 +76,11 @@ export class Character {
 		if (!model) {
 			return;
 		}
-		const modifiers = [];
+		const modifiers: string[] = [];
 		//const activityModifier = this.#activityModifiers.get(sequenceName) ?? this.#activityModifiers.get('ALL');
 		for (const activityModifier of this.#activityModifiers) {
-			if (activityModifier.asset == sequenceName || activityModifier.asset == 'ALL') {
-				modifiers.push(activityModifier?.modifier);
+			if ((activityModifier.asset == sequenceName || activityModifier.asset == 'ALL') && activityModifier.modifier) {
+				modifiers.push(activityModifier.modifier);
 			}
 		}
 		modifiers.push(...this.#modifiers);
@@ -265,7 +265,7 @@ export class Character {
 				case MODIFIER_ENTITY_MODEL:
 				case MODIFIER_COURIER:
 				case MODIFIER_COURIER_FLYING:
-					if (modifier.asset.startsWith(this.id)) {
+					if (modifier.asset && modifier.asset.startsWith(this.id)) {
 						if (modifier.asset.startsWith(`${this.id}_variant_`)) {
 							if (modifier.asset.endsWith(`_variant_${this.#modelId}`)) {
 								alternateModelName = modifier.modifier;
@@ -280,14 +280,14 @@ export class Character {
 					break;
 				case MODIFIER_MODEL:
 				case MODIFIER_PARTICLE:
-					replacements.set(modifier.asset, modifier.modifier);
+					replacements.set(modifier.asset!, modifier.modifier!);
 					break;
 				case MODIFIER_MODEL_SKIN:
-					skin = modifier.skin;
+					skin = Number(modifier.skin ?? 0);
 					break;
 				case MODIFIER_BODYGROUP_VISIBILITY:
 					// TODO: use modifier.asset to determine the model to replace
-					bodygroups.set(modifier.modifier, modifier.value);
+					bodygroups.set(modifier.modifier!, Number(modifier.value));
 					break;
 				case MODIFIER_ACTIVITY:
 					this.#activityModifiers.add(modifier);
@@ -295,11 +295,11 @@ export class Character {
 				case MODIFIER_PET:
 				case MODIFIER_PORTRAIT_BACKGROUND_MODEL:
 				case MODIFIER_HERO_MODEL_CHANGE:
-					const modelName = replacements.get(modifier.asset) ?? modifier.modifier ?? modifier.asset;
+					const modelName = replacements.get(modifier.asset!) ?? modifier.modifier ?? modifier.asset ?? '';
 					const model = await Source2ModelManager.createInstance('dota2', modelName, true);
 					if (model) {
 						model.setVisible(this.#visible);
-						model.skin = modifier.skin ?? 0;
+						model.skin = Number(modifier.skin ?? 0);
 						const loadoutDefaultOffset = modifier.loadoutDefaultOffset;
 						if (loadoutDefaultOffset) {
 							model.position = stringToVec3(loadoutDefaultOffset);
@@ -314,7 +314,7 @@ export class Character {
 					}
 					break;
 				case MODIFIER_ARCANA_LEVEL:
-					arcanaLevel = modifier.level;
+					arcanaLevel = Number(modifier.level ?? 0);
 					break;
 				default:
 					console.warn('character_unknown_modifier_type', modifier.type, modifier);
@@ -395,16 +395,19 @@ export class Character {
 
 	async #setUnit(modifier: AssetModifier) {
 		let modifierAsset = modifier.asset;
+		if (!modifierAsset) {
+			return;
+		}
 		const modifierType = modifier.type;
 		if (modifierType == MODIFIER_COURIER || modifierType == MODIFIER_COURIER_FLYING) {
 			modifierAsset += '_' + modifierType;
 		}
-		const modelName = modifier.modifier;
+		const modelName = modifier.modifier ?? '';
 		const model = await Source2ModelManager.createInstance('dota2', modelName, true);
 		if (model) {
 			this.#group.addChild(model);
 			model.setVisible(this.#visible);
-			model.skin = modifier.skin ?? modifier.item?.skin ?? 0;
+			model.skin = Number(modifier.skin ?? modifier.item?.skin ?? 0);
 			const loadoutDefaultOffset = modifier.loadoutDefaultOffset;
 			if (loadoutDefaultOffset) {
 				model.setPosition(stringToVec3(loadoutDefaultOffset));

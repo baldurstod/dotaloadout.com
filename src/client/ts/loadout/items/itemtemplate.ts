@@ -8,7 +8,7 @@ export class ItemTemplate {
 	}
 
 	get name() {
-		return this.#definition.name;
+		return (this.#definition.name as string) ?? '';
 	}
 
 	get imageInventory() {
@@ -23,12 +23,12 @@ export class ItemTemplate {
 		return String(this.#definition.id);
 	}
 
-	getModelName(styleId: number, model: number = 0) {
+	getModelName(styleId: number, model: number = 0): string {
 		const style = (this.#definition.styles as JSONObject)?.[styleId] as JSONObject;
 		if (model == 0) {
-			return style?.model_player ?? this.#definition.modelPlayer;
+			return (style?.model_player as string | undefined) ?? (this.#definition.modelPlayer as string | undefined) ?? '';
 		} else {
-			return style?.['model_player' + model] ?? style?.model_player ?? this.#definition['modelPlayer' + model] ?? this.#definition.modelPlayer;
+			return (style?.['model_player' + model] as string | undefined) ?? (style?.model_player as string | undefined) ?? (this.#definition['modelPlayer' + model] as string | undefined) ?? (this.#definition.modelPlayer as string | undefined) ?? '';
 		}
 	}
 
@@ -56,9 +56,9 @@ export class ItemTemplate {
 		return this.#definition.skin;
 	}
 
-	getSkin(styleId: number) {
+	getSkin(styleId: number): number {
 		const style = (this.#definition.styles as JSONObject)?.[styleId] as JSONObject;
-		return style?.skin ?? this.#definition.skin;
+		return (style?.skin as number | undefined) ?? (this.#definition.skin as number | undefined) ?? 0;
 
 	}
 

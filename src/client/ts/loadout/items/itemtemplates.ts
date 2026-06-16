@@ -14,7 +14,7 @@ export class ItemTemplates {
 		return this.#templates.get(id);
 	}
 
-	static getTemplateByName(name: string): string {
+	static getTemplateByName(name: string): string | undefined {
 		return this.#templatesByName.get(name);
 	}
 

@@ -178,7 +178,7 @@ export class ItemList {
 		});
 		this.#htmlItems.set(itemTemplate, htmlItemSlot);
 
-		this.#addRarity(itemTemplate.rarity);
+		this.#addRarity(itemTemplate.rarity as string);
 	}
 
 	#addRarity(rarity: string) {

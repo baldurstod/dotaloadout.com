@@ -1,6 +1,7 @@
 import { vec3 } from 'gl-matrix';
 import { Entity, Source2ModelInstance, Source2ModelManager, Source2ParticleManager } from 'harmony-3d';
 import { OptionsManager } from 'harmony-browser-utils';
+import { JSONObject } from 'harmony-types';
 import { getPersonaId } from '../../utils/persona';
 import { AssetModifier } from '../assetmodifier';
 import { Character } from '../characters/character';
@@ -10,13 +11,13 @@ import { ItemTemplate } from './itemtemplate';
 export class Item {
 	#template: ItemTemplate;
 	#character: Character;
-	#model: Source2ModelInstance | null;
+	#model?: Source2ModelInstance | null = null;
 	#childEntities = new Set<Entity>();
 	#extraEntities = new Set<Entity>();
-	#visible;
-	#alternateModelName;
+	#visible?: boolean;
+	#alternateModelName?: string;
 	#style = 0;
-	#characterSkin;
+	#characterSkin = 0;
 	#arcanaLevel?: number;
 
 	constructor(template: ItemTemplate, character: Character) {
@@ -30,12 +31,12 @@ export class Item {
 		}
 		const modelName = this.modelName;
 		if (!modelName) {
-			return;
+			return null;
 		}
 		this.#model = await Source2ModelManager.createInstance('dota2', this.modelName, true);
 
 		if (this.#model) {
-			this.#model.visible = this.#visible;
+			this.#model.setVisible(this.#visible);
 			this.#model.playSequence('ACT_DOTA_IDLE');
 			this.#model.skin = this.skin;
 		}
@@ -64,7 +65,7 @@ export class Item {
 		this.#clearExtraEntities();
 	}
 
-	async setVisible(visible) {
+	async setVisible(visible: boolean | undefined): Promise<void> {
 		if (visible == true) {
 			visible = undefined
 		}
@@ -72,11 +73,11 @@ export class Item {
 
 		const model = await this.getModel();
 		if (model) {
-			model.visible = visible;
+			model.setVisible(visible);
 		}
 
 		for (const extraEntity of this.#extraEntities) {
-			extraEntity.visible = visible;
+			extraEntity.setVisible(visible);
 		}
 	}
 
@@ -100,15 +101,15 @@ export class Item {
 		return this.#template.slot;
 	}
 
-	get modelName() {
-		return this.#alternateModelName ?? this.#template.getModelName(this.#style);
+	get modelName(): string {
+		return this.#alternateModelName ?? this.#template.getModelName(this.#style) ?? '';
 	}
 
 	get assetModifiers() {
 		return this.#template.assetModifiers;
 	}
 
-	get skin() {
+	get skin(): number {
 		return this.#template.getSkin(this.#style) ?? this.#characterSkin ?? 0;
 	}
 
@@ -120,7 +121,7 @@ export class Item {
 		return this.#style;
 	}
 
-	setStyle(styleId) {
+	setStyle(styleId: number): void {
 		this.#style = styleId;
 
 		//TODO: put that in the caller
@@ -131,7 +132,7 @@ export class Item {
 		return this.#template.hasStyles();
 	}
 
-	getStyle(styleId) {
+	getStyle(styleId: number) {
 		return this.#template.getStyle(styleId);
 	}
 
@@ -144,7 +145,7 @@ export class Item {
 	}
 
 	getAssetModifiers() {
-		const modifiers = this.assetModifiers;
+		const modifiers = this.assetModifiers as JSONObject[];
 		if (!modifiers) {
 			return;
 		}
@@ -169,15 +170,15 @@ export class Item {
 		this.#extraEntities.clear();
 	}
 
-	async processModifiers(replacements, characterModelId: number) {
+	async processModifiers(replacements: Map<string, string>, characterModelId: number): Promise<void> {
 		this.#clearExtraEntities();
 
 		const modifiers = this.getAssetModifiers();
 		let originalModelName = this.#template.getModelName(this.#style, characterModelId);
 		if (!originalModelName && modifiers) {
 			for (const modifier of modifiers) {
-				if (modifier.type == MODIFIER_ENTITY_MODEL && modifier.asset.endsWith(`_variant_${characterModelId}`)) {
-					originalModelName = modifier.modifier;
+				if (modifier.type == MODIFIER_ENTITY_MODEL && modifier.asset && modifier.asset.endsWith(`_variant_${characterModelId}`)) {
+					originalModelName = modifier.modifier ?? originalModelName;
 					break;
 				}
 			}
@@ -187,10 +188,10 @@ export class Item {
 
 		const model = await this.getModel();
 		if (model) {
-			this.#model.skin = this.skin;
-			this.#model.setAttribute('desaturate', OptionsManager.getItem('app.items.desaturate'));
+			model.skin = this.skin;
+			model.setAttribute('desaturate', OptionsManager.getItem('app.items.desaturate'));
 
-			this.#model.setBodyGroup('arcana', this.#arcanaLevel ?? 0);
+			model.setBodyGroup('arcana', this.#arcanaLevel ?? 0);
 		}
 
 		if (!modifiers) {
@@ -201,44 +202,56 @@ export class Item {
 		for (const modifier of modifiers) {
 			switch (modifier.type) {
 				case MODIFIER_PARTICLE_CREATE:
-					if (!OptionsManager.getItem('app.showeffects')) {
+					if (!OptionsManager.getItem('app.showeffects') || !modifier.modifier) {
 						break;
 					}
 					const systemName = replacements.get(modifier.modifier) ?? modifier.modifier;
 					let system = await Source2ParticleManager.getSystem('dota2', systemName/*, snapshotModifiers TODO */);
+					if (!system) {
+						break;
+					}
 					system.start();
 					if (this.modelName) {
 						this.#model?.addChild(system);
 						this.#childEntities.add(system);
 					} else {
 						this.#extraEntities.add(system);
-						system.visible = this.#visible;
+						system.setVisible(this.#visible);
 					}
 
 					break;
 				case MODIFIER_ADDITIONAL_WEARABLE:
+					if (!modifier.asset) {
+						break;
+					}
 					const modelName = replacements.get(modifier.asset) ?? modifier.asset;
 					const model = await Source2ModelManager.createInstance('dota2', modelName, true);
 					if (model) {
-						model.visible = this.#visible;
-						model.skin = modifier.skin ?? 0;
+						model.setVisible(this.#visible);
+						model.skin = Number(modifier.skin ?? 0);
 						this.#extraEntities.add(model);
 					}
 					break;
 				case MODIFIER_ENTITY_MODEL:
 					break;
+					/*
+					TODO ?
 					if (modifier.asset == this.#character.id) {
 						break;
 					}
 					const entityModelName = replacements.get(modifier.modifier) ?? modifier.modifier;
 					const entityModel = await Source2ModelManager.createInstance('dota2', entityModelName, true);
 					if (entityModel) {
-						entityModel.visible = this.#visible;
+						entityModel.setVisible(this.#visible);
 						entityModel.skin = modifier.skin ?? this.skin ?? 0;
 						this.#extraEntities.add(entityModel);
 					}
+					*/
 					break;
 				case MODIFIER_ENTITY_CLIENTSIDE_MODEL:
+					if (!modifier.asset || !modifier.modifier) {
+						break;
+					}
 					position = vec3.create();
 
 					if (modifier.asset.endsWith('_melee')) {
@@ -285,8 +298,8 @@ export class Item {
 					const clientsideModelName = replacements.get(modifier.modifier) ?? modifier.modifier;
 					const clientsideModel = await Source2ModelManager.createInstance('dota2', clientsideModelName, true);
 					if (clientsideModel) {
-						clientsideModel.visible = this.#visible;
-						clientsideModel.skin = modifier.skin ?? this.skin ?? 0;
+						clientsideModel.setVisible(this.#visible);
+						clientsideModel.skin = Number(modifier.skin ?? this.skin ?? 0);
 						this.#extraEntities.add(clientsideModel);
 						clientsideModel.position = position;
 					}
@@ -306,14 +319,14 @@ export class Item {
 		}
 	}
 
-	async #setItemModel(modelName) {
+	async #setItemModel(modelName?: string): Promise<void> {
 		if (this.#alternateModelName != modelName) {
 			this.#alternateModelName = modelName;
 			await this.#resetModel();
 		}
 	}
 
-	setCharacterSkin(skin) {
+	setCharacterSkin(skin: number) {
 		if (!this.#template.isBaseItem) {
 			this.#characterSkin = skin;
 		}

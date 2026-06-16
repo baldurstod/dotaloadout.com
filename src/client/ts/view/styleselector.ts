@@ -28,7 +28,7 @@ export class StyleSelector {
 		}
 	}
 
-	#handleCharacterSelected(characterId:string) {
+	#handleCharacterSelected(characterId: string) {
 		const character = CharacterManager.getCharacter(characterId);
 		if (!character) {
 			return;
@@ -55,13 +55,13 @@ export class StyleSelector {
 			]
 
 		});
-		for (const [styleId, style] of item.getStyles()) {
+		for (const [styleId] of item.getStyles()) {
 			createElement('div', {
 				class: 'style-selector-item-style',
 				parent: htmlItemStyles,
-				innerText: item.getStyle(styleId).name as string,
+				innerText: item.getStyle(Number(styleId)).name as string,
 				events: {
-					click: () => item.setStyle(styleId),
+					click: () => item.setStyle(Number(styleId)),
 				},
 			});
 		}
