@@ -19,7 +19,7 @@ import viewerCSS from '../css/viewer.css';
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
 import { Controller } from './controller';
 import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_CLOSE_ITEM_LIST, EVENT_EXPORT_OBJ, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from './controllerevents';
-import { CharacterManager } from './loadout/characters/charactermanager';
+import { CharacterManager, LoadoutJSON } from './loadout/characters/charactermanager';
 import { MarketPrice } from './loadout/marketprice';
 import { loadoutCamera, loadoutColorBackground, loadoutScene } from './loadout/scene';
 import { showAboutLayer, showBugNotification } from './misc/about';
@@ -73,9 +73,9 @@ class Application {
 	#appToolbar = new Toolbar();
 	#appViewer = new Viewer();
 	//#htmlElement;
-	#lightsContainer;
-	#ambientLight;
-	#pointLights;
+	#lightsContainer = new Group({ name: 'Lights' });
+	#ambientLight = new AmbientLight();
+	#pointLights: PointLight[] = [];
 	#shadowRoot?: ShadowRoot;
 
 	constructor() {
@@ -146,8 +146,8 @@ class Application {
 		OptionsManagerEvents.addEventListener('app.lights.ambient.intensity', event => this.#ambientLight.intensity = (event as CustomEvent).detail.value);
 
 		OptionsManagerEvents.addEventListener('app.lights.pointlights.*', event => {
-			let lightParams = (event as CustomEvent).detail.name.replace('app.lights.pointlights.', '').split('.');
-			let light = this.#pointLights[lightParams[0]];
+			let lightParams: string[] = (event as CustomEvent).detail.name.replace('app.lights.pointlights.', '').split('.');
+			let light = this.#pointLights[Number(lightParams[0])];
 			if (light) {
 				switch (lightParams[1]) {
 					case 'position':
@@ -157,10 +157,11 @@ class Application {
 						light.color = hexToRgb((event as CustomEvent).detail.value);
 						break;
 					case 'visible':
-						light.visible = (event as CustomEvent).detail.value ? undefined : false;
+						light.setVisible((event as CustomEvent).detail.value ? undefined : false);
 						break;
-					default:
-						light[lightParams[1]] = (event as CustomEvent).detail.value;
+					case 'intensity':
+						light.intensity = (event as CustomEvent).detail.value;
+						break;
 				}
 			}
 		});
@@ -233,8 +234,8 @@ class Application {
 			this.#appCharacterSelector.htmlElement,
 		);
 
-		if (ENABLE_PATREON_POWERUSER) {
-			this.#shadowRoot.append(this.#appExport3DPopover?.htmlElement);
+		if (this.#appExport3DPopover) {
+			this.#shadowRoot.append(this.#appExport3DPopover.htmlElement);
 		}
 
 		this.#appToolbar.setMode();
@@ -244,18 +245,18 @@ class Application {
 	}
 
 	#initCSS() {
-		shadowRootStyle(this.#shadowRoot, applicationCSS);
-		shadowRootStyle(this.#shadowRoot, loadoutCSS);
-		shadowRootStyle(this.#shadowRoot, characterSelectorCSS);
-		shadowRootStyle(this.#shadowRoot, export3dPopoverCSS);
-		shadowRootStyle(this.#shadowRoot, viewerCSS);
-		shadowRootStyle(this.#shadowRoot, toolbarCSS);
-		shadowRootStyle(this.#shadowRoot, styleSelectorCSS);
-		shadowRootStyle(this.#shadowRoot, statusbarCSS);
-		shadowRootStyle(this.#shadowRoot, marketPricesCSS);
-		shadowRootStyle(this.#shadowRoot, itemSlotsCSS);
-		shadowRootStyle(this.#shadowRoot, itemListItemCSS);
-		shadowRootStyle(this.#shadowRoot, itemListCSS);
+		shadowRootStyle(this.#shadowRoot!, applicationCSS);
+		shadowRootStyle(this.#shadowRoot!, loadoutCSS);
+		shadowRootStyle(this.#shadowRoot!, characterSelectorCSS);
+		shadowRootStyle(this.#shadowRoot!, export3dPopoverCSS);
+		shadowRootStyle(this.#shadowRoot!, viewerCSS);
+		shadowRootStyle(this.#shadowRoot!, toolbarCSS);
+		shadowRootStyle(this.#shadowRoot!, styleSelectorCSS);
+		shadowRootStyle(this.#shadowRoot!, statusbarCSS);
+		shadowRootStyle(this.#shadowRoot!, marketPricesCSS);
+		shadowRootStyle(this.#shadowRoot!, itemSlotsCSS);
+		shadowRootStyle(this.#shadowRoot!, itemListItemCSS);
+		shadowRootStyle(this.#shadowRoot!, itemListCSS);
 	}
 
 	#iniRepositories() {
@@ -264,7 +265,7 @@ class Application {
 		Source2ParticleManager.loadManifests('dota2');
 	}
 
-	#characterSelected(characterId) {
+	#characterSelected(characterId: string): void {
 		const character = CharacterManager.getCharacter(characterId);
 		if (!character) {
 			return;
@@ -275,8 +276,8 @@ class Application {
 		this.#appItemList.setCharacter(character);
 	}
 
-	set backGroundColor(hex) {
-		if (hex) {
+	set backGroundColor(hex: string) {
+		if (hex && this.#shadowRoot) {
 			let rgb = hexToRgb(hex);
 			Graphics.clearColor(rgb);
 			loadoutColorBackground.setColor(rgb);
@@ -297,11 +298,11 @@ class Application {
 	#beforeUnload() {
 		if (OptionsManager.getItem('app.cameras.perspective.saveposition')) {
 			OptionsManager.setItem('app.cameras.orbit.position', (loadoutCamera.position as [number, number, number]).join(' '));
-			OptionsManager.setItem('app.cameras.orbit.target', this.#appViewer.getCameraTarget().join(' '));
+			OptionsManager.setItem('app.cameras.orbit.target', (this.#appViewer.getCameraTarget() as number[]).join(' '));
 		}
 	}
 
-	#setSilhouetteMode(silhouetteMode) {
+	#setSilhouetteMode(silhouetteMode: boolean): void {
 		if (silhouetteMode) {
 			Graphics.setDefine('SILHOUETTE_MODE');
 		} else {
@@ -309,21 +310,20 @@ class Application {
 		}
 	}
 
-	#setSilhouetteColor(silhouetteColor) {
+	#setSilhouetteColor(silhouetteColor: string): void {
 		let rgb = hexToRgb(silhouetteColor);
 		Graphics.setDefine('SILHOUETTE_COLOR', `vec4(${rgb[0]},${rgb[1]},${rgb[2]},${rgb[3]})`);
 	}
 
 	#initLights() {
-		this.#lightsContainer = loadoutScene.addChild(new Group({ name: 'Lights' }));
-		this.#ambientLight = this.#lightsContainer.addChild(new AmbientLight());
-		this.#pointLights = [];
+		loadoutScene.addChild(this.#lightsContainer);
+		this.#lightsContainer.addChild(this.#ambientLight);
 		for (let i = 0; i < 3; ++i) {
-			this.#pointLights.push(this.#lightsContainer.addChild(new PointLight({ intensity: 0.0 })));
+			this.#pointLights.push(this.#lightsContainer.addChild(new PointLight({ intensity: 0.0 })) as PointLight);
 		}
 	}
 
-	async #uploadLoadout(loadout) {
+	async #uploadLoadout(loadout: LoadoutJSON) {
 		try {
 			const response = await fetch(SHARE_LOADOUT_URL, { method: 'POST', body: JSON.stringify(loadout) });
 			if (!response) {
@@ -369,13 +369,13 @@ class Application {
 
 		const loadoutResult = /\/@loadout\/(.*)/.exec(pathname);
 		if (loadoutResult) {
-			this.#loadShareLoadout(loadoutResult[1]);
+			this.#loadShareLoadout(loadoutResult[1]!);
 		} else {
 			this.#loadOldLoadout();
 		}
 	}
 
-	async #loadShareLoadout(loadoutId) {
+	async #loadShareLoadout(loadoutId: string) {
 		const response = await fetch(SHARE_LOADOUT_URL + loadoutId);
 		const responseJSON = await response.json();
 		if (responseJSON.success) {

@@ -30,9 +30,9 @@ export class CharacterSelector {
 		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: Event) => this.#setSortField((event as CustomEvent<OptionsManagerEvent>).detail.value as string));
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		if (this.#htmlElement) {
-			return;
+			return this.#htmlElement;
 		}
 		this.#htmlElement = createElement('div', {
 			class: 'character-selector',

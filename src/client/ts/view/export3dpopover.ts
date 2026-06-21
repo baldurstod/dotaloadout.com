@@ -11,7 +11,7 @@ export class Export3DPopover {
 	#html3DMerge?: HTMLHarmonySwitchElement;
 	#html3DShowDialog?: HTMLHarmonySwitchElement;
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		defineHarmonySwitch();
 		this.#htmlElement = createElement('div', {
 			class: 'export-3d-popover',
@@ -69,7 +69,7 @@ export class Export3DPopover {
 		return this.#htmlElement;
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 

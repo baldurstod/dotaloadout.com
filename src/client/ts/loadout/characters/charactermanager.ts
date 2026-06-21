@@ -12,6 +12,8 @@ import { Units } from '../misc/units';
 import { Character } from './character';
 import { CharacterTemplates } from './charactertemplates';
 
+export type LoadoutJSON = { characters: JSONObject[] };
+
 export class CharacterManager {
 	static #characterTemplates = new Map();
 	static #characters = new Map<string, Character>();
@@ -172,8 +174,8 @@ export class CharacterManager {
 		Controller.dispatchEvent(new CustomEvent(EVENT_SET_MARKET_PRICES, { detail: prices }));
 	}
 
-	static exportLoadout() {
-		const loadoutJSON: { characters: JSONObject[] } = { characters: [] };
+	static exportLoadout(): LoadoutJSON {
+		const loadoutJSON: LoadoutJSON = { characters: [] };
 
 		for (let [_, character] of this.#characters) {
 			const loadout = character.exportLoadout();
