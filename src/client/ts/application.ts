@@ -32,6 +32,7 @@ import { hexToRgb } from './utils/hextorgb';
 import { AdPanel } from './view/adpanel';
 import { CharacterSelector } from './view/characterselector';
 import { Export3DPopover } from './view/export3dpopover';
+import { FrameSelector } from './view/frameselector';
 import { ItemList } from './view/itemlist';
 import { ItemSlots } from './view/itemslots';
 import { MarketPrices } from './view/marketprices';
@@ -68,6 +69,7 @@ class Application {
 	//#appStatusbar = new Statusbar();
 	#appStyleSelector = new StyleSelector();
 	#appUnitSelector = new UnitSelector();
+	#appFrameSelector = new FrameSelector();
 	#appToolbar = new Toolbar();
 	#appViewer = new Viewer();
 	//#htmlElement;
@@ -220,6 +222,7 @@ class Application {
 									this.#appMarketPrices.htmlElement,
 									this.#appStyleSelector.htmlElement,
 									this.#appUnitSelector.htmlElement,
+									this.#appFrameSelector.htmlElement,
 								],
 							}),
 							this.#appItemList.htmlElement,

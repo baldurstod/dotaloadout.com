@@ -4,7 +4,6 @@
 		"app",
 		"engine",
 		"app.css.variables"
-
 	],
 	"options": [
 		{
@@ -40,7 +39,7 @@
 			"name": "app.market.currency",
 			"type": "list",
 			"default": "USD",
-			"datalist":[
+			"datalist": [
 				"USD",
 				"EUR",
 				"GBP",
@@ -62,7 +61,7 @@
 			"name": "app.loadout.pedestalmodel",
 			"type": "list",
 			"default": "models/heroes/pedestal/pedestal_1",
-			"datalist":[
+			"datalist": [
 				"models/heroes/pedestal/pedestal_1",
 				"models/heroes/pedestal/pedestal_1_small",
 				"models/heroes/pedestal/pedestal_1_large",
@@ -93,7 +92,7 @@
 			"name": "app.loadout.lod",
 			"type": "list",
 			"default": "1",
-			"datalist":[
+			"datalist": [
 				"1",
 				"2"
 			]
@@ -224,84 +223,88 @@
 			"name": "app.lights.pointlights.1.visible",
 			"type": "boolean",
 			"default": true
-		}
-		,{
+		},
+		{
 			"name": "app.inspector.display",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.transformations.display",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.showeffects",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.objexporter.exporttextures",
 			"type": "boolean",
 			"default": true
-		}
-		,{
+		},
+		{
 			"name": "app.objexporter.singlemesh",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.objexporter.askoptions",
 			"type": "boolean",
 			"default": true
-		}
-		,{
+		},
+		{
 			"name": "app.objexporter.subdivide",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.objexporter.mergevertices",
 			"type": "boolean",
 			"default": true
-		}
-		,{
+		},
+		{
 			"name": "app.objexporter.subdivide.iterations",
 			"type": "integer",
 			"min": 1,
 			"max": 5,
 			"default": 1
-		}
-		,{
+		},
+		{
 			"name": "app.heroselector.sort.field",
 			"type": "list",
 			"default": "name",
 			"datalist": [
-				"name"
-				,"order"
-				,"female"
+				"name",
+				"order",
+				"female"
 			]
-		}
-		,{
+		},
+		{
 			"name": "app.characters.desaturate",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.items.desaturate",
 			"type": "boolean",
 			"default": false
-		}
-		,{
+		},
+		{
 			"name": "app.characters.equipdefaultitems",
 			"type": "boolean",
 			"default": true
-		}
-		,{
+		},
+		{
 			"name": "app.units.display",
 			"type": "map",
 			"default": {}
+		},
+		{
+			"name": "app.panels.frameselector",
+			"type": "boolean",
+			"default": false
 		}
 	]
-
 }

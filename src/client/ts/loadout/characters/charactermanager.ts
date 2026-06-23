@@ -24,6 +24,7 @@ export class CharacterManager {
 		Controller.addEventListener(ControllerEvent.RemoveItem, event => this.#removeItem((event as CustomEvent).detail.character, (event as CustomEvent).detail.itemID));
 		Controller.addEventListener(ControllerEvent.ToolbarActivitySelected, event => this.#currentCharacter?.setActivity((event as CustomEvent).detail));
 		Controller.addEventListener(ControllerEvent.ToolbarActivityModifiers, event => this.#currentCharacter?.setModifiers((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.ChangeAnimFrame, (event: Event) => { this.#changeAnimFrame((event as CustomEvent<number>).detail) });
 
 		OptionsManagerEvents.addEventListener('app.characters.desaturate', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.items.desaturate', () => this.#currentCharacter?.processModifiers());
@@ -199,6 +200,16 @@ export class CharacterManager {
 			character.importLoadout(characterJSON);
 			character.setVisible(true);
 			character.processModifiers();
+		}
+	}
+
+	static async #changeAnimFrame(frame: number): Promise<void> {
+		const source2Model = await this.#currentCharacter?.getModel();
+		if (source2Model) {
+			const l = source2Model.getAnimLength();
+			if (l !== -1) {
+				source2Model.mainAnimFrame = frame * l;
+			}
 		}
 	}
 }

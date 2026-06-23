@@ -43,7 +43,7 @@ export class Character {
 		OptionsManagerEvents.addEventListener('app.units.display', event => this.#positionUnits(event as CustomEvent));
 	}
 
-	async #getModel(): Promise<Source2ModelInstance | null> {
+	async getModel(): Promise<Source2ModelInstance | null> {
 		if (this.#model) {
 			return this.#model;
 		}
@@ -71,7 +71,7 @@ export class Character {
 			entity?.playSequence?.(sequenceName);
 		}
 
-		const model = await this.#getModel();
+		const model = await this.getModel();
 		if (!model) {
 			return;
 		}
@@ -167,7 +167,7 @@ export class Character {
 	}
 
 	async #addChild(itemModel: Entity | null) {
-		const model = await this.#getModel();
+		const model = await this.getModel();
 
 		if (model) {
 			model.addChild(itemModel);
@@ -326,7 +326,7 @@ export class Character {
 		}
 
 		await this.#setCharacterModel(alternateModelName);
-		const model = await this.#getModel();
+		const model = await this.getModel();
 		model?.resetBodyGroups();
 		this.#setSkin(skin);
 		this.#setArcanaLevel(arcanaLevel);
@@ -445,7 +445,7 @@ export class Character {
 	}
 
 	async #setSkin(skin: number) {
-		const model = await this.#getModel();
+		const model = await this.getModel();
 		if (!model) {
 			return;
 		}
@@ -456,7 +456,7 @@ export class Character {
 	}
 
 	async #setArcanaLevel(arcanaLevel: number) {
-		const model = await this.#getModel();
+		const model = await this.getModel();
 		if (!model) {
 			return;
 		}
@@ -482,7 +482,7 @@ export class Character {
 	}
 
 	async #resetModel() {
-		const oldModel = await this.#getModel();
+		const oldModel = await this.getModel();
 		if (oldModel) {
 			oldModel.remove();
 		}
