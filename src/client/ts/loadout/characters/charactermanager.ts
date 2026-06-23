@@ -2,8 +2,7 @@ import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { JSONObject } from 'harmony-types';
 import world from '../../../json/datas/world.json';
 import { DOTA2_HEROES_URL } from '../../constants';
-import { Controller } from '../../controller';
-import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_ITEM_CLICK, EVENT_REMOVE_ITEM, EVENT_SET_MARKET_PRICES, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED, ItemClick } from '../../controllerevents';
+import { Controller, ControllerEvent, ItemClick } from '../../controller';
 import { Item } from '../items/item';
 import { ItemManager } from '../items/itemmanager';
 import { ItemTemplates } from '../items/itemtemplates';
@@ -20,11 +19,11 @@ export class CharacterManager {
 	static #currentCharacter?: Character;
 
 	static {
-		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#characterSelected((event as CustomEvent).detail.characterId));
-		Controller.addEventListener(EVENT_ITEM_CLICK, event => this.#handleItemClick((event as CustomEvent<ItemClick>).detail));
-		Controller.addEventListener(EVENT_REMOVE_ITEM, event => this.#removeItem((event as CustomEvent).detail.character, (event as CustomEvent).detail.itemID));
-		Controller.addEventListener(EVENT_TOOLBAR_ACTIVITY_SELECTED, event => this.#currentCharacter?.setActivity((event as CustomEvent).detail));
-		Controller.addEventListener(EVENT_TOOLBAR_ACTIVITY_MODIFIERS, event => this.#currentCharacter?.setModifiers((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#characterSelected((event as CustomEvent).detail.characterId));
+		Controller.addEventListener(ControllerEvent.ItemClick, event => this.#handleItemClick((event as CustomEvent<ItemClick>).detail));
+		Controller.addEventListener(ControllerEvent.RemoveItem, event => this.#removeItem((event as CustomEvent).detail.character, (event as CustomEvent).detail.itemID));
+		Controller.addEventListener(ControllerEvent.ToolbarActivitySelected, event => this.#currentCharacter?.setActivity((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.ToolbarActivityModifiers, event => this.#currentCharacter?.setModifiers((event as CustomEvent).detail));
 
 		OptionsManagerEvents.addEventListener('app.characters.desaturate', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.items.desaturate', () => this.#currentCharacter?.processModifiers());
@@ -66,7 +65,7 @@ export class CharacterManager {
 			CharacterTemplates.addTemplate(worldItem);
 		}
 
-		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTERS_LOADED));
+		Controller.dispatchEvent<void>(ControllerEvent.CharactersLoaded);
 	}
 
 	/*static getCharacterTemplates() {
@@ -171,7 +170,7 @@ export class CharacterManager {
 				prices.set(item, price);
 			}
 		}
-		Controller.dispatchEvent(new CustomEvent(EVENT_SET_MARKET_PRICES, { detail: prices }));
+		Controller.dispatchEvent(ControllerEvent.SetMarketPrices, { detail: prices });
 	}
 
 	static exportLoadout(): LoadoutJSON {

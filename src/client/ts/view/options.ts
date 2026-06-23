@@ -1,11 +1,10 @@
 import { Entity, ManifestRepository, MergeRepository, Repositories, Repository, RepositoryEntry, SceneExplorer, ShaderEditor, Source2ModelManager, VpkRepository, ZipRepository } from 'harmony-3d';
 import { defineRepository, HTMLRepositoryElement } from 'harmony-3d-utils';
 import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
-import { createElement, defineHarmonyFileInput, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, hide, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
+import { createElement, defineHarmonyFileInput, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
 import optionsCSS from '../../css/options.css';
 import repositoryEntryCSS from '../../css/repositoryentry.css';
-import { Controller } from '../controller';
-import { EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_OPTIONS } from '../controllerevents';
+import { Controller, ControllerEvent } from '../controller';
 import { loadoutScene } from '../loadout/scene';
 
 export class Options {
@@ -56,7 +55,7 @@ export class Options {
 										class: 'option-button',
 										i18n: '#reset_camera',
 										events: {
-											click: () => Controller.dispatchEvent(new CustomEvent(EVENT_RESET_CAMERA)),
+											click: () => Controller.dispatchEvent(ControllerEvent.ResetCamera),
 										}
 									}),
 								],
@@ -167,17 +166,17 @@ export class Options {
 			}
 		});
 
-		Controller.addEventListener('closeoptions', () => hide(this.#htmlElement));
-		Controller.addEventListener(EVENT_TOOLBAR_OPTIONS, () => this.#toggle());
+		//Controller.addEventListener('closeoptions', () => hide(this.#htmlElement));
+		Controller.addEventListener(ControllerEvent.ToolbarOptions, () => this.#toggle());
 
-		OptionsManagerEvents.addEventListener('app.cameras.orbit.polarrotation', (event: Event) => this.#htmlFreeRotation!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.cameras.default.orthographic', (event: Event) => this.#htmlOrthoCam!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.itemselector.hideitemname', (event: Event) => this.#htmlHideItemsName!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.showpedestal', (event: Event) => this.#htmlShowPedestal!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.showmetamorphosis', (event: Event) => this.#htmlShowMetamorphosis!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.market.automarket', (event: Event) => this.#htmlShowPrices!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.showeffects', (event: Event) => this.#htmlShowEffects!.state = (event as CustomEvent<OptionsManagerEvent>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.market.currency', (event: Event) => this.#htmlCurrency!.value = (event as CustomEvent<OptionsManagerEvent>).detail.value as string);
+		OptionsManagerEvents.addEventListener('app.cameras.orbit.polarrotation', (event: Event) => this.#htmlFreeRotation!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.cameras.default.orthographic', (event: Event) => this.#htmlOrthoCam!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.itemselector.hideitemname', (event: Event) => this.#htmlHideItemsName!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.showpedestal', (event: Event) => this.#htmlShowPedestal!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.showmetamorphosis', (event: Event) => this.#htmlShowMetamorphosis!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.market.automarket', (event: Event) => this.#htmlShowPrices!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.showeffects', (event: Event) => this.#htmlShowEffects!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
+		OptionsManagerEvents.addEventListener('app.market.currency', (event: Event) => this.#htmlCurrency!.value = (event as CustomEvent<OptionsManagerEvent<string>>).detail.value as string);
 
 		return this.#htmlElement;
 	}
@@ -272,13 +271,13 @@ export class Options {
 	#toggle() {
 		toggle(this.#htmlElement);
 
-		let event;
+		let event: ControllerEvent;
 		if (isVisible(this.#htmlElement!)) {
-			event = EVENT_PANEL_OPTIONS_OPENED;
+			event = ControllerEvent.PanelOptionsOpened;
 		} else {
-			event = EVENT_PANEL_OPTIONS_CLOSED;
+			event = ControllerEvent.PanelOptionsClosed;
 		}
-		Controller.dispatchEvent(new CustomEvent(event));
+		Controller.dispatchEvent(event);
 	}
 
 	get htmlElement() {

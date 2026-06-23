@@ -1,18 +1,17 @@
 import { bugReportSVG, manufacturingSVG, moreHorizSVG, patreonLogoSVG, pauseSVG, photoCameraSVG, playSVG, print3dSVG, settingsSVG, shareSVG, viewInArSVG } from 'harmony-svg';
-import { createElement, hide, show } from 'harmony-ui';
 import { JSONObject } from 'harmony-types';
+import { createElement, hide, show } from 'harmony-ui';
 import activities from '../../json/activities.json';
 import { ENABLE_PATREON_POWERUSER } from '../bundleoptions';
-import { Controller } from '../controller';
-import { EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ACTIVITY_MODIFIERS, EVENT_TOOLBAR_ACTIVITY_SELECTED, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_OPTIONS, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from '../controllerevents';
+import { Controller, ControllerEvent } from '../controller';
 
-function createButton(svg: string, eventName: string, i18n: string) {
+function createButton(svg: string, event: ControllerEvent, i18n: string) {
 	return createElement('div', {
 		class: 'toolbar-button',
 		i18n: { title: i18n, },
 		innerHTML: svg,
 		events: {
-			click: () => Controller.dispatchEvent(new CustomEvent(eventName)),
+			click: () => Controller.dispatchEvent(event, {}),
 		},
 	});
 }
@@ -31,12 +30,12 @@ export class Toolbar {
 	}
 
 	#initListeners() {
-		Controller.addEventListener(EVENT_TOOLBAR_PLAY, () => {
+		Controller.addEventListener(ControllerEvent.ToolbarPlay, () => {
 			hide(this.#htmlPlay);
 			show(this.#htmlPause);
 
 		});
-		Controller.addEventListener(EVENT_TOOLBAR_PAUSE, () => {
+		Controller.addEventListener(ControllerEvent.ToolbarPause, () => {
 			show(this.#htmlPlay);
 			hide(this.#htmlPause);
 		});
@@ -85,17 +84,17 @@ export class Toolbar {
 				createElement('div', {
 					class: 'toolbar-buttons',
 					childs: [
-						this.#htmlPlay = createButton(playSVG, EVENT_TOOLBAR_PLAY, '#play'),
-						this.#htmlPause = createButton(pauseSVG, EVENT_TOOLBAR_PAUSE, '#pause'),
-						createButton(shareSVG, EVENT_TOOLBAR_SHARE, '#share_current_loadout'),
-						createButton(photoCameraSVG, EVENT_TOOLBAR_PICTURE, '#save_picture'),
-						this.#htmlExportFBXButton = createButton(viewInArSVG, EVENT_TOOLBAR_EXPORT_FBX, '#export_fbx'),
-						this.#htmlExportOBJButton = createButton(print3dSVG, EVENT_TOOLBAR_EXPORT_OBJ, '#export_for_3d_print'),
-						createButton(bugReportSVG, EVENT_TOOLBAR_BUG, '#report_bug'),
-						createButton(settingsSVG, EVENT_TOOLBAR_OPTIONS, '#options'),
-						createButton(manufacturingSVG, EVENT_TOOLBAR_ADVANCED_OPTIONS, '#advanced_options'),
-						createButton(moreHorizSVG, EVENT_TOOLBAR_ABOUT, '#about'),
-						createButton(patreonLogoSVG, EVENT_TOOLBAR_PATREON, '#patreon'),
+						this.#htmlPlay = createButton(playSVG, ControllerEvent.ToolbarPlay, '#play'),
+						this.#htmlPause = createButton(pauseSVG, ControllerEvent.ToolbarPause, '#pause'),
+						createButton(shareSVG, ControllerEvent.ToolbarShare, '#share_current_loadout'),
+						createButton(photoCameraSVG, ControllerEvent.ToolbarPicture, '#save_picture'),
+						this.#htmlExportFBXButton = createButton(viewInArSVG, ControllerEvent.ToolbarExportFbx, '#export_fbx'),
+						this.#htmlExportOBJButton = createButton(print3dSVG, ControllerEvent.ToolbarExportObj, '#export_for_3d_print'),
+						createButton(bugReportSVG, ControllerEvent.ToolbarBug, '#report_bug'),
+						createButton(settingsSVG, ControllerEvent.ToolbarOptions, '#options'),
+						createButton(manufacturingSVG, ControllerEvent.ToolbarAdvancedOptions, '#advanced_options'),
+						createButton(moreHorizSVG, ControllerEvent.ToolbarAbout, '#about'),
+						createButton(patreonLogoSVG, ControllerEvent.ToolbarPatreon, '#patreon'),
 					]
 				}),
 			],
@@ -129,11 +128,11 @@ export class Toolbar {
 	}
 
 	#handleActivitySelected(activity: string) {
-		Controller.dispatchEvent(new CustomEvent(EVENT_TOOLBAR_ACTIVITY_SELECTED, { detail: activity }));
+		Controller.dispatchEvent(ControllerEvent.ToolbarActivitySelected, { detail: activity });
 	}
 
 	#handleActivityModifiersChanged(modifiers: string) {
-		Controller.dispatchEvent(new CustomEvent(EVENT_TOOLBAR_ACTIVITY_MODIFIERS, { detail: modifiers.split(' ') }));
+		Controller.dispatchEvent(ControllerEvent.ToolbarActivityModifiers, { detail: modifiers.split(' ') });
 	}
 
 	setActivity(activity: string) {

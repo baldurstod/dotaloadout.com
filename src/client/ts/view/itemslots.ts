@@ -1,8 +1,7 @@
 import { closeSVG } from 'harmony-svg';
 import { createElement, display, hide, show } from 'harmony-ui';
 import { DOTA2_DEFAULT_ECON_URL, DOTA2_ECON_URL } from '../constants';
-import { Controller } from '../controller';
-import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_REMOVE_ITEM, EVENT_SLOT_CLICK, PersonaChanged, SlotClick } from '../controllerevents';
+import { Controller, ControllerEvent, PersonaChanged } from '../controller';
 import { Character } from '../loadout/characters/character';
 import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { Item } from '../loadout/items/item';
@@ -17,11 +16,11 @@ export class ItemSlots {
 	#currentCharacter: Character | null = null;
 
 	constructor() {
-		Controller.addEventListener(EVENT_CHARACTER_ITEM_ADDED, event => this.#handleItemAdded((event as CustomEvent).detail));
-		Controller.addEventListener(EVENT_CHARACTER_PERSONA_CHANGED, event => this.#handlePersonaChanged((event as CustomEvent<PersonaChanged>).detail));
+		Controller.addEventListener(ControllerEvent.CharacterItemAdded, event => this.#handleItemAdded((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent<PersonaChanged>).detail));
 
-		Controller.addEventListener(EVENT_CLOSE_ITEM_LIST, () => hide(this.#htmlElement));
-		Controller.addEventListener(EVENT_OPEN_ITEM_LIST, () => show(this.#htmlElement));
+		Controller.addEventListener(ControllerEvent.CloseItemList, () => hide(this.#htmlElement));
+		Controller.addEventListener(ControllerEvent.OpenItemList, () => show(this.#htmlElement));
 	}
 
 	#initHTML() {
@@ -43,7 +42,7 @@ export class ItemSlots {
 						}),
 					],
 					events: {
-						click: () => Controller.dispatchEvent(new CustomEvent(EVENT_OPEN_CHARACTER_SELECTOR)),
+						click: () => Controller.dispatchEvent<void>(ControllerEvent.OpenCharacterSelector),
 					},
 				}),
 				this.#htmlSlotsContainer = createElement('div', { class: 'item-slots-list' }),
@@ -98,20 +97,19 @@ export class ItemSlots {
 							innerHTML: closeSVG,
 							events: {
 								click: (event: Event) => {
-									Controller.dispatchEvent(new CustomEvent(EVENT_REMOVE_ITEM, {
+									Controller.dispatchEvent(ControllerEvent.SlotClick, {
 										detail: {
 											character: this.#currentCharacter,
 											itemID: Number(htmlItemSlot.getAttribute('item-id')),
 										}
-									}));
+									});
 									event.stopPropagation();
 								}
-								//click: () => console.log(htmlItemSlot.getAttribute('item-id'))//Controller.dispatchEvent(new CustomEvent(EVENT_SLOT_CLICK, { detail: itemSlot.SlotName })),
 							},
 						}),
 					],
 					events: {
-						click: () => Controller.dispatchEvent(new CustomEvent<SlotClick>(EVENT_SLOT_CLICK, { detail: itemSlot.SlotName })),
+						click: () => Controller.dispatchEvent(ControllerEvent.SlotClick, { detail: itemSlot.SlotName }),
 					},
 				});
 				if ((itemSlot?.DisplayInLoadout ?? '1') == '0') {

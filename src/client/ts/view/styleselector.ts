@@ -1,6 +1,5 @@
 import { createElement } from 'harmony-ui';
-import { Controller } from '../controller';
-import { CharacterSelected, EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_SELECTED } from '../controllerevents';
+import { CharacterSelected, Controller, ControllerEvent } from '../controller';
 import { CharacterManager } from '../loadout/characters/charactermanager';
 import { Item } from '../loadout/items/item';
 
@@ -9,9 +8,9 @@ export class StyleSelector {
 	#items = new Map<Item, HTMLElement>();
 
 	constructor() {
-		Controller.addEventListener(EVENT_CHARACTER_ITEM_ADDED, event => this.#addItem((event as CustomEvent<Item>).detail));
-		Controller.addEventListener(EVENT_CHARACTER_ITEM_REMOVED, event => this.#removeItem((event as CustomEvent<Item>).detail));
-		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
+		Controller.addEventListener(ControllerEvent.CharacterItemAdded, event => this.#addItem((event as CustomEvent<Item>).detail));
+		Controller.addEventListener(ControllerEvent.CharacterItemRemoved, event => this.#removeItem((event as CustomEvent<Item>).detail));
+		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
 	#addItem(item: Item) {

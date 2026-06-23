@@ -1,6 +1,7 @@
 import { AmbientLight, CameraProjection, Graphics, Group, MergeRepository, ObjExporter, PointLight, Repositories, Source2ModelManager, Source2ParticleManager, WebRepository, exportToBinaryFBX, stringToVec3 } from 'harmony-3d';
 import { NotificationType, OptionsManager, OptionsManagerEvents, ShortcutHandler, addNotification, saveFile } from 'harmony-browser-utils';
 import { I18n, createElement, createShadowRoot, documentStyle, hide, shadowRootStyle, show } from 'harmony-ui';
+import { setTimeoutPromise } from 'harmony-utils';
 import applicationCSS from '../css/application.css';
 import characterSelectorCSS from '../css/characterselector.css';
 import export3dPopoverCSS from '../css/export3dpopover.css';
@@ -16,9 +17,13 @@ import styleSelectorCSS from '../css/styleselector.css';
 import toolbarCSS from '../css/toolbar.css';
 import varsCSS from '../css/vars.css';
 import viewerCSS from '../css/viewer.css';
+import english from '../json/i18n/english.json';
+import french from '../json/i18n/french.json';
+import optionsmanager from '../json/optionsmanager.json';
+import { ENABLE_PATREON_BASE, ENABLE_PATREON_POWERUSER, PATREON_IS_LOGGED, PRODUCTION } from './bundleoptions';
 import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
-import { Controller } from './controller';
-import { EVENT_CHARACTERS_LOADED, EVENT_CHARACTER_SELECTED, EVENT_CLOSE_ITEM_LIST, EVENT_EXPORT_OBJ, EVENT_OPEN_CHARACTER_SELECTOR, EVENT_OPEN_ITEM_LIST, EVENT_PANEL_OPTIONS_CLOSED, EVENT_PANEL_OPTIONS_OPENED, EVENT_RESET_CAMERA, EVENT_TOOLBAR_ABOUT, EVENT_TOOLBAR_ADVANCED_OPTIONS, EVENT_TOOLBAR_BUG, EVENT_TOOLBAR_EXPORT_FBX, EVENT_TOOLBAR_EXPORT_OBJ, EVENT_TOOLBAR_PATREON, EVENT_TOOLBAR_PAUSE, EVENT_TOOLBAR_PICTURE, EVENT_TOOLBAR_PLAY, EVENT_TOOLBAR_SHARE } from './controllerevents';
+import { Controller, ControllerEvent } from './controller';
+import { GOOGLE_ANALYTICS_ID } from './googleconstants';
 import { CharacterManager, LoadoutJSON } from './loadout/characters/charactermanager';
 import { MarketPrice } from './loadout/marketprice';
 import { loadoutCamera, loadoutColorBackground, loadoutScene } from './loadout/scene';
@@ -26,12 +31,14 @@ import { showAboutLayer, showBugNotification } from './misc/about';
 import { hexToRgb } from './utils/hextorgb';
 import { AdPanel } from './view/adpanel';
 import { CharacterSelector } from './view/characterselector';
+import { Export3DPopover } from './view/export3dpopover';
 import { ItemList } from './view/itemlist';
 import { ItemSlots } from './view/itemslots';
 import { MarketPrices } from './view/marketprices';
 import { Options } from './view/options';
 import { StyleSelector } from './view/styleselector';
 import { Toolbar } from './view/toolbar';
+import { UnitSelector } from './view/unitselector';
 import { Viewer } from './view/viewer';
 
 documentStyle(htmlCSS);
@@ -49,15 +56,6 @@ documentStyle(marketPricesCSS);
 documentStyle(itemSlotsCSS);
 documentStyle(itemListItemCSS);
 documentStyle(itemListCSS);*/
-
-import { setTimeoutPromise } from 'harmony-utils';
-import english from '../json/i18n/english.json';
-import french from '../json/i18n/french.json';
-import optionsmanager from '../json/optionsmanager.json';
-import { ENABLE_PATREON_BASE, ENABLE_PATREON_POWERUSER, PATREON_IS_LOGGED, PRODUCTION } from './bundleoptions';
-import { GOOGLE_ANALYTICS_ID } from './googleconstants';
-import { Export3DPopover } from './view/export3dpopover';
-import { UnitSelector } from './view/unitselector';
 
 class Application {
 	#appAdPanel = new AdPanel();
@@ -172,28 +170,28 @@ class Application {
 	#initListeners() {
 		window.addEventListener('beforeunload', () => this.#beforeUnload());
 
-		Controller.addEventListener(EVENT_CHARACTERS_LOADED, () => this.#appCharacterSelector.show());
-		Controller.addEventListener(EVENT_OPEN_CHARACTER_SELECTOR, () => this.#appCharacterSelector.show());
-		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#characterSelected((event as CustomEvent).detail.characterId));
+		Controller.addEventListener(ControllerEvent.CharactersLoaded, () => this.#appCharacterSelector.show());
+		Controller.addEventListener(ControllerEvent.OpenCharacterSelector, () => this.#appCharacterSelector.show());
+		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#characterSelected((event as CustomEvent).detail.characterId));
 
-		Controller.addEventListener(EVENT_TOOLBAR_PLAY, () => Graphics.speed = 1.0);
-		Controller.addEventListener(EVENT_TOOLBAR_PAUSE, () => Graphics.speed = 0.0);
-		Controller.addEventListener(EVENT_TOOLBAR_SHARE, () => this.#shareLoadout());
-		Controller.addEventListener(EVENT_TOOLBAR_PICTURE, () => this.#savePicture());
-		Controller.addEventListener(EVENT_TOOLBAR_EXPORT_FBX, () => this.#exportToFBX());
-		Controller.addEventListener(EVENT_TOOLBAR_EXPORT_OBJ, () => this.#export3D());
+		Controller.addEventListener(ControllerEvent.ToolbarPlay, () => Graphics.speed = 1.0);
+		Controller.addEventListener(ControllerEvent.ToolbarPause, () => Graphics.speed = 0.0);
+		Controller.addEventListener(ControllerEvent.ToolbarShare, () => this.#shareLoadout());
+		Controller.addEventListener(ControllerEvent.ToolbarPicture, () => this.#savePicture());
+		Controller.addEventListener(ControllerEvent.ToolbarExportFbx, () => this.#exportToFBX());
+		Controller.addEventListener(ControllerEvent.ToolbarExportObj, () => this.#export3D());
 		if (ENABLE_PATREON_POWERUSER) {
-			Controller.addEventListener(EVENT_EXPORT_OBJ, () => this.#export3D2());
+			Controller.addEventListener(ControllerEvent.ExportObj, () => this.#export3D2());
 		}
-		Controller.addEventListener(EVENT_TOOLBAR_ABOUT, () => showAboutLayer());
-		Controller.addEventListener(EVENT_TOOLBAR_BUG, () => showBugNotification());
-		Controller.addEventListener(EVENT_TOOLBAR_PATREON, () => this.#handlePatreonClick());
+		Controller.addEventListener(ControllerEvent.ToolbarAbout, () => showAboutLayer());
+		Controller.addEventListener(ControllerEvent.ToolbarBug, () => showBugNotification());
+		Controller.addEventListener(ControllerEvent.ToolbarPatreon, () => this.#handlePatreonClick());
 
-		Controller.addEventListener(EVENT_PANEL_OPTIONS_OPENED, () => Controller.dispatchEvent(new CustomEvent(EVENT_CLOSE_ITEM_LIST)));
-		Controller.addEventListener(EVENT_PANEL_OPTIONS_CLOSED, () => Controller.dispatchEvent(new CustomEvent(EVENT_OPEN_ITEM_LIST)));
-		Controller.addEventListener(EVENT_TOOLBAR_ADVANCED_OPTIONS, () => OptionsManager.showOptionsManager());
+		Controller.addEventListener(ControllerEvent.PanelOptionsOpened, () => Controller.dispatchEvent(ControllerEvent.CloseItemList));
+		Controller.addEventListener(ControllerEvent.PanelOptionsClosed, () => Controller.dispatchEvent(ControllerEvent.OpenItemList));
+		Controller.addEventListener(ControllerEvent.ToolbarAdvancedOptions, () => OptionsManager.showOptionsManager());
 
-		Controller.addEventListener(EVENT_RESET_CAMERA, () => this.#resetCamera());
+		Controller.addEventListener(ControllerEvent.ResetCamera, () => this.#resetCamera());
 	}
 
 	#initHTML() {

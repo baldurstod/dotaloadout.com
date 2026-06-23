@@ -1,7 +1,7 @@
 import { customFetch } from 'harmony-3d';
 import { JSONObject } from 'harmony-types';
 import { DOTA2_REPOSITORY, ITEM_GAME_PATH } from '../constants';
-import { Controller } from '../controller';
+import { Controller, ControllerEvent } from '../controller';
 
 class LoadoutClass {// TODO: turn into a static class
 	static #instance: LoadoutClass;
@@ -36,7 +36,7 @@ class LoadoutClass {// TODO: turn into a static class
 				if (json) {
 					this.#json = json;
 					//this.#loadItems();
-					Controller.dispatchEvent(new CustomEvent('itemsloaded'));
+					Controller.dispatchEvent(ControllerEvent.ItemsLoaded);
 				}
 				resolve(true);
 			});

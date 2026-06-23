@@ -1,6 +1,5 @@
 import { createElement, display, hide, show } from 'harmony-ui';
-import { Controller } from '../controller';
-import { EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CLOSE_ITEM_LIST, EVENT_ITEM_CLICK, EVENT_OPEN_ITEM_LIST, EVENT_SLOT_CLICK, SlotClick } from '../controllerevents';
+import { Controller, ControllerEvent, SlotClick } from '../controller';
 import { Character } from '../loadout/characters/character';
 import { ItemManager } from '../loadout/items/itemmanager';
 import { ItemTemplate } from '../loadout/items/itemtemplate';
@@ -24,16 +23,16 @@ export class ItemList {
 	#filters: Filters = {};
 
 	constructor() {
-		Controller.addEventListener(EVENT_SLOT_CLICK, event => {
+		Controller.addEventListener(ControllerEvent.SlotClick, event => {
 			this.#setSlotFilter((event as CustomEvent<SlotClick>).detail);
 			if (this.#htmlItemsSlotFilter) {
 				this.#htmlItemsSlotFilter.value = (event as CustomEvent<SlotClick>).detail;
 			}
 		});
-		Controller.addEventListener(EVENT_CLOSE_ITEM_LIST, () => hide(this.#htmlElement));
-		Controller.addEventListener(EVENT_OPEN_ITEM_LIST, () => show(this.#htmlElement));
+		Controller.addEventListener(ControllerEvent.CloseItemList, () => hide(this.#htmlElement));
+		Controller.addEventListener(ControllerEvent.OpenItemList, () => show(this.#htmlElement));
 
-		Controller.addEventListener(EVENT_CHARACTER_PERSONA_CHANGED, event => this.#handlePersonaChanged((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent).detail));
 	}
 
 	#initHTML() {
@@ -173,7 +172,7 @@ export class ItemList {
 				}),
 			],
 			events: {
-				click: () => Controller.dispatchEvent(new CustomEvent(EVENT_ITEM_CLICK, { detail: { character: character, itemId: itemTemplate.id } })),
+				click: () => Controller.dispatchEvent(ControllerEvent.ItemClick, { detail: { character: character, itemId: itemTemplate.id } }),
 			}
 		});
 		this.#htmlItems.set(itemTemplate, htmlItemSlot);

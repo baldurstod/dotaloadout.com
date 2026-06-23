@@ -1,8 +1,7 @@
 import { OptionsManager } from 'harmony-browser-utils';
 import { createElement, createShadowRoot, HarmonySwitchChange, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
 import unitSelectorCSS from '../../css/unitselector.css';
-import { Controller } from '../controller';
-import { CharacterSelected, EVENT_CHARACTER_SELECTED, EVENT_CHARACTER_UNITS_CHANGED } from '../controllerevents';
+import { CharacterSelected, Controller, ControllerEvent } from '../controller';
 import { Character } from '../loadout/characters/character';
 import { CharacterManager } from '../loadout/characters/charactermanager';
 import { Units } from '../loadout/misc/units';
@@ -14,8 +13,8 @@ export class UnitSelector {
 	#items = new Map();
 
 	constructor() {
-		Controller.addEventListener(EVENT_CHARACTER_UNITS_CHANGED, () => this.#refreshUnits());
-		Controller.addEventListener(EVENT_CHARACTER_SELECTED, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
+		Controller.addEventListener(ControllerEvent.CharacterUnitsChanged, () => this.#refreshUnits());
+		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
 	#refreshUnits() {

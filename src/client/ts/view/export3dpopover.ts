@@ -1,7 +1,6 @@
 import { OptionsManager } from 'harmony-browser-utils/';
 import { createElement, defineHarmonySwitch, HTMLHarmonySwitchElement, show } from 'harmony-ui';
-import { Controller } from '../controller';
-import { EVENT_EXPORT_OBJ } from '../controllerevents';
+import { Controller, ControllerEvent } from '../controller';
 
 export class Export3DPopover {
 	#htmlElement?: HTMLElement;
@@ -52,7 +51,7 @@ export class Export3DPopover {
 					i18n: '#export_for_3d_print',
 					events: {
 						click: () => {
-							Controller.dispatchEvent(new CustomEvent(EVENT_EXPORT_OBJ));
+							Controller.dispatchEvent<void>(ControllerEvent.ExportObj);
 							this.#hide();
 						},
 					}

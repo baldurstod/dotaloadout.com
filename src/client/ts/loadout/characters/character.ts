@@ -3,8 +3,7 @@ import { Entity, Group, Source2ModelInstance, Source2ModelManager, stringToVec3 
 import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { JSONObject } from 'harmony-types';
 import { DEFAULT_ACTIVITY } from '../../constants';
-import { Controller } from '../../controller';
-import { EVENT_CHARACTER_ITEM_ADDED, EVENT_CHARACTER_ITEM_REMOVED, EVENT_CHARACTER_PERSONA_CHANGED, EVENT_CHARACTER_UNITS_CHANGED, PersonaChanged } from '../../controllerevents';
+import { Controller, ControllerEvent } from '../../controller';
 import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
 import { ItemTemplates } from '../items/itemtemplates';
@@ -158,7 +157,7 @@ export class Character {
 
 		this.#items.set(itemId, item);
 
-		Controller.dispatchEvent(new CustomEvent<Item>(EVENT_CHARACTER_ITEM_ADDED, { detail: item }));
+		Controller.dispatchEvent<Item>(ControllerEvent.CharacterItemAdded, { detail: item });
 
 		if (item.slot) {
 			this.#replaceSlot(item);
@@ -180,7 +179,7 @@ export class Character {
 	removeItem(itemId: string): void {
 		const item = this.#items.get(itemId);
 
-		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_ITEM_REMOVED, { detail: item }));
+		Controller.dispatchEvent<Item>(ControllerEvent.CharacterItemRemoved, { detail: item });
 
 		if (!item) {
 			return;
@@ -236,7 +235,7 @@ export class Character {
 			entity?.remove();
 		}
 		this.#units.clear();
-		Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_UNITS_CHANGED));
+		Controller.dispatchEvent<void>(ControllerEvent.CharacterUnitsChanged);
 	}
 
 	async processModifiers() {
@@ -422,7 +421,7 @@ export class Character {
 				model.setVisible((event as CustomEvent).detail.value[modifierAsset] ? undefined : false);
 			});
 
-			Controller.dispatchEvent(new CustomEvent(EVENT_CHARACTER_UNITS_CHANGED));
+			Controller.dispatchEvent<void>(ControllerEvent.CharacterUnitsChanged);
 
 		}
 		await this.#positionUnits();
@@ -495,7 +494,7 @@ export class Character {
 		for (const [_, item] of this.#items) {
 			item.setVisible(personaId == item.getPersonaId());
 		}
-		Controller.dispatchEvent(new CustomEvent<PersonaChanged>(EVENT_CHARACTER_PERSONA_CHANGED, { detail: personaId }));
+		Controller.dispatchEvent<number>(ControllerEvent.CharacterPersonaChanged, { detail: personaId });
 	}
 
 	async setActivity(activity: string) {

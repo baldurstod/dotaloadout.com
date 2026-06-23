@@ -1,7 +1,6 @@
 import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { createElement, hide, show } from 'harmony-ui';
-import { Controller } from '../controller';
-import { CharacterSelected, EVENT_CHARACTER_SELECTED } from '../controllerevents';
+import { CharacterSelected, Controller, ControllerEvent } from '../controller';
 import { CharacterTemplate } from '../loadout/characters/charactertemplate';
 import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { createCharacterElement } from './utils/createcharacterelement';
@@ -24,10 +23,10 @@ export class CharacterSelector {
 
 	constructor() {
 		this.#setFilterMethod(OptionsManager.getItem(FILTER_METHOD) as string);
-		OptionsManagerEvents.addEventListener(FILTER_METHOD, (event: Event) => this.#setFilterMethod((event as CustomEvent<OptionsManagerEvent>).detail.value as string));
+		OptionsManagerEvents.addEventListener(FILTER_METHOD, (event: Event) => this.#setFilterMethod((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
 
 		this.#setSortField(OptionsManager.getItem(SORT_FIELD) as string);
-		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: Event) => this.#setSortField((event as CustomEvent<OptionsManagerEvent>).detail.value as string));
+		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: Event) => this.#setSortField((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
 	}
 
 	#initHTML(): HTMLElement {
@@ -90,7 +89,7 @@ export class CharacterSelector {
 	}
 
 	#selectCharacter(characterId: string) {
-		Controller.dispatchEvent(new CustomEvent<CharacterSelected>(EVENT_CHARACTER_SELECTED, { detail: { characterId: characterId } }));
+		Controller.dispatchEvent<CharacterSelected>(ControllerEvent.CharacterSelected, { detail: { characterId: characterId } });
 		this.hide();
 	}
 

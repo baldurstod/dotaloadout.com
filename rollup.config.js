@@ -29,7 +29,6 @@ for (const buildOption of BUILD_OPTIONS) {
 			output: {
 				file: `./build/client/js/${buildOption.output}`,
 				format: 'esm',
-				sourcemap: isProduction,
 			},
 			plugins: [
 				replace({

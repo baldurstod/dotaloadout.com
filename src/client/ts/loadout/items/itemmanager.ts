@@ -1,6 +1,5 @@
 import { DOTA2_REPOSITORY, ITEM_GAME_PATH } from '../../constants';
-import { Controller } from '../../controller';
-import { EVENT_ITEMS_LOADED } from '../../controllerevents';
+import { Controller, ControllerEvent } from '../../controller';
 import { Units } from '../misc/units';
 import { MODIFIER_ENTITY_MODEL } from '../modifiers';
 import { ItemTemplates } from './itemtemplates';
@@ -36,7 +35,7 @@ export class ItemManager {
 				characterItems.add(String(item.id));
 			}
 
-			Controller.dispatchEvent(new CustomEvent(EVENT_ITEMS_LOADED, { detail: { characterId: characterId } }));
+			Controller.dispatchEvent(ControllerEvent.ItemsLoaded, { detail: { characterId: characterId } });
 			resolve(characterItems);
 		});
 
