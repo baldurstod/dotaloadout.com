@@ -118,7 +118,7 @@ export class CharacterManager {
 		} else {
 			character.bundleItem = null;
 			if (character.hasItem(itemId)) {
-				character.removeItem(itemId);
+				await character.removeItem(itemId);
 				const it = await ItemManager.getBaseItemId(character.id, item.slot);
 				if (it) {
 					await character.addItem(it);
@@ -132,7 +132,7 @@ export class CharacterManager {
 	}
 
 	static async #removeItem(character: Character, itemId: string) {
-		character?.removeItem(itemId);
+		await character?.removeItem(itemId);
 	}
 
 	static async #equipDefaultItems(character: Character, itemIds: Set<string>) {

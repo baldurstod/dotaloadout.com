@@ -160,7 +160,7 @@ export class Character {
 		Controller.dispatchEvent<Item>(ControllerEvent.CharacterItemAdded, { detail: item });
 
 		if (item.slot) {
-			this.#replaceSlot(item);
+			await this.#replaceSlot(item);
 		}
 
 		await this.#addChild(await item.getModel());
@@ -176,7 +176,7 @@ export class Character {
 		}
 	}
 
-	removeItem(itemId: string): void {
+	async removeItem(itemId: string): Promise<void> {
 		const item = this.#items.get(itemId);
 
 		Controller.dispatchEvent<Item>(ControllerEvent.CharacterItemRemoved, { detail: item });
@@ -187,13 +187,13 @@ export class Character {
 		item.remove();
 		this.#items.delete(itemId);
 		this.#itemsPerSlot.delete(item.slot);
-		this.processModifiers();
+		await this.processModifiers();
 	}
 
-	#replaceSlot(item: Item) {
+	async #replaceSlot(item: Item) {
 		const previousItem = this.#itemsPerSlot.get(item.slot);
 		if (previousItem) {
-			this.removeItem(previousItem.id);
+			await this.removeItem(previousItem.id);
 		}
 
 		this.#itemsPerSlot.set(item.slot, item);
