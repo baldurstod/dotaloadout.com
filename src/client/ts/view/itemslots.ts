@@ -97,10 +97,10 @@ export class ItemSlots {
 							innerHTML: closeSVG,
 							events: {
 								click: (event: Event) => {
-									Controller.dispatchEvent(ControllerEvent.SlotClick, {
+									Controller.dispatchEvent(ControllerEvent.RemoveItem, {
 										detail: {
 											character: this.#currentCharacter,
-											itemID: Number(htmlItemSlot.getAttribute('item-id')),
+											itemID: htmlItemSlot.getAttribute('item-id'),
 										}
 									});
 									event.stopPropagation();

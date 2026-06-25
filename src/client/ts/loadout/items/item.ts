@@ -10,10 +10,10 @@ import { ItemTemplate } from './itemtemplate';
 
 export class Item {
 	#template: ItemTemplate;
-	#character: Character;
+	readonly #character: Character;
 	#model?: Source2ModelInstance | null = null;
-	#childEntities = new Set<Entity>();
-	#extraEntities = new Set<Entity>();
+	readonly #childEntities = new Set<Entity>();
+	readonly #extraEntities = new Set<Entity>();
 	#visible?: boolean;
 	#alternateModelName?: string;
 	#style = 0;
