@@ -187,6 +187,7 @@ export class Character {
 		item.remove();
 		this.#items.delete(itemId);
 		this.#itemsPerSlot.delete(item.slot);
+		this.processModifiers();
 	}
 
 	#replaceSlot(item: Item) {
