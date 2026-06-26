@@ -223,8 +223,12 @@ export class ItemList {
 	#matchFilter(itemTemplate: ItemTemplate) {
 		const slotFilter = this.#filters.slot;
 		if (slotFilter) {
-			if (itemTemplate.slot != slotFilter) {
+			if (itemTemplate.slot !== slotFilter) {
 				return false;
+			}
+			if (slotFilter === 'persona_selector') {
+				// Disregard any other filter for persona_selector
+				return true;
 			}
 		}
 
