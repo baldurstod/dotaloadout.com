@@ -48,6 +48,15 @@ export type PersonaChanged = number;
 
 export type SlotClick = string;
 
+export type ToolbarActivitySelected = string;
+
+export type ToolbarActivityModifiers = string[];
+
+export type RemoveItem = {
+	character: Character,
+	itemID: string,
+};
+
 export class Controller {
 	static readonly #eventTarget = new EventTarget();
 

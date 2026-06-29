@@ -2,12 +2,12 @@ import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { JSONObject } from 'harmony-types';
 import world from '../../../json/datas/world.json';
 import { DOTA2_HEROES_URL } from '../../constants';
-import { Controller, ControllerEvent, ItemClick } from '../../controller';
+import { CharacterSelected, Controller, ControllerEvent, ItemClick, RemoveItem, ToolbarActivityModifiers, ToolbarActivitySelected } from '../../controller';
 import { Item } from '../items/item';
 import { ItemManager } from '../items/itemmanager';
 import { ItemTemplates } from '../items/itemtemplates';
 import { MarketPrice } from '../marketprice';
-import { Units } from '../misc/units';
+import { Unit, Units } from '../misc/units';
 import { Character } from './character';
 import { CharacterTemplates } from './charactertemplates';
 
@@ -19,28 +19,31 @@ export class CharacterManager {
 	static #currentCharacter?: Character;
 
 	static {
-		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#characterSelected((event as CustomEvent).detail.characterId));
-		Controller.addEventListener(ControllerEvent.ItemClick, event => this.#handleItemClick((event as CustomEvent<ItemClick>).detail));
-		Controller.addEventListener(ControllerEvent.RemoveItem, event => this.#removeItem((event as CustomEvent).detail.character, (event as CustomEvent).detail.itemID));
-		Controller.addEventListener(ControllerEvent.ToolbarActivitySelected, event => this.#currentCharacter?.setActivity((event as CustomEvent).detail));
-		Controller.addEventListener(ControllerEvent.ToolbarActivityModifiers, event => this.#currentCharacter?.setModifiers((event as CustomEvent).detail));
-		Controller.addEventListener(ControllerEvent.ChangeAnimFrame, (event: Event) => { this.#changeAnimFrame((event as CustomEvent<number>).detail) });
+		Controller.addEventListener(ControllerEvent.CharacterSelected, event => { void this.#characterSelected((event as CustomEvent<CharacterSelected>).detail.characterId) });
+		Controller.addEventListener(ControllerEvent.ItemClick, event => { void this.#handleItemClick((event as CustomEvent<ItemClick>).detail) });
+		Controller.addEventListener(ControllerEvent.RemoveItem, event => { void this.#removeItem((event as CustomEvent<RemoveItem>).detail.character, (event as CustomEvent<RemoveItem>).detail.itemID) });
+		Controller.addEventListener(ControllerEvent.ToolbarActivitySelected, event => { void this.#currentCharacter?.setActivity((event as CustomEvent<ToolbarActivitySelected>).detail) });
+		Controller.addEventListener(ControllerEvent.ToolbarActivityModifiers, event => { void this.#currentCharacter?.setModifiers((event as CustomEvent<ToolbarActivityModifiers>).detail) });
+		Controller.addEventListener(ControllerEvent.ChangeAnimFrame, (event: Event) => { void this.#changeAnimFrame((event as CustomEvent<number>).detail) });
 
+
+		/* eslint-disable @typescript-eslint/no-misused-promises */
 		OptionsManagerEvents.addEventListener('app.characters.desaturate', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.items.desaturate', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.loadout.pedestalmodel', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.showpedestal', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.showmetamorphosis', () => this.#currentCharacter?.processModifiers());
 		OptionsManagerEvents.addEventListener('app.showeffects', () => this.#currentCharacter?.processModifiers());
+		/* eslint-enable @typescript-eslint/no-misused-promises */
 	}
 
-	static async loadCharacters() {
+	static async loadCharacters(): Promise<false | undefined> {
 		const response = await fetch(DOTA2_HEROES_URL);
 		if (!response) {
 			return false;
 		}
 
-		const json = await response.json();
+		const json = await response.json() as JSONObject;
 		if (!json) {
 			return false;
 		}
@@ -50,7 +53,7 @@ export class CharacterManager {
 			return false;
 		}
 
-		Units.addUnits(json.units);
+		Units.addUnits(json.units as Record<string, Unit>);
 		Units.addUnits({
 			radiant_courier: { name: 'Radiant courier' },
 			dire_courier: { name: 'Dire courier' },
@@ -58,7 +61,7 @@ export class CharacterManager {
 			dire_courier_flying: { name: 'Dire flying courier' },
 		});
 
-		for (const character of charactersJSON) {
+		for (const character of charactersJSON as JSONObject[]) {
 			character['is_hero'] = true;
 			CharacterTemplates.addTemplate(character);
 		}
@@ -92,11 +95,11 @@ export class CharacterManager {
 		character.setVisible(true);
 
 		await this.#equipDefaultItems(character, await ItemManager.getItems(characterId));
-		CharacterManager.refreshMarketPrices();
+		await CharacterManager.refreshMarketPrices();
 		return character;
 	}
 
-	static async #handleItemClick(detail: ItemClick) {
+	static async #handleItemClick(detail: ItemClick): Promise<void> {
 		const character = detail.character;
 		const itemId = detail.itemId;
 		const item = ItemTemplates.getTemplate(itemId);
@@ -127,17 +130,17 @@ export class CharacterManager {
 				await character.addItem(itemId);
 			}
 		}
-		CharacterManager.refreshMarketPrices();
-		character.processModifiers();
+		await CharacterManager.refreshMarketPrices();
+		await character.processModifiers();
 	}
 
-	static async #removeItem(character: Character, itemId: string) {
+	static async #removeItem(character: Character, itemId: string): Promise<void> {
 		await character?.removeItem(itemId);
 	}
 
-	static async #equipDefaultItems(character: Character, itemIds: Set<string>) {
+	static async #equipDefaultItems(character: Character, itemIds: Set<string>): Promise<void> {
 		if (!OptionsManager.getItem('app.characters.equipdefaultitems')) {
-			character.processModifiers();
+			await character.processModifiers();
 			return;
 		}
 
@@ -154,11 +157,11 @@ export class CharacterManager {
 				}
 			}
 		}
-		character.processModifiers();
+		await character.processModifiers();
 	}
 
-	static async refreshMarketPrices() {
-		let currentCharacter = this.#currentCharacter;
+	static async refreshMarketPrices(): Promise<void> {
+		const currentCharacter = this.#currentCharacter;
 		if (!currentCharacter) {
 			return
 		}
@@ -166,7 +169,7 @@ export class CharacterManager {
 		const items = currentCharacter.getItemsWithBundle();
 		const prices = new Map<Item, string>();
 		for (const [itemId, item] of items) {
-			let price = await MarketPrice.getPrice(itemId);
+			const price = await MarketPrice.getPrice(itemId);
 			if (price) {
 				prices.set(item, price);
 			}
@@ -177,7 +180,7 @@ export class CharacterManager {
 	static exportLoadout(): LoadoutJSON {
 		const loadoutJSON: LoadoutJSON = { characters: [] };
 
-		for (let [_, character] of this.#characters) {
+		for (const [, character] of this.#characters) {
 			const loadout = character.exportLoadout();
 			if (loadout) {
 				loadoutJSON.characters.push(loadout);
@@ -186,20 +189,20 @@ export class CharacterManager {
 		return loadoutJSON;
 	}
 
-	static async importLoadout(loadoutJSON: JSONObject) {
+	static async importLoadout(loadoutJSON: JSONObject): Promise<void> {
 		if (loadoutJSON.characters) {
-			for (let character of loadoutJSON.characters as JSONObject[]) {
+			for (const character of loadoutJSON.characters as JSONObject[]) {
 				await this.#importLoadoutCharacter(character);
 			}
 		}
 	}
 
-	static async #importLoadoutCharacter(characterJSON: JSONObject) {
+	static async #importLoadoutCharacter(characterJSON: JSONObject): Promise<void> {
 		const character = await this.#characterSelected(characterJSON.npc as string);
 		if (character) {
-			character.importLoadout(characterJSON);
+			await character.importLoadout(characterJSON);
 			character.setVisible(true);
-			character.processModifiers();
+			await character.processModifiers();
 		}
 	}
 

@@ -5,8 +5,10 @@ import { CharacterTemplate } from '../loadout/characters/charactertemplate';
 import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { createCharacterElement } from './utils/createcharacterelement';
 
-const FILTER_METHOD = 'app.heroselector.filter.method'
-const SORT_FIELD = 'app.heroselector.sort.field'
+const FILTER_METHOD = 'app.heroselector.filter.method';
+const SORT_FIELD = 'app.heroselector.sort.field';
+
+export type HeroSortField = 'name' | 'order' | 'female';
 
 export class CharacterSelector {
 	#htmlElement?: HTMLElement;
@@ -18,15 +20,15 @@ export class CharacterSelector {
 	#htmlFilterName?: HTMLInputElement;
 	#initialized = false;
 	#css = createElement('style');
-	#sortField = '';
+	#sortField: HeroSortField = 'name';
 	#htmlSortField?: HTMLSelectElement;
 
 	constructor() {
 		this.#setFilterMethod(OptionsManager.getItem(FILTER_METHOD) as string);
 		OptionsManagerEvents.addEventListener(FILTER_METHOD, (event: Event) => this.#setFilterMethod((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
 
-		this.#setSortField(OptionsManager.getItem(SORT_FIELD) as string);
-		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: Event) => this.#setSortField((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
+		this.#setSortField(OptionsManager.getItem(SORT_FIELD) as HeroSortField);
+		OptionsManagerEvents.addEventListener(SORT_FIELD, (event: Event) => this.#setSortField((event as CustomEvent<OptionsManagerEvent<string>>).detail.value as HeroSortField));
 	}
 
 	#initHTML(): HTMLElement {
@@ -152,7 +154,7 @@ export class CharacterSelector {
 		}
 	}
 
-	#setSortField(sortField: string) {
+	#setSortField(sortField: HeroSortField) {
 		if (this.#htmlSortField) {
 			this.#htmlSortField.value = sortField;
 		}

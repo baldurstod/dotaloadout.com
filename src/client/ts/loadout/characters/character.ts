@@ -1,6 +1,6 @@
 import { vec3 } from 'gl-matrix';
 import { Entity, Group, Source2ModelInstance, Source2ModelManager, stringToVec3 } from 'harmony-3d';
-import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
+import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils/';
 import { JSONObject } from 'harmony-types';
 import { DEFAULT_ACTIVITY } from '../../constants';
 import { Controller, ControllerEvent } from '../../controller';
@@ -10,7 +10,7 @@ import { ItemTemplates } from '../items/itemtemplates';
 import { Units } from '../misc/units';
 import { MODIFIER_ACTIVITY, MODIFIER_ARCANA_LEVEL, MODIFIER_BODYGROUP_VISIBILITY, MODIFIER_COURIER, MODIFIER_COURIER_FLYING, MODIFIER_ENTITY_MODEL, MODIFIER_HERO_MODEL_CHANGE, MODIFIER_MODEL, MODIFIER_MODEL_SKIN, MODIFIER_PARTICLE, MODIFIER_PERSONA, MODIFIER_PET, MODIFIER_PORTRAIT_BACKGROUND_MODEL } from '../modifiers';
 import { loadoutScene } from '../scene';
-import { CharacterTemplate } from './charactertemplate';
+import { CharacterSlot, CharacterTemplate } from './charactertemplate';
 import { CharacterTemplates } from './charactertemplates';
 
 export class Character {
@@ -40,7 +40,7 @@ export class Character {
 		this.#characterId = characterId;
 		this.#template = CharacterTemplates.getTemplate(characterId)!;
 		this.#group.name = this.name;
-		OptionsManagerEvents.addEventListener('app.units.display', event => this.#positionUnits(event as CustomEvent));
+		OptionsManagerEvents.addEventListener('app.units.display', event => { this.#positionUnits(event as CustomEvent) });
 	}
 
 	async getModel(): Promise<Source2ModelInstance | null> {
@@ -50,6 +50,8 @@ export class Character {
 		if (this.#modelPromise) {
 			return this.#modelPromise;
 		}
+
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		this.#modelPromise = new Promise(async resolve => {
 			this.#model = await Source2ModelManager.createInstance('dota2', this.getModelName(), true);
 			this.#group.addChild(this.#model);
@@ -60,14 +62,14 @@ export class Character {
 		return this.#modelPromise;
 	}
 
-	async playSequence() {
+	async playSequence(): Promise<void> {
 		const sequenceName = this.#activity;
 
-		for (const [_, item] of this.#items) {
-			item.playSequence(sequenceName);
+		for (const [, item] of this.#items) {
+			await item.playSequence(sequenceName);
 		}
 
-		for (const [_, entity] of this.#units) {
+		for (const [, entity] of this.#units) {
 			entity?.playSequence?.(sequenceName);
 		}
 
@@ -90,33 +92,33 @@ export class Character {
 		this.#metamorphosisModel?.playSequence(sequenceName);
 	}
 
-	async setVisible(visible: boolean) {
+	setVisible(visible: boolean): void {
 		this.#visible = visible === true ? undefined : visible;
 		this.#group.setVisible(visible);
 	}
 
-	get name() {
+	get name(): string {
 		return this.#template.name;
 	}
 
 	get id(): string {
-		return this.#template.id as string;
+		return this.#template.id;
 	}
 
 	//todo: NameAliases
-	get heroOrderId() {
+	get heroOrderId(): number {
 		return this.#template.heroOrderId;
 	}
 
-	get itemSlots() {
+	get itemSlots(): Map<string, CharacterSlot> | undefined {
 		return this.#template.itemSlots;
 	}
 
-	isHero() {
+	isHero(): boolean {
 		return this.#template.isHero();
 	}
 
-	getModelCount() {
+	getModelCount(): number {
 		return this.#template.getModelCount();
 	}
 
@@ -124,23 +126,23 @@ export class Character {
 		return this.#alternateModelName ?? this.#template.getModelName(this.#modelId);
 	}
 
-	async setModelId(modelId: number) {
+	async setModelId(modelId: number): Promise<void> {
 		if (modelId >= 0 && modelId <= this.getModelCount()) {
 			this.#modelId = modelId;
 		}
 		await this.#resetModel();
-		this.processModifiers();
+		await this.processModifiers();
 	}
 
 	getModelId(): number {
 		return this.#modelId;
 	}
 
-	hasItem(itemId: string) {
+	hasItem(itemId: string): boolean {
 		return this.#items.has(itemId);
 	}
 
-	async addItem(itemId: string) {
+	async addItem(itemId: string): Promise<void> {
 		if (this.hasItem(itemId)) {
 			return;
 		}
@@ -153,7 +155,7 @@ export class Character {
 		if (!item) {
 			return;
 		}
-		item.setVisible(this.#personaId == item.getPersonaId());
+		await item.setVisible(this.#personaId == item.getPersonaId());
 
 		this.#items.set(itemId, item);
 
@@ -166,7 +168,7 @@ export class Character {
 		await this.#addChild(await item.getModel());
 	}
 
-	async #addChild(itemModel: Entity | null) {
+	async #addChild(itemModel: Entity | null): Promise<void> {
 		const model = await this.getModel();
 
 		if (model) {
@@ -184,13 +186,13 @@ export class Character {
 		if (!item) {
 			return;
 		}
-		item.remove();
+		await item.remove();
 		this.#items.delete(itemId);
 		this.#itemsPerSlot.delete(item.slot);
 		await this.processModifiers();
 	}
 
-	async #replaceSlot(item: Item) {
+	async #replaceSlot(item: Item): Promise<void> {
 		const previousItem = this.#itemsPerSlot.get(item.slot);
 		if (previousItem) {
 			await this.removeItem(previousItem.id);
@@ -199,11 +201,11 @@ export class Character {
 		this.#itemsPerSlot.set(item.slot, item);
 	}
 
-	getItems() {
+	getItems(): Map<string, Item> {
 		return new Map(this.#items);
 	}
 
-	getItemsWithBundle() {
+	getItemsWithBundle(): Map<string, Item> {
 		const items = this.getItems();
 		if (this.bundleItem) {
 			items.set(this.bundleItem.id, this.bundleItem);
@@ -213,17 +215,17 @@ export class Character {
 
 	async getAssetModifiers(): Promise<AssetModifier[]> {
 		let modifiers: AssetModifier[] = [];
-		for (const [_, item] of this.#items) {
+		for (const [, item] of this.#items) {
 			const itemModifiers = item.getAssetModifiers();
 			if (itemModifiers) {
 				modifiers = modifiers.concat(itemModifiers);
 			}
 		}
-		this.setPersonaId(0);
+		await this.#setPersonaId(0);
 		return modifiers;
 	}
 
-	#clearExtraEntities() {
+	#clearExtraEntities(): void {
 		this.#pedestalModel?.remove();
 		this.#petModel?.remove();
 		this.#metamorphosisModel?.remove();
@@ -232,14 +234,14 @@ export class Character {
 		this.#petModel = null;
 		this.#metamorphosisModel = null;
 
-		for (const [_, entity] of this.#units) {
+		for (const [, entity] of this.#units) {
 			entity?.remove();
 		}
 		this.#units.clear();
 		Controller.dispatchEvent<void>(ControllerEvent.CharacterUnitsChanged);
 	}
 
-	async processModifiers() {
+	async processModifiers(): Promise<void> {
 		this.#group.setAttribute('desaturate', OptionsManager.getItem('app.characters.desaturate'));
 		this.#clearExtraEntities();
 		const modifiers = await this.getAssetModifiers()
@@ -250,7 +252,7 @@ export class Character {
 		let alternateModelName: string | undefined;
 		const replacements = new Map<string, string>();
 		let skin = 0;
-		let arcanaLevel: number = 0;
+		let arcanaLevel = 0;
 
 		this.#activityModifiers.clear();
 
@@ -260,7 +262,7 @@ export class Character {
 			switch (modifier.type) {
 				case MODIFIER_PERSONA:
 					console.log(modifier);
-					this.setPersonaId(Number(modifier.persona));
+					await this.#setPersonaId(Number(modifier.persona));
 					break;
 				case MODIFIER_ENTITY_MODEL:
 				case MODIFIER_COURIER:
@@ -302,7 +304,7 @@ export class Character {
 						model.skin = Number(modifier.skin ?? 0);
 						const loadoutDefaultOffset = modifier.loadoutDefaultOffset;
 						if (loadoutDefaultOffset) {
-							model.position = stringToVec3(loadoutDefaultOffset);
+							model.setPosition(stringToVec3(loadoutDefaultOffset));
 						}
 						if (modifier.type == MODIFIER_PET) {
 							this.#petModel = model;
@@ -329,8 +331,8 @@ export class Character {
 		await this.#setCharacterModel(alternateModelName);
 		const model = await this.getModel();
 		model?.resetBodyGroups();
-		this.#setSkin(skin);
-		this.#setArcanaLevel(arcanaLevel);
+		await this.#setSkin(skin);
+		await this.#setArcanaLevel(arcanaLevel);
 
 		this.#group.addChild(this.#pedestalModel);
 		this.#group.addChild(this.#petModel);
@@ -358,7 +360,7 @@ export class Character {
 			}
 		}
 
-		for (const [_, item] of this.#items) {
+		for (const [, item] of this.#items) {
 			await item.processModifiers(replacements, this.#modelId);
 			for (const entity of item.getExtraEntities()) {
 				await this.#addChild(entity);
@@ -373,10 +375,10 @@ export class Character {
 		await this.playSequence();
 	}
 
-	async #processGeneratedUnits() {
+	async #processGeneratedUnits(): Promise<void> {
 		const itemSlots = this.itemSlots;
 		if (itemSlots) {
-			for (const [_, itemSlot] of itemSlots) {
+			for (const [, itemSlot] of itemSlots) {
 				if (itemSlot.GeneratesUnits) {
 					for (const i in itemSlot.GeneratesUnits) {
 						const unitID = itemSlot.GeneratesUnits[i];
@@ -385,7 +387,7 @@ export class Character {
 						}
 						const model = Units.getModel(unitID);
 						if (model) {
-							this.#setUnit(new AssetModifier(null, { asset: unitID, modifier: model }));
+							await this.#setUnit(new AssetModifier(null, { asset: unitID, modifier: model }));
 						}
 					}
 				}
@@ -393,7 +395,7 @@ export class Character {
 		}
 	}
 
-	async #setUnit(modifier: AssetModifier) {
+	async #setUnit(modifier: AssetModifier): Promise<void> {
 		let modifierAsset = modifier.asset;
 		if (!modifierAsset) {
 			return;
@@ -415,74 +417,74 @@ export class Character {
 			this.#units.get(modifierAsset)?.remove();
 			this.#units.delete(modifierAsset);
 			this.#units.set(modifierAsset, model);
-			model.position = getUnitPlacement(this.#units.size + (this.getModelName() ? 1 : 0));
+			model.setPosition(getUnitPlacement(this.#units.size + (this.getModelName() ? 1 : 0)));
 			model.setVisible(await OptionsManager.getSubItem('app.units.display', modifierAsset) ? undefined : false);
 
 			OptionsManagerEvents.addEventListener('app.units.display', (event) => {
-				model.setVisible((event as CustomEvent).detail.value[modifierAsset] ? undefined : false);
+				model.setVisible(((event as CustomEvent<OptionsManagerEvent<Record<string, boolean>>>).detail.value)[modifierAsset] ? undefined : false);
 			});
 
 			Controller.dispatchEvent<void>(ControllerEvent.CharacterUnitsChanged);
 
 		}
-		await this.#positionUnits();
+		this.#positionUnits();
 	}
 
-	async #positionUnits(event?: CustomEvent) {
-		const display = event?.detail?.value ?? OptionsManager.getItem('app.units.display');
+	#positionUnits(event?: CustomEvent<OptionsManagerEvent<Record<string, boolean>>>): void {
+		const display = (event?.detail?.value ?? OptionsManager.getItem('app.units.display')) as Record<string, boolean>;
 		console.info(display);
 		let unit = this.getModelName() ? 1 : 0;
 		for (const [unitId, model] of this.#units) {
 			console.info(unitId, model);
 			if (display[unitId]) {
-				model.position = getUnitPlacement(unit);
+				model.setPosition(getUnitPlacement(unit));
 				++unit;
 			}
 		}
 	}
 
-	async #initPedestal() {
+	async #initPedestal(): Promise<void> {
 		this.#pedestalModel = await Source2ModelManager.createInstance('dota2', OptionsManager.getItem('app.loadout.pedestalmodel') as string, true);
 	}
 
-	async #setSkin(skin: number) {
+	async #setSkin(skin: number): Promise<void> {
 		const model = await this.getModel();
 		if (!model) {
 			return;
 		}
 		model.skin = skin;
-		for (const [_, item] of this.#items) {
+		for (const [, item] of this.#items) {
 			item.setCharacterSkin(skin);
 		}
 	}
 
-	async #setArcanaLevel(arcanaLevel: number) {
+	async #setArcanaLevel(arcanaLevel: number): Promise<void> {
 		const model = await this.getModel();
 		if (!model) {
 			return;
 		}
 		//model.skin = skin;
 		this.#model?.setBodyGroup('arcana', arcanaLevel);
-		for (const [_, item] of this.#items) {
+		for (const [, item] of this.#items) {
 			item.setArcanaLevel(arcanaLevel);
 		}
 	}
 
-	async #reparentItems() {
-		for (const [_, item] of this.#items) {
+	async #reparentItems(): Promise<void> {
+		for (const [, item] of this.#items) {
 			await this.#addChild(await item.getModel());
 			item.reparentChilds();
 		}
 	}
 
-	async #setCharacterModel(modelName: string | undefined) {
+	async #setCharacterModel(modelName: string | undefined): Promise<void> {
 		if (this.#alternateModelName != modelName) {
 			this.#alternateModelName = modelName;
 			await this.#resetModel();
 		}
 	}
 
-	async #resetModel() {
+	async #resetModel(): Promise<void> {
 		const oldModel = await this.getModel();
 		if (oldModel) {
 			oldModel.remove();
@@ -491,38 +493,40 @@ export class Character {
 		this.#modelPromise = undefined;
 	}
 
-	setPersonaId(personaId: number) {
-		for (const [_, item] of this.#items) {
-			item.setVisible(personaId == item.getPersonaId());
+	async #setPersonaId(personaId: number): Promise<void> {
+		const promises: Promise<void>[] = [];
+		for (const [, item] of this.#items) {
+			promises.push(item.setVisible(personaId == item.getPersonaId()));
 		}
+		await Promise.all(promises);
 		Controller.dispatchEvent<number>(ControllerEvent.CharacterPersonaChanged, { detail: personaId });
 	}
 
-	async setActivity(activity: string) {
+	async setActivity(activity: string): Promise<void> {
 		this.#activity = activity;
 		await this.playSequence();
 	}
 
-	getActivity() {
+	getActivity(): string {
 		return this.#activity;
 	}
 
-	async setModifiers(modifiers: string[]) {
+	async setModifiers(modifiers: string[]): Promise<void> {
 		this.#modifiers = modifiers;
 		await this.playSequence();
 	}
 
-	getModifiers() {
+	getModifiers(): string[] {
 		return this.#modifiers;
 	}
 
-	exportLoadout() {
+	exportLoadout(): JSONObject | undefined {
 		if (this.#visible === false) {
 			return;
 		}
 
 		const items = [];
-		for (const [_, item] of this.#items) {
+		for (const [, item] of this.#items) {
 			items.push({
 				id: item.id,
 				style: item.style
@@ -537,18 +541,20 @@ export class Character {
 		return json;
 	}
 
-	async importLoadout(characterJSON: JSONObject) {
-		let itemsJSON = characterJSON.items as JSONObject[];
+	async importLoadout(characterJSON: JSONObject): Promise<void> {
+		const itemsJSON = characterJSON.items as JSONObject[];
 		if (itemsJSON) {
-			for (let itemJSON of itemsJSON) {
-				const itemId: string = String(itemJSON.id);
+			for (const itemJSON of itemsJSON) {
+				const itemId = String(itemJSON.id as number);
 				const item = await this.addItem(itemId);
+				console.info(item);
 			}
+
 		}
 		//await this.#importLoadoutUnusualEffects(characterJSON.unusualEffects);
 	}
 
-	getUnits() {
+	getUnits(): Map<string, Source2ModelInstance> {
 		return this.#units;
 	}
 }

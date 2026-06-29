@@ -5,7 +5,7 @@ export type CharacterSlot = {
 	SlotIndex: string,
 	SlotName: string,
 	SlotText: string,
-	GeneratesUnits: { [key: string]: string }/*TODO: fix type*/,
+	GeneratesUnits: Record<string, string>,
 }
 
 export class CharacterTemplate {
@@ -19,15 +19,15 @@ export class CharacterTemplate {
 		return this.#definition.Name as string;
 	}
 
-	get id() {
-		return this.#definition.ID;
+	get id(): string {
+		return this.#definition.ID as string;
 	}
 
-	get heroOrderId() {
+	get heroOrderId(): number {
 		return Number(this.#definition.HeroOrderID);
 	}
 
-	get itemSlots() {
+	get itemSlots(): Map<string, CharacterSlot> | undefined {
 		const itemSlots = this.#definition.ItemSlots as JSONObject;
 		if (!itemSlots) {
 			return;
@@ -43,14 +43,14 @@ export class CharacterTemplate {
 				SlotIndex: slot.SlotIndex as string,
 				SlotName: slotLowerCase,
 				SlotText: slot.SlotText as string,
-				GeneratesUnits: slot.GeneratesUnits as { [key: string]: string },
+				GeneratesUnits: slot.GeneratesUnits as Record<string, string>,
 			});
 		}
 		return slots;
 	}
 
-	isHero() {
-		return this.#definition['is_hero'];
+	isHero(): boolean {
+		return this.#definition['is_hero'] as boolean;
 	}
 
 	getModelCount(): number {
@@ -65,7 +65,7 @@ export class CharacterTemplate {
 		return (this.#definition[`Model${modelID}`] as string) ?? this.#definition.Model as string ?? '';
 	}
 
-	getAdjective(name: string) {
-		return (this.#definition.Adjectives as { [key: string]: string })?.[name];
+	getAdjective(name: string): string | undefined {
+		return (this.#definition.Adjectives as Record<string, string>)?.[name];
 	}
 }
