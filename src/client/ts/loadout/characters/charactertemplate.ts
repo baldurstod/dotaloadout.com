@@ -49,6 +49,10 @@ export class CharacterTemplate {
 		return slots;
 	}
 
+	getSpawnedUnits(): Array<string> {
+		return Array.from((this.#definition.spawned_units as string[]) ?? []);
+	}
+
 	isHero(): boolean {
 		return this.#definition['is_hero'] as boolean;
 	}

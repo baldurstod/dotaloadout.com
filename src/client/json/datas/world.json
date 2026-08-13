@@ -36,7 +36,18 @@
 				"SlotText": "Radiant creeps"
 			}
 		},
-		"Name": "Radiant creeps"
+		"Name": "Radiant creeps",
+		"spawned_units": [
+			"npc_dota_creep_goodguys_melee",
+			"npc_dota_creep_goodguys_melee_upgraded",
+			"npc_dota_creep_goodguys_melee_upgraded_mega",
+			"npc_dota_creep_goodguys_ranged",
+			"npc_dota_creep_goodguys_ranged_upgraded",
+			"npc_dota_creep_goodguys_ranged_upgraded_mega",
+			"npc_dota_creep_goodguys_flagbearer",
+			"npc_dota_creep_goodguys_flagbearer_upgraded",
+			"npc_dota_creep_goodguys_flagbearer_upgraded_mega"
+		]
 	},
 	{
 		"HeroID": "1003",
@@ -49,7 +60,10 @@
 				"SlotText": "Radiant siege creeps"
 			}
 		},
-		"Name": "Radiant siege creeps"
+		"Name": "Radiant siege creeps",
+		"spawned_units": [
+			"npc_dota_goodguys_siege"
+		]
 	},
 	{
 		"HeroID": "1004",
@@ -62,7 +76,18 @@
 				"SlotText": "Dire creeps"
 			}
 		},
-		"Name": "Dire creeps"
+		"Name": "Dire creeps",
+		"spawned_units": [
+			"npc_dota_creep_badguys_melee",
+			"npc_dota_creep_badguys_melee_upgraded",
+			"npc_dota_creep_badguys_melee_upgraded_mega",
+			"npc_dota_creep_badguys_ranged",
+			"npc_dota_creep_badguys_ranged_upgraded",
+			"npc_dota_creep_badguys_ranged_upgraded_mega",
+			"npc_dota_creep_badguys_flagbearer",
+			"npc_dota_creep_badguys_flagbearer_upgraded",
+			"npc_dota_creep_badguys_flagbearer_upgraded_mega"
+		]
 	},
 	{
 		"HeroID": "1005",
@@ -75,7 +100,10 @@
 				"SlotText": "Dire siege creeps"
 			}
 		},
-		"Name": "Dire siege creeps"
+		"Name": "Dire siege creeps",
+		"spawned_units": [
+			"npc_dota_badguys_siege"
+		]
 	},
 	{
 		"HeroID": "1006",
@@ -88,7 +116,10 @@
 				"SlotText": "Radiant towers"
 			}
 		},
-		"Name": "Radiant towers"
+		"Name": "Radiant towers",
+		"spawned_units": [
+			"npc_dota_goodguys_tower1_mid"
+		]
 	},
 	{
 		"HeroID": "1007",
@@ -101,7 +132,10 @@
 				"SlotText": "Dire towers"
 			}
 		},
-		"Name": "Dire towers"
+		"Name": "Dire towers",
+		"spawned_units": [
+			"npc_dota_badguys_tower1_mid"
+		]
 	},
 	{
 		"HeroID": "1008",
@@ -114,7 +148,10 @@
 				"SlotText": "Roshan"
 			}
 		},
-		"Name": "Roshan"
+		"Name": "Roshan",
+		"spawned_units": [
+			"npc_dota_roshan"
+		]
 	},
 	{
 		"HeroID": "1009",

@@ -3,6 +3,7 @@ import { JSONObject } from 'harmony-types';
 import world from '../../../json/datas/world.json';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { CharacterSelected, Controller, ControllerEvent, ItemClick, RemoveItem, ToolbarActivityModifiers, ToolbarActivitySelected } from '../../controller';
+import { AssetModifier } from '../assetmodifier';
 import { Item } from '../items/item';
 import { ItemManager } from '../items/itemmanager';
 import { ItemTemplates } from '../items/itemtemplates';
@@ -150,11 +151,34 @@ export class CharacterManager {
 
 		const slots = character.itemSlots;
 		if (slots) {
+			let defaultItemId: string | undefined;
 			for (const itemId of itemIds) {
 				const itemTemplate = ItemTemplates.getTemplate(itemId);
 				if (itemTemplate && itemTemplate.isBaseItem && slots.has(itemTemplate.slot)) {
+					defaultItemId = itemId;
 					await character.addItem(itemId);
 				}
+			}
+
+			if (defaultItemId) {
+				const item = character.getItem(defaultItemId);
+				if (item) {
+					const units = character.getSpawnedUnits();
+					for (const asset of units) {
+						const modifier = Units.getModel(asset);
+						if (!modifier) {
+							continue;
+						}
+
+						item.extraAssetModifiers.push(new AssetModifier(item, {
+							asset,
+							modifier,
+							type: "entity_clientside_model",
+						}));
+					}
+					character.processModifiers();
+				}
+
 			}
 		}
 		await character.processModifiers();

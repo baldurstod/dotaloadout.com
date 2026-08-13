@@ -142,6 +142,10 @@ export class Character {
 		return this.#items.has(itemId);
 	}
 
+	getItem(itemId: string): Item | undefined {
+		return this.#items.get(itemId);
+	}
+
 	async addItem(itemId: string): Promise<void> {
 		if (this.hasItem(itemId)) {
 			return;
@@ -556,6 +560,10 @@ export class Character {
 
 	getUnits(): Map<string, Source2ModelInstance> {
 		return this.#units;
+	}
+
+	getSpawnedUnits(): Array<string> {
+		return this.#template.getSpawnedUnits();
 	}
 }
 

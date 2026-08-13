@@ -19,6 +19,7 @@ export class Item {
 	#style = 0;
 	#characterSkin = 0;
 	#arcanaLevel?: number;
+	readonly extraAssetModifiers: AssetModifier[] = [];
 
 	constructor(template: ItemTemplate, character: Character) {
 		this.#template = template;
@@ -146,14 +147,13 @@ export class Item {
 
 	getAssetModifiers() {
 		const modifiers = this.assetModifiers as JSONObject[];
-		if (!modifiers) {
-			return;
-		}
+		const ret = Array.from(this.extraAssetModifiers);
 
-		const ret = [];
-		for (const modifierJSON of modifiers) {
-			if (modifierJSON.style === undefined || modifierJSON.style == this.#style) {
-				ret.push(new AssetModifier(this, modifierJSON));
+		if (modifiers) {
+			for (const modifierJSON of modifiers) {
+				if (modifierJSON.style === undefined || modifierJSON.style == this.#style) {
+					ret.push(new AssetModifier(this, modifierJSON));
+				}
 			}
 		}
 		return ret;
