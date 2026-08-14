@@ -1,7 +1,7 @@
 import { Entity, ManifestRepository, MergeRepository, Repositories, Repository, RepositoryEntry, SceneExplorer, ShaderEditor, Source2ModelManager, VpkRepository, ZipRepository } from 'harmony-3d';
 import { defineRepository, HTMLRepositoryElement } from 'harmony-3d-utils';
 import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
-import { createElement, defineHarmonyFileInput, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
+import { createElement, defineHarmonyFileInput, defineHarmonySwitch, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
 import optionsCSS from '../../css/options.css';
 import repositoryEntryCSS from '../../css/repositoryentry.css';
 import { Controller, ControllerEvent } from '../controller';
@@ -24,6 +24,7 @@ export class Options {
 		defineHarmonyTab();
 		defineHarmonyTabGroup();
 		defineHarmonyFileInput();
+		defineHarmonySwitch();
 
 		let htmlOverrideGameModels: HTMLHarmonySwitchElement;
 		this.#htmlElement = createElement('div', {

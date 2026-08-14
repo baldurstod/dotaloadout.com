@@ -1,5 +1,5 @@
 import { OptionsManager } from 'harmony-browser-utils';
-import { createElement, createShadowRoot, HarmonySwitchChange, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
+import { createElement, createShadowRoot, defineHarmonySwitch, HarmonySwitchChange, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
 import unitSelectorCSS from '../../css/unitselector.css';
 import { CharacterSelected, Controller, ControllerEvent } from '../controller';
 import { Character } from '../loadout/characters/character';
@@ -40,6 +40,7 @@ export class UnitSelector {
 	}
 
 	#createUnitSelector(unitID: string): void {
+		defineHarmonySwitch();
 		const sw = createElement('harmony-switch', {
 			class: 'unit',
 			'data-i18n': Units.getName(unitID),
