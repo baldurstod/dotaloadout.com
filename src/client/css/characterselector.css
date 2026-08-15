@@ -1,4 +1,4 @@
-.character-selector{
+.character-selector {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -13,7 +13,8 @@
 	background-color: rgba(0, 0, 0, 0.3);
 	z-index: 1000;
 }
-.character-selector-characters{
+
+.character-selector-characters {
 	display: flex;
 	flex-wrap: wrap;
 	/*overflow: auto;*/
@@ -21,13 +22,15 @@
 	text-align: center;
 	justify-content: center;
 }
-.character-selector-filter-name{
+
+.character-selector-filter-name {
 	position: absolute;
 	font-size: 20rem;
 	pointer-events: none;
 	opacity: 40%;
 }
-.character-selector-character{
+
+.character-selector-character {
 	height: var(--hero-icon-height);
 	width: var(--hero-icon-width);
 	overflow: hidden;
@@ -35,23 +38,28 @@
 	padding: 0.1rem;
 	cursor: pointer;
 }
-.character-selector-character.filtered{
+
+.character-selector-character.filtered {
 	filter: grayscale(100%) brightness(0.3);
 }
 
-.character-selector-character-img{
+.character-selector-character-img {
 	position: relative;
 }
 
-.hero-icon{
-	background-image:url('https://dota2content.dotaloadout.com/generated/heroes.jpeg');
+.icon {
 	height: 100%;
 	width: 100%;
 	background-size: 100% auto;
 	background-repeat: no-repeat;
 	cursor: pointer;
 }
-.hero-name{
+
+.hero-icon {
+	background-image: url('https://dota2content.dotaloadout.com/generated/heroes.jpeg');
+}
+
+.hero-name {
 	position: absolute;
 	bottom: 0px;
 	color: var(--theme-text-color);
@@ -60,13 +68,56 @@
 	overflow: hidden;
 	font-size: 1.1em;
 }
-.filter-container{
+
+.filter-container {
 	display: flex;
 	gap: 1rem;
 	padding: 1rem;
 }
-.characters-filter-name, .characters-sort-field{
+
+.characters-filter-name,
+.characters-sort-field {
 	font-size: 1.5rem;
 	padding: 0.3rem;
 	cursor: pointer;
+}
+
+.world-slot-courier {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/courier/donkey_radiant_default.png');
+}
+
+.world-slot-direcreeps {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/tools/default_dire_creeps.png');
+}
+
+.world-slot-diretowers {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/tools/default_dire_towers.png');
+}
+
+.world-slot-neutralcreeps {
+	background-image: url('./img/npc_dota_neutral_warpine_raider.png');
+}
+
+.world-slot-radiantcreeps {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/tools/default_radiant_creeps.png');
+}
+
+.world-slot-radiantsiegecreeps {
+	background-image: url('./img/npc_dota_goodguys_siege.png');
+}
+
+.world-slot-radianttowers {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/tools/default_radiant_towers.png');
+}
+
+.world-slot-roshan {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/roshan/dota_item_roshan.png');
+}
+
+.world-slot-ward {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/items/wards/ward_default.png');
+}
+
+.world-slot-wearable {
+	background-image: url('https://dota2content.dotaloadout.com/panorama/images/econ/pets/poogie/poogie.png');
 }
