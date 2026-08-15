@@ -8,6 +8,9 @@ import { Character } from '../characters/character';
 import { MODIFIER_ADDITIONAL_WEARABLE, MODIFIER_ENTITY_CLIENTSIDE_MODEL, MODIFIER_ENTITY_MODEL, MODIFIER_PARTICLE_CREATE } from '../modifiers';
 import { ItemTemplate } from './itemtemplate';
 
+const DIRE_BANNER = 'models/props/creep_banners/creep_banner_dire.vmdl_c';
+const RADIANT_BANNER = 'models/props/creep_banners/creep_banner_radiant.vmdl_c';
+
 export class Item {
 	#template: ItemTemplate;
 	readonly #character: Character;
@@ -253,33 +256,29 @@ export class Item {
 						break;
 					}
 					position = vec3.create();
+					let extraModel = '';
+
+					const banner = this.#character.id === 'direcreeps' ? DIRE_BANNER : RADIANT_BANNER
 
 					if (modifier.asset.endsWith('_melee')) {
-						position[1] -= 400;
-					}
-					if (modifier.asset.endsWith('_melee_upgraded')) {
 						position[1] -= 300;
 					}
 					if (modifier.asset.endsWith('_melee_upgraded_mega')) {
-						position[1] -= 200;
+						position[1] -= 175;
 					}
 					if (modifier.asset.endsWith('_ranged')) {
-						position[1] -= 100;
-					}
-					if (modifier.asset.endsWith('_ranged_upgraded')) {
-						position[1] += 0;
+						position[1] -= 50;
 					}
 					if (modifier.asset.endsWith('_ranged_upgraded_mega')) {
-						position[1] += 100;
+						position[1] += 50;
 					}
 					if (modifier.asset.endsWith('_flagbearer')) {
-						position[1] += 200;
-					}
-					if (modifier.asset.endsWith('_flagbearer_upgraded')) {
-						position[1] += 300;
+						position[1] += 175;
+						extraModel = banner;
 					}
 					if (modifier.asset.endsWith('_flagbearer_upgraded_mega')) {
-						position[1] += 400;
+						position[1] += 300;
+						extraModel = banner;
 					}
 
 					// Only keep one tower
@@ -302,8 +301,13 @@ export class Item {
 						clientsideModel.skin = Number(modifier.skin ?? this.skin ?? 0);
 						this.#extraEntities.add(clientsideModel);
 						clientsideModel.position = position;
+
+						if (extraModel) {
+							const model = await Source2ModelManager.createInstance('dota2', extraModel, true);
+							clientsideModel.addChild(model);
+							clientsideModel.getAttachment('attach_banner')?.addChild(model);
+						}
 					}
-					break;
 					break;
 				default:
 					console.warn('item_unknown_modifier_type', modifier.type);

@@ -39,13 +39,10 @@
 		"Name": "Radiant creeps",
 		"spawned_units": [
 			"npc_dota_creep_goodguys_melee",
-			"npc_dota_creep_goodguys_melee_upgraded",
 			"npc_dota_creep_goodguys_melee_upgraded_mega",
 			"npc_dota_creep_goodguys_ranged",
-			"npc_dota_creep_goodguys_ranged_upgraded",
 			"npc_dota_creep_goodguys_ranged_upgraded_mega",
 			"npc_dota_creep_goodguys_flagbearer",
-			"npc_dota_creep_goodguys_flagbearer_upgraded",
 			"npc_dota_creep_goodguys_flagbearer_upgraded_mega"
 		]
 	},
@@ -79,13 +76,10 @@
 		"Name": "Dire creeps",
 		"spawned_units": [
 			"npc_dota_creep_badguys_melee",
-			"npc_dota_creep_badguys_melee_upgraded",
 			"npc_dota_creep_badguys_melee_upgraded_mega",
 			"npc_dota_creep_badguys_ranged",
-			"npc_dota_creep_badguys_ranged_upgraded",
 			"npc_dota_creep_badguys_ranged_upgraded_mega",
 			"npc_dota_creep_badguys_flagbearer",
-			"npc_dota_creep_badguys_flagbearer_upgraded",
 			"npc_dota_creep_badguys_flagbearer_upgraded_mega"
 		]
 	},
