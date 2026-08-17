@@ -5,7 +5,7 @@ import activities from '../../json/activities.json';
 import { ENABLE_PATREON_POWERUSER } from '../bundleoptions';
 import { Controller, ControllerEvent } from '../controller';
 
-function createButton(svg: string, event: ControllerEvent, i18n: string) {
+function createButton(svg: string, event: ControllerEvent, i18n: string): HTMLElement {
 	return createElement('div', {
 		class: 'toolbar-button',
 		i18n: { title: i18n, },
@@ -29,7 +29,7 @@ export class Toolbar {
 		this.#initListeners();
 	}
 
-	#initListeners() {
+	#initListeners(): void {
 		Controller.addEventListener(ControllerEvent.ToolbarPlay, () => {
 			hide(this.#htmlPlay);
 			show(this.#htmlPause);
@@ -41,7 +41,7 @@ export class Toolbar {
 		});
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'toolbar',
 			childs: [
@@ -105,7 +105,7 @@ export class Toolbar {
 			createElement('option', {
 				parent: this.#htmlActivitySelector,
 				value: activityName,
-				innerText: `${activityLabel}`,
+				innerText: `${activityLabel as string}`,
 			});
 		}
 
@@ -113,11 +113,11 @@ export class Toolbar {
 		return this.#htmlElement;
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	setMode() {
+	setMode(): void {
 		if (ENABLE_PATREON_POWERUSER) {
 			this.#htmlExportOBJButton?.classList.remove('disabled');
 			this.#htmlExportFBXButton?.classList.remove('disabled');
@@ -127,21 +127,21 @@ export class Toolbar {
 		}
 	}
 
-	#handleActivitySelected(activity: string) {
+	#handleActivitySelected(activity: string): void {
 		Controller.dispatchEvent(ControllerEvent.ToolbarActivitySelected, { detail: activity });
 	}
 
-	#handleActivityModifiersChanged(modifiers: string) {
+	#handleActivityModifiersChanged(modifiers: string): void {
 		Controller.dispatchEvent(ControllerEvent.ToolbarActivityModifiers, { detail: modifiers.split(' ') });
 	}
 
-	setActivity(activity: string) {
+	setActivity(activity: string): void {
 		if (this.#htmlActivitySelector) {
 			this.#htmlActivitySelector.value = activity;
 		}
 	}
 
-	setModifiers(modifiers: string[]) {
+	setModifiers(modifiers: string[]): void {
 		if (this.#htmlActivityModifiers) {
 			this.#htmlActivityModifiers.value = modifiers.join(' ');
 		}

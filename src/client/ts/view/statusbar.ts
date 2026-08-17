@@ -3,7 +3,7 @@ import { createElement } from 'harmony-ui';
 export class Statusbar {
 	#htmlElement!: HTMLElement;
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'statusbar',
 			innerText: 'this is the statusbar',
@@ -12,7 +12,7 @@ export class Statusbar {
 
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 }

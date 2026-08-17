@@ -1,16 +1,15 @@
 import { createElement } from 'harmony-ui';
-import { Controller, ControllerEvent } from '../controller';
-
 import { DOTA2_MARKET_LISTINGS } from '../constants';
+import { Controller, ControllerEvent } from '../controller';
+import { Item } from '../loadout/items/item';
 
 export class MarketPrices {
 	#htmlElement!: HTMLElement;
 
 	constructor() {
-		Controller.addEventListener(ControllerEvent.SetMarketPrices, event => {
+		Controller.addEventListener(ControllerEvent.SetMarketPrices, (event: Event) => {
 			this.#htmlElement.innerText = '';
-			const prices = (event as CustomEvent).detail;
-			for (const [item, price] of (event as CustomEvent).detail) {
+			for (const [item, price] of (event as CustomEvent<Map<Item, string>>).detail) {
 				createElement('a', {
 					parent: this.#htmlElement,
 					target: '_blank',
@@ -22,14 +21,14 @@ export class MarketPrices {
 		});
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'market-prices',
 		});
 		return this.#htmlElement;
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 }

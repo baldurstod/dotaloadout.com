@@ -35,7 +35,7 @@ export class ItemList {
 		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent).detail));
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'item-list',
 			childs: [
@@ -119,7 +119,7 @@ export class ItemList {
 		hide(this.#htmlElement);
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 

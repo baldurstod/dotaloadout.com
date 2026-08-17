@@ -95,7 +95,7 @@ export class CharacterSelector {
 		this.hide();
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 

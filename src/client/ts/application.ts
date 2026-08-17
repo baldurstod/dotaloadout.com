@@ -196,7 +196,7 @@ class Application {
 		Controller.addEventListener(ControllerEvent.ResetCamera, () => this.#resetCamera());
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#shadowRoot = createShadowRoot('div', {
 			class: 'application',
 			parent: document.body,

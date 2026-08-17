@@ -13,13 +13,13 @@ export class StyleSelector {
 		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
-	#addItem(item: Item) {
+	#addItem(item: Item): void {
 		if (item.hasStyles()) {
 			this.#items.set(item, this.#createItemSelector(item));
 		}
 	}
 
-	#removeItem(item: Item) {
+	#removeItem(item: Item): void {
 		const html = this.#items.get(item);
 		if (html) {
 			html.remove();
@@ -27,7 +27,7 @@ export class StyleSelector {
 		}
 	}
 
-	#handleCharacterSelected(characterId: string) {
+	#handleCharacterSelected(characterId: string): void {
 		const character = CharacterManager.getCharacter(characterId);
 		if (!character) {
 			return;
@@ -38,7 +38,7 @@ export class StyleSelector {
 		character.getItems().forEach(item => this.#addItem(item));
 	}
 
-	#createItemSelector(item: Item) {
+	#createItemSelector(item: Item): HTMLElement {
 		let htmlItemStyles;
 		const htmlSelector = createElement('div', {
 			class: 'style-selector-item',
@@ -67,14 +67,14 @@ export class StyleSelector {
 		return htmlSelector;
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'style-selector',
 		});
 		return this.#htmlElement;
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 }

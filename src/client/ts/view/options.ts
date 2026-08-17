@@ -1,5 +1,5 @@
 import { Entity, ManifestRepository, MergeRepository, Repositories, Repository, RepositoryEntry, SceneExplorer, ShaderEditor, Source2ModelManager, VpkRepository, ZipRepository } from 'harmony-3d';
-import { defineRepository, HTMLRepositoryElement } from 'harmony-3d-utils';
+import { defineRepository, EntryCreated, HTMLRepositoryElement } from 'harmony-3d-utils';
 import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
 import { createElement, defineHarmonyFileInput, defineHarmonySwitch, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
 import optionsCSS from '../../css/options.css';
@@ -20,7 +20,7 @@ export class Options {
 	#shaderEditor = new ShaderEditor();
 	#htmlTabImport?: HTMLHarmonyTabElement;
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		defineHarmonyTab();
 		defineHarmonyTabGroup();
 		defineHarmonyFileInput();
@@ -95,7 +95,7 @@ export class Options {
 									this.#htmlCurrency = createElement('select', {
 										class: 'options-currencies',
 										events: {
-											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.market.currency', event.detail.value)
+											change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setItem('app.market.currency', event.detail.state)
 										}
 									}) as HTMLSelectElement,
 									this.#htmlShowEffects = createElement('harmony-switch', {
@@ -136,13 +136,13 @@ export class Options {
 										'data-accept': '.zip,.vpk',
 										'data-tooltip-i18n': '#import_models_zip_tooltip',
 										events: {
-											change: (event: Event) => this.#importModels((event.target as HTMLHarmonyFileInputElement).files, htmlOverrideGameModels.state as boolean),
+											change: (event: Event) => { void this.#importModels((event.target as HTMLHarmonyFileInputElement).files, htmlOverrideGameModels.state as boolean) },
 										},
 									}),
 									htmlOverrideGameModels = createElement('harmony-switch', {
 										'data-i18n': '#override_game_models',
 										events: {
-											change: (event: Event) => OptionsManager.setItem('app.repositories.import.overridemodels', htmlOverrideGameModels.state),
+											change: () => OptionsManager.setItem('app.repositories.import.overridemodels', htmlOverrideGameModels.state),
 										},
 									}) as HTMLHarmonySwitchElement,
 								],
@@ -154,10 +154,10 @@ export class Options {
 			}),
 		});
 
-		OptionsManager.getList('app.market.currency').then(currencyList => {
+		void OptionsManager.getList('app.market.currency').then(currencyList => {
 			if (currencyList && this.#htmlCurrency) {
 				this.#htmlCurrency.innerText = '';
-				for (let currency of currencyList) {
+				for (const currency of currencyList) {
 					createElement('option', {
 						parent: this.#htmlCurrency,
 						innerText: String(currency),
@@ -170,19 +170,19 @@ export class Options {
 		//Controller.addEventListener('closeoptions', () => hide(this.#htmlElement));
 		Controller.addEventListener(ControllerEvent.ToolbarOptions, () => this.#toggle());
 
-		OptionsManagerEvents.addEventListener('app.cameras.orbit.polarrotation', (event: Event) => this.#htmlFreeRotation!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.cameras.default.orthographic', (event: Event) => this.#htmlOrthoCam!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.itemselector.hideitemname', (event: Event) => this.#htmlHideItemsName!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.showpedestal', (event: Event) => this.#htmlShowPedestal!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.showmetamorphosis', (event: Event) => this.#htmlShowMetamorphosis!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.market.automarket', (event: Event) => this.#htmlShowPrices!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.showeffects', (event: Event) => this.#htmlShowEffects!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value as boolean);
-		OptionsManagerEvents.addEventListener('app.market.currency', (event: Event) => this.#htmlCurrency!.value = (event as CustomEvent<OptionsManagerEvent<string>>).detail.value as string);
+		OptionsManagerEvents.addEventListener('app.cameras.orbit.polarrotation', (event: Event) => this.#htmlFreeRotation!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.cameras.default.orthographic', (event: Event) => this.#htmlOrthoCam!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.itemselector.hideitemname', (event: Event) => this.#htmlHideItemsName!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.showpedestal', (event: Event) => this.#htmlShowPedestal!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.showmetamorphosis', (event: Event) => this.#htmlShowMetamorphosis!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.market.automarket', (event: Event) => this.#htmlShowPrices!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.showeffects', (event: Event) => this.#htmlShowEffects!.state = (event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value);
+		OptionsManagerEvents.addEventListener('app.market.currency', (event: Event) => this.#htmlCurrency!.value = (event as CustomEvent<OptionsManagerEvent<string>>).detail.value);
 
 		return this.#htmlElement;
 	}
 
-	async #importModels(files: FileList | null, overrideModels: boolean) {
+	async #importModels(files: FileList | null, overrideModels: boolean): Promise<void> {
 		if (!files) {
 			return;
 		}
@@ -191,7 +191,7 @@ export class Options {
 		}
 	}
 
-	async #importModels2(file: File, overrideModels: boolean) {
+	async #importModels2(file: File, overrideModels: boolean): Promise<void> {
 		//TODO: check zip
 		const dota2Repository = Repositories.getRepository('dota2') as MergeRepository;
 		let localRepo: Repository;
@@ -211,12 +211,12 @@ export class Options {
 			const repo = new ManifestRepository(new MergeRepository(file.name, localRepo, dota2Repository));
 			Repositories.addRepository(repo);
 			await repo.generateModelManifest();
-			this.#addRepo(repo);
+			await this.#addRepo(repo);
 			Source2ModelManager.loadManifest(file.name);
 		}
 	}
 
-	async #addRepo(repo: Repository) {
+	async #addRepo(repo: Repository): Promise<void> {
 		const root = await repo.getFileList();
 		if (!root) {
 			return;
@@ -228,18 +228,18 @@ export class Options {
 			parent: this.#htmlTabImport,
 			adoptStyle: repositoryEntryCSS,
 			events: {
-				fileclick: (event: CustomEvent) => console.info((event as CustomEvent).detail.getFullName()),
-				directoryclick: (event: CustomEvent) => console.info((event as CustomEvent).detail.getFullName(), event),
-				entrycreated: (event: CustomEvent) => {
+				fileclick: (event: CustomEvent<RepositoryEntry>) => console.info(event.detail.getFullName()),
+				directoryclick: (event: CustomEvent<RepositoryEntry>) => console.info(event.detail.getFullName(), event),
+				entrycreated: (event: CustomEvent<EntryCreated>) => {
 					createElement('div', {
 						class: 'custom-buttons',
-						parent: (event as CustomEvent).detail.view,
+						parent: event.detail.view,
 						slot: 'custom',
 						childs: [
 							createElement('button', {
 								i18n: '#add_to_scene',
 								events: {
-									click: () => this.#addModel((event as CustomEvent).detail.entry),
+									click: () => { void this.#addModel(event.detail.entry) },
 								}
 							}),
 							/*
@@ -252,7 +252,7 @@ export class Options {
 							*/
 						]
 					});
-					I18n.observeElement((event as CustomEvent).detail.view);
+					I18n.observeElement(event.detail.view);
 				},
 			}
 		}) as HTMLRepositoryElement;
@@ -261,7 +261,7 @@ export class Options {
 		//repositoryView.addStyle(repositoryEntryCSS);
 	}
 
-	async #addModel(entry: RepositoryEntry, parent?: Entity | null) {
+	async #addModel(entry: RepositoryEntry, parent?: Entity | null): Promise<void> {
 		const model = await Source2ModelManager.createInstance(entry.getRepository().name, entry.getFullName(), true);//await ModelManager.addTF2Model(entry.getFullName(), entry.getRepository().name);
 
 		if (model) {
@@ -269,11 +269,11 @@ export class Options {
 		}
 	}
 
-	#toggle() {
+	#toggle(): void {
 		toggle(this.#htmlElement);
 
 		let event: ControllerEvent;
-		if (isVisible(this.#htmlElement!)) {
+		if (isVisible(this.#htmlElement)) {
 			event = ControllerEvent.PanelOptionsOpened;
 		} else {
 			event = ControllerEvent.PanelOptionsClosed;
@@ -281,7 +281,7 @@ export class Options {
 		Controller.dispatchEvent(event);
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 }

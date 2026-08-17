@@ -12,12 +12,12 @@ export class Viewer {
 	constructor() {
 		this.#initHTML();
 		this.#orbitControl = new OrbitControl(loadoutCamera);
-		loadoutCamera.position = [100, 0, 40];
+		loadoutCamera.setPosition([100, 0, 40]);
 		this.#orbitControl.setTargetPosition([0, 0, 40]);
 		//this.#initRenderer();
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'viewer',
 			childs: [
@@ -27,7 +27,7 @@ export class Viewer {
 		return this.#htmlElement;
 	}
 
-	async initRenderer() {
+	async initRenderer(): Promise<void> {
 		await Graphics.initCanvas({
 			canvas: this.#htmlCanvas,
 			autoResize: true,
@@ -55,19 +55,19 @@ export class Viewer {
 		Graphics.play();
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement;
 	}
 
-	setCameraTarget(target: vec3) {
-		this.#orbitControl.target.position = target;
+	setCameraTarget(target: vec3): void {
+		this.#orbitControl.target.setPosition(target);
 	}
 
-	getCameraTarget() {
-		return this.#orbitControl.target.position;
+	getCameraTarget(): vec3 {
+		return this.#orbitControl.target.getPosition();
 	}
 
-	setPolarRotation(polarRotation: boolean) {
+	setPolarRotation(polarRotation: boolean): void {
 		if (polarRotation) {
 			this.#orbitControl.minPolarAngle = -Infinity;
 			this.#orbitControl.maxPolarAngle = Infinity;

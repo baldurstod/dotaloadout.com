@@ -23,7 +23,7 @@ export class ItemSlots {
 		Controller.addEventListener(ControllerEvent.OpenItemList, () => show(this.#htmlElement));
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#htmlElement = createElement('div', {
 			class: 'item-slots',
 			childs: [
@@ -52,7 +52,7 @@ export class ItemSlots {
 		return this.#htmlElement;
 	}
 
-	get htmlElement() {
+	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 

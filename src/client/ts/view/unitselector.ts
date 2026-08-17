@@ -17,14 +17,14 @@ export class UnitSelector {
 		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
-	#refreshUnits() {
+	#refreshUnits(): void {
 		if (!this.#character) {
 			return;
 		}
 
 		const units = this.#character.getUnits();
 		this.#htmlUnits?.replaceChildren();
-		for (const [unitID, _] of units) {
+		for (const [unitID] of units) {
 			this.#createUnitSelector(unitID);
 		}
 
@@ -34,7 +34,7 @@ export class UnitSelector {
 		}
 	}
 
-	#handleCharacterSelected(characterId: string) {
+	#handleCharacterSelected(characterId: string): void {
 		this.#character = CharacterManager.getCharacter(characterId);
 		this.#refreshUnits();
 	}
@@ -46,16 +46,16 @@ export class UnitSelector {
 			'data-i18n': Units.getName(unitID),
 			parent: this.#htmlUnits,
 			events: {
-				change: (event: CustomEvent<HarmonySwitchChange>) => OptionsManager.setSubItem('app.units.display', unitID, event.detail.state),
+				change: (event: CustomEvent<HarmonySwitchChange>) => { void OptionsManager.setSubItem('app.units.display', unitID, event.detail.state) },
 			},
 		}) as HTMLHarmonySwitchElement;
 
-		(async () => {
+		void (async (): Promise<void> => {
 			sw.checked = (await OptionsManager.getSubItem('app.units.display', unitID)) as boolean;
 		})()
 	}
 
-	#createModelSelector(modelCount: number) {
+	#createModelSelector(modelCount: number): void {
 		createElement('div', {
 			parent: this.#htmlUnits,
 			childs: [
@@ -70,7 +70,7 @@ export class UnitSelector {
 					steap: 1,
 					value: String(this.#character?.getModelId()),
 					events: {
-						input: (event: Event) => this.#character?.setModelId(Number((event.target as HTMLInputElement).value)),
+						input: (event: Event) => { void this.#character?.setModelId(Number((event.target as HTMLInputElement).value)) },
 						//OptionsManager.setSubItem('app.units.display', unitID, event.target.checked),
 					},
 					//checked: OptionsManager.getSubItem('app.units.display', unitID),
@@ -79,7 +79,7 @@ export class UnitSelector {
 		});
 	}
 
-	#initHTML() {
+	#initHTML(): HTMLElement {
 		this.#shadowRoot = createShadowRoot('div', {
 			adoptStyle: unitSelectorCSS,
 			childs: [
@@ -87,10 +87,10 @@ export class UnitSelector {
 			]
 		});
 		I18n.observeElement(this.#shadowRoot);
-		return this.#shadowRoot.host;
+		return this.#shadowRoot.host as HTMLElement;
 	}
 
-	get htmlElement() {
-		return this.#shadowRoot?.host ?? this.#initHTML();
+	get htmlElement(): HTMLElement {
+		return this.#shadowRoot?.host as HTMLElement ?? this.#initHTML();
 	}
 }
