@@ -47,7 +47,7 @@ for (const buildOption of BUILD_OPTIONS) {
 				),
 				typescript({ compilerOptions: { target: 'es2023' } }),
 				nodeResolve({
-					dedupe: ['gl-matrix', 'vanilla-picker', 'harmony-ui', 'harmony-3d', 'harmony-browser-utils'],
+					dedupe: ['gl-matrix', 'harmony-ui', 'harmony-3d', 'harmony-browser-utils'],
 					//extensions: ['.js', '.ts'],
 				}),
 				isProduction ? terser() : null,

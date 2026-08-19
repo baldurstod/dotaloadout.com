@@ -21,7 +21,7 @@ import english from '../json/i18n/english.json';
 import french from '../json/i18n/french.json';
 import optionsmanager from '../json/optionsmanager.json';
 import { ENABLE_PATREON_BASE, ENABLE_PATREON_POWERUSER, PATREON_IS_LOGGED, PRODUCTION } from './bundleoptions';
-import { DOTA2_REPOSITORY, SHARE_LOADOUT_URL } from './constants';
+import { DOTA2_REPOSITORY, MAIN_CANVAS, SHARE_LOADOUT_URL } from './constants';
 import { Controller, ControllerEvent } from './controller';
 import { GOOGLE_ANALYTICS_ID } from './googleconstants';
 import { CharacterManager, LoadoutJSON } from './loadout/characters/charactermanager';
@@ -243,6 +243,8 @@ class Application {
 		if (ENABLE_PATREON_BASE) {
 			((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
 		}
+
+		return this.#shadowRoot.host as HTMLElement;
 	}
 
 	#initCSS() {
@@ -411,21 +413,23 @@ class Application {
 		}
 	}
 
-	#savePicture() {
+	#savePicture(): void {
 		const value = this.#getPictureSize();
-		Graphics.savePicture(loadoutScene, loadoutCamera, 'dotaloadout.png', Number(value.w), Number(value.h));
+		//this.#showHighLights(false);
+		Graphics.exportCanvas(MAIN_CANVAS, 'dotaloadout.png', value?.w, value?.h);
+		//this.#showHighLights(true);
 	}
 
-	#getPictureSize() {
-		let option = OptionsManager.getItem('app.picture.size');
+	#getPictureSize(): { w: number, h: number } | null {
+		const option = OptionsManager.getItem('app.picture.size') as string;
 		if (option) {
-			let regexSize = /(\d*)[\*|x|X](\d*)/i;
-			var result = regexSize.exec(option as string);
+			const regexSize = /(\d*)[\*|x|\X](\d*)/i;
+			const result = regexSize.exec(option);
 			if (result && result[1] && result[2]) {
-				return { w: result[1], h: result[2] };
+				return { w: Number(result[1]), h: Number(result[2]) };
 			}
 		}
-		return { w: undefined, h: undefined };
+		return null;
 	}
 
 	async #exportToFBX() {

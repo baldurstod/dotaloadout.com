@@ -23,3 +23,6 @@ export const TF2_GROUP_URL = 'https://steamcommunity.com/groups/tf2loadout/discu
 export const DEFAULT_ACTIVITY = 'ACT_DOTA_IDLE';
 
 export const SHARE_LOADOUT_URL = 'https://share.dotaloadout.com/';
+
+export const MAIN_CANVAS = 'main_canvas';
+export const LOADOUT_LAYOUT = 'loadout';

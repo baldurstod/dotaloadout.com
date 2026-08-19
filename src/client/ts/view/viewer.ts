@@ -1,6 +1,8 @@
 import { vec3 } from 'gl-matrix';
-import { Composer, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, ShaderPrecision, WebGLStats } from 'harmony-3d';
+import { CanvasLayout, CanvasView, Composer, ContextType, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, ShaderPrecision, WebGLStats } from 'harmony-3d';
+import { OptionsManager } from 'harmony-browser-utils';
 import { createElement } from 'harmony-ui';
+import { LOADOUT_LAYOUT, MAIN_CANVAS } from '../constants';
 import { loadoutCamera, loadoutScene } from '../loadout/scene';
 
 export class Viewer {
@@ -29,15 +31,44 @@ export class Viewer {
 
 	async initRenderer(): Promise<void> {
 		await Graphics.initCanvas({
-			canvas: this.#htmlCanvas,
+			useOffscreenCanvas: true,
 			autoResize: true,
 			webGL: {
 				alpha: true,
 				preserveDrawingBuffer: true,
-				premultipliedAlpha: false
+				premultipliedAlpha: false,
+			},
+			webGPU: {
+				configuration: {
+					alphaMode: 'premultiplied',
+				},
 			}
 		});
 
+
+		let contextType = ContextType.WebGL;
+
+		if (OptionsManager.getItem('engine.renderer.experimentalwebgpu')) {
+			contextType = ContextType.WebGPU;
+		}
+
+		Graphics.addCanvas({
+			name: MAIN_CANVAS,
+			canvas: this.#htmlCanvas,
+			layouts: [
+				new CanvasLayout(LOADOUT_LAYOUT,
+					[
+						new CanvasView({
+							name: 'main',
+							scene: loadoutScene,
+							composer: this.#composer,
+						}),
+					],
+				),
+			],
+			autoResize: true,
+			useLayout: LOADOUT_LAYOUT,
+		});
 
 		Graphics.setShaderPrecision(ShaderPrecision.High);
 		Graphics.clearColor([0.5, 0.5, 0.5, 1]);
@@ -47,7 +78,7 @@ export class Viewer {
 			if (this.#composer?.enabled) {
 				this.#composer.render((event as CustomEvent<GraphicTickEvent>).detail.delta, {});
 			} else {
-				Graphics.render(loadoutScene, loadoutScene.activeCamera!, (event as CustomEvent<GraphicTickEvent>).detail.delta, {});
+				Graphics.renderMultiCanvas((event as CustomEvent<GraphicTickEvent>).detail.delta, (event as CustomEvent<GraphicTickEvent>).detail.context);
 			}
 		});
 
