@@ -1,7 +1,7 @@
 import { Entity, ManifestRepository, MergeRepository, Repositories, Repository, RepositoryEntry, SceneExplorer, ShaderEditor, Source2ModelManager, VpkRepository, ZipRepository } from 'harmony-3d';
 import { defineRepository, EntryCreated, HTMLRepositoryElement } from 'harmony-3d-utils';
 import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
-import { createElement, defineHarmonyFileInput, defineHarmonySwitch, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
+import { createElement, defineHarmonyColorPicker, defineHarmonyFileInput, defineHarmonySwitch, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyColorPickerElement, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
 import optionsCSS from '../../css/options.css';
 import repositoryEntryCSS from '../../css/repositoryentry.css';
 import { Controller, ControllerEvent } from '../controller';
@@ -25,7 +25,9 @@ export class Options {
 		defineHarmonyTabGroup();
 		defineHarmonyFileInput();
 		defineHarmonySwitch();
+		defineHarmonyColorPicker();
 
+		let htmlRecordVideoSizeList;
 		let htmlOverrideGameModels: HTMLHarmonySwitchElement;
 		this.#htmlElement = createElement('div', {
 			hidden: true,
@@ -107,6 +109,32 @@ export class Options {
 									}) as HTMLHarmonySwitchElement,
 								],
 							}),
+							createElement('group', {
+								class: 'items-options',
+								childs: [
+									createElement('label', {
+										class: 'space-after',
+										childs: [
+											createElement('span', {
+												i18n: '#picture_size',
+											}),
+											createElement('input', {
+												list: 'loadout-application-options-size-list',
+												$input: (event: InputEvent) => OptionsManager.setItem('app.picture.size', (event.target as HTMLInputElement).value),
+												$keydown: (event: MouseEvent) => event.stopPropagation(),
+											}),
+											htmlRecordVideoSizeList = createElement('datalist', {
+												id: 'loadout-application-options-size-list',
+											}),
+										]
+									}),
+									createElement('div', {
+										child: createElement('harmony-color-picker', {
+											$change: (event: CustomEvent) => OptionsManager.setItem('app.backgroundcolor', (event).detail.hex.toUpperCase()),
+										}) as HTMLHarmonyColorPickerElement,
+									}),
+								],
+							}),
 						]
 					}),
 					createElement('harmony-tab', {
@@ -152,6 +180,13 @@ export class Options {
 				],
 				adoptStyle: optionsCSS,
 			}),
+		});
+
+
+		const list = ['', '128*128', '184*184', '1600*900', '1920*1080', '2560*1440', '3840*2160'];
+		list.forEach((value) => {
+			const option = createElement('option', { 'data-value': value, innerText: value });
+			htmlRecordVideoSizeList.append(option);
 		});
 
 		void OptionsManager.getList('app.market.currency').then(currencyList => {
