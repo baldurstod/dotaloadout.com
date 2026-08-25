@@ -31,7 +31,7 @@ export class ItemSlots {
 					class: 'item-slots-character',
 					childs: [
 						this.#htmlCharacterIcon = createElement('div', {
-							class: 'hero-icon',
+							class: 'icon hero-icon',
 							// Hero order id starts at 1
 							// we use heroCount - 1 to acknowledge the fact that 0% means top is aligned with top edge and 100% bottom is aligned with bottom edge
 							//style: `background-position-y:${(characterTemplate.heroOrderId - 1) / (heroCount - 1) * 100}%`,
@@ -70,10 +70,10 @@ export class ItemSlots {
 		// Hero order id starts at 1
 		// we use heroCount - 1 to acknowledge the fact that 0% means top is aligned with top edge and 100% bottom is aligned with bottom edge
 		if (character.isHero()) {
-			this.#htmlCharacterIcon!.className = 'hero-icon';
+			this.#htmlCharacterIcon!.className = 'icon hero-icon';
 			this.#htmlCharacterIcon!.style = `background-position-y:${(character.heroOrderId - 1) / (heroCount - 1) * 100}%`;
 		} else {
-			this.#htmlCharacterIcon!.className = `world-slot-${character.id}`;
+			this.#htmlCharacterIcon!.className = `icon world-slot-${character.id}`;
 		}
 		this.#htmlCharacterName!.innerText = character.name;
 
