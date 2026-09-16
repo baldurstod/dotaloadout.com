@@ -305,6 +305,11 @@
 			"name": "app.panels.frameselector",
 			"type": "boolean",
 			"default": false
+		},
+		{
+			"name": "engine.renderer.experimentalwebgpu",
+			"type": "boolean",
+			"default": false
 		}
 	]
 }

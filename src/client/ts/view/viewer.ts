@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { CanvasLayout, CanvasView, Composer, ContextType, Graphics, GraphicsEvent, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, ShaderPrecision, WebGLStats } from 'harmony-3d';
+import { CanvasLayout, CanvasView, Composer, ContextType, Graphics, GraphicsEvents, GraphicTickEvent, HALF_PI, OrbitControl, ShaderPrecision, WebGLStats } from 'harmony-3d';
 import { OptionsManager } from 'harmony-browser-utils';
 import { createElement } from 'harmony-ui';
 import { LOADOUT_LAYOUT, MAIN_CANVAS } from '../constants';
@@ -30,9 +30,16 @@ export class Viewer {
 	}
 
 	async initRenderer(): Promise<void> {
+		let contextType = ContextType.WebGL;
+
+		if (OptionsManager.getItem('engine.renderer.experimentalwebgpu')) {
+			contextType = ContextType.WebGPU;
+		}
+
 		await Graphics.initCanvas({
 			useOffscreenCanvas: true,
 			autoResize: true,
+			type: contextType,
 			webGL: {
 				alpha: true,
 				preserveDrawingBuffer: true,
@@ -44,13 +51,6 @@ export class Viewer {
 				},
 			}
 		});
-
-
-		let contextType = ContextType.WebGL;
-
-		if (OptionsManager.getItem('engine.renderer.experimentalwebgpu')) {
-			contextType = ContextType.WebGPU;
-		}
 
 		Graphics.addCanvas({
 			name: MAIN_CANVAS,
@@ -73,7 +73,7 @@ export class Viewer {
 		Graphics.setShaderPrecision(ShaderPrecision.High);
 		Graphics.clearColor([0.5, 0.5, 0.5, 1]);
 
-		GraphicsEvents.addEventListener(GraphicsEvent.Tick, (event: Event) => {
+		GraphicsEvents.addEventListener('tick', (event: Event) => {
 			WebGLStats.tick();
 			if (this.#composer?.enabled) {
 				this.#composer.render((event as CustomEvent<GraphicTickEvent>).detail.delta, {});
