@@ -16,7 +16,7 @@ export class ItemSlots {
 	#currentCharacter: Character | null = null;
 
 	constructor() {
-		Controller.addEventListener(ControllerEvent.CharacterItemAdded, event => this.#handleItemAdded((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.CharacterItemAdded, event => this.#handleItemAdded((event as CustomEvent<Item>).detail));
 		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent<PersonaChanged>).detail));
 
 		Controller.addEventListener(ControllerEvent.CloseItemList, () => hide(this.#htmlElement));
@@ -56,7 +56,7 @@ export class ItemSlots {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	setCharacter(character: Character) {
+	setCharacter(character: Character): void {
 		if (!character || character == this.#currentCharacter) {
 			return;
 		}
@@ -79,7 +79,7 @@ export class ItemSlots {
 
 		const itemSlots = character.itemSlots;
 		if (itemSlots) {
-			for (const [_, itemSlot] of itemSlots) {
+			for (const [, itemSlot] of itemSlots) {
 				const htmlItemSlot = createElement('div', {
 					class: 'item-slot',
 					parent: this.#htmlSlotsContainer,
@@ -120,12 +120,12 @@ export class ItemSlots {
 			}
 		}
 
-		for (const [_, item] of character.getItems()) {
+		for (const [, item] of character.getItems()) {
 			this.#handleItemAdded(item);
 		}
 	}
 
-	#handleItemAdded(item: Item) {
+	#handleItemAdded(item: Item): void {
 		if (item.character == this.#currentCharacter) {
 			const itemSlot = item.slot;
 			const htmlSlot = this.#htmlSlots.get(itemSlot);
@@ -137,17 +137,17 @@ export class ItemSlots {
 				if (htmlImg && htmlName) {
 					const imageInventory = item.imageInventory;
 					if (imageInventory) {
-						htmlImg.src = DOTA2_ECON_URL + item.imageInventory + '.png';
+						htmlImg.src = DOTA2_ECON_URL + (item.imageInventory as string) + '.png';
 					} else {
 						htmlImg.src = DOTA2_DEFAULT_ECON_URL;
 					}
-					htmlName.innerText = item.name as string;
+					htmlName.innerText = item.name;
 				}
 			}
 		}
 	}
 
-	#handlePersonaChanged(personaId: number) {
+	#handlePersonaChanged(personaId: number): void {
 		for (const [name, html] of this.#htmlSlots) {
 			if (name == 'persona_selector') {
 				// Always display persona selector

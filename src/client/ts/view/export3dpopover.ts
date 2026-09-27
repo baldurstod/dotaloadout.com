@@ -72,7 +72,7 @@ export class Export3DPopover {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	show() {
+	show(): void {
 		if (!this.#html3DExportTexture || !this.#html3DSingleMesh || !this.#html3DSmoothMesh || !this.#html3DShowDialog || !this.#htmlElement) {
 			return;
 		}
@@ -85,7 +85,7 @@ export class Export3DPopover {
 		this.#htmlElement.showPopover();
 	}
 
-	#hide() {
+	#hide(): void {
 		if (this.#htmlElement) {
 			this.#htmlElement.hidePopover();
 		}

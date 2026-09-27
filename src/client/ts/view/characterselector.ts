@@ -90,7 +90,7 @@ export class CharacterSelector {
 		this.#sort();
 	}
 
-	#selectCharacter(characterId: string) {
+	#selectCharacter(characterId: string): void {
 		Controller.dispatchEvent<CharacterSelected>(ControllerEvent.CharacterSelected, { detail: { characterId: characterId } });
 		this.hide();
 	}
@@ -99,7 +99,7 @@ export class CharacterSelector {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	show() {
+	show(): void {
 		this.#initHTML();
 		if (!this.#initialized) {
 			this.#init();
@@ -109,11 +109,11 @@ export class CharacterSelector {
 		this.#htmlFilterName!.select();
 	}
 
-	hide() {
+	hide(): void {
 		hide(this.#htmlElement);
 	}
 
-	#setNameFilter(name: string) {
+	#setNameFilter(name: string): void {
 		this.#filters.name = name.toLowerCase();
 		this.#updateFilters();
 		this.#htmlNameContainer!.innerText = name;
@@ -121,7 +121,7 @@ export class CharacterSelector {
 		this.#htmlNameContainerTimeout = setTimeout(() => this.#htmlNameContainer!.innerText = '', 2000);
 	}
 
-	#updateFilters() {
+	#updateFilters(): void {
 		for (const [characterTemplate, characterHtml] of this.#htmlCharacters) {
 			if (this.#matchFilter(characterTemplate)) {
 				//show(characterHtml);
@@ -133,7 +133,7 @@ export class CharacterSelector {
 		}
 	}
 
-	#matchFilter(characterTemplate: CharacterTemplate) {
+	#matchFilter(characterTemplate: CharacterTemplate): boolean {
 		const nameFilter = this.#filters.name;
 		if (nameFilter) {
 			/*if (characterTemplate.name != slotFilter) {
@@ -146,7 +146,7 @@ export class CharacterSelector {
 		return true;
 	}
 
-	#setFilterMethod(filterMethod: string) {
+	#setFilterMethod(filterMethod: string): void {
 		if (filterMethod == 'hide') {
 			this.#css.textContent = '.character-selector-character.filtered{display: none;}';
 		} else {
@@ -154,7 +154,7 @@ export class CharacterSelector {
 		}
 	}
 
-	#setSortField(sortField: HeroSortField) {
+	#setSortField(sortField: HeroSortField): void {
 		if (this.#htmlSortField) {
 			this.#htmlSortField.value = sortField;
 		}
@@ -163,7 +163,8 @@ export class CharacterSelector {
 		this.#sort();
 	}
 
-	#sort() {
+	#sort(): void {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const that = this;
 		this.#htmlCharacters[Symbol.iterator] = function* (): MapIterator<[CharacterTemplate, HTMLElement]> {
 			yield* [...this.entries()].sort(
@@ -196,7 +197,7 @@ export class CharacterSelector {
 			);
 		}
 
-		for (let [_, htmlCharacter] of this.#htmlCharacters) {
+		for (const [, htmlCharacter] of this.#htmlCharacters) {
 			this.#htmlCharactersContainer!.append(htmlCharacter);
 		}
 	}

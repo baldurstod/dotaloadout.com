@@ -1,7 +1,7 @@
 import { Entity, ManifestRepository, MergeRepository, Repositories, Repository, RepositoryEntry, SceneExplorer, ShaderEditor, Source2ModelManager, VpkRepository, ZipRepository } from 'harmony-3d';
 import { defineRepository, EntryCreated, HTMLRepositoryElement } from 'harmony-3d-utils';
 import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
-import { createElement, defineHarmonyColorPicker, defineHarmonyFileInput, defineHarmonySwitch, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyColorPickerElement, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
+import { ColorPickerEventData, createElement, defineHarmonyColorPicker, defineHarmonyFileInput, defineHarmonySwitch, defineHarmonyTab, defineHarmonyTabGroup, HarmonySwitchChange, HTMLHarmonyColorPickerElement, HTMLHarmonyFileInputElement, HTMLHarmonySwitchElement, HTMLHarmonyTabElement, I18n, isVisible, toggle } from 'harmony-ui';
 import optionsCSS from '../../css/options.css';
 import repositoryEntryCSS from '../../css/repositoryentry.css';
 import { Controller, ControllerEvent } from '../controller';
@@ -130,7 +130,7 @@ export class Options {
 									}),
 									createElement('div', {
 										child: createElement('harmony-color-picker', {
-											$change: (event: CustomEvent) => OptionsManager.setItem('app.backgroundcolor', (event).detail.hex.toUpperCase()),
+											$change: (event: CustomEvent) => OptionsManager.setItem('app.backgroundcolor', (event as CustomEvent<ColorPickerEventData>).detail.hex.toUpperCase()),
 										}) as HTMLHarmonyColorPickerElement,
 									}),
 								],

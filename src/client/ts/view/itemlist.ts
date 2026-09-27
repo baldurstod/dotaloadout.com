@@ -32,7 +32,7 @@ export class ItemList {
 		Controller.addEventListener(ControllerEvent.CloseItemList, () => hide(this.#htmlElement));
 		Controller.addEventListener(ControllerEvent.OpenItemList, () => show(this.#htmlElement));
 
-		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent).detail));
+		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent<number>).detail));
 	}
 
 	#initHTML(): HTMLElement {
@@ -115,19 +115,21 @@ export class ItemList {
 		}
 	}*/
 
+	/*
 	#hide() {
 		hide(this.#htmlElement);
 	}
+	*/
 
 	get htmlElement(): HTMLElement {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	async setCharacter(character: Character) {
+	async setCharacter(character: Character): Promise<void> {
 		const itemSlots = character.itemSlots;
 		if (itemSlots) {
 			this.#htmlItemsSlotFilter!.innerHTML = '<option/><option value="none">Bundle</option>';
-			for (const [_, slot] of itemSlots) {
+			for (const [, slot] of itemSlots) {
 				if ((slot?.DisplayInLoadout ?? '1') == '0') {
 					continue;
 				}
@@ -141,7 +143,7 @@ export class ItemList {
 		this.#setSlotFilter();
 		this.#setRarityFilter();
 
-		const itemIds = await ItemManager.getItems(character.id as string);
+		const itemIds = await ItemManager.getItems(character.id);
 
 		this.#htmlRarityOptions.forEach(html => html.remove());
 		this.#htmlRarityOptions.clear();
@@ -153,9 +155,9 @@ export class ItemList {
 		}
 	}
 
-	async #addItem(character: Character, itemTemplate: ItemTemplate) {
+	#addItem(character: Character, itemTemplate: ItemTemplate): void {
 		const htmlItemSlot = createElement('div', {
-			class: `item-list-item item-rarity-${itemTemplate.rarity}`,
+			class: `item-list-item item-rarity-${itemTemplate.rarity as string}`,
 			parent: this.#htmlItemsList,
 			childs: [
 				createElement('img', {
@@ -180,7 +182,7 @@ export class ItemList {
 		this.#addRarity(itemTemplate.rarity as string);
 	}
 
-	#addRarity(rarity: string) {
+	#addRarity(rarity: string): void {
 		if (this.#htmlRarityOptions.has(rarity)) {
 			return;
 		}
@@ -191,17 +193,17 @@ export class ItemList {
 		this.#htmlRarityOptions.set(rarity, htmlRarityOption);
 	}
 
-	#setSlotFilter(slot?: string) {
+	#setSlotFilter(slot?: string): void {
 		this.#filters.slot = slot;
 		this.#updateFilters();
 	}
 
-	#setRarityFilter(rarity?: string) {
+	#setRarityFilter(rarity?: string): void {
 		this.#filters.rarity = rarity;
 		this.#updateFilters();
 	}
 
-	#setNameFilter(name?: string) {
+	#setNameFilter(name?: string): void {
 		if (name) {
 			this.#filters.name = name.toLowerCase().trim();
 		} else {
@@ -210,7 +212,7 @@ export class ItemList {
 		this.#updateFilters();
 	}
 
-	#updateFilters() {
+	#updateFilters(): void {
 		for (const [itemTemplate, htmlItem] of this.#htmlItems) {
 			if (this.#matchFilter(itemTemplate)) {
 				show(htmlItem);
@@ -220,7 +222,7 @@ export class ItemList {
 		}
 	}
 
-	#matchFilter(itemTemplate: ItemTemplate) {
+	#matchFilter(itemTemplate: ItemTemplate): boolean {
 		const slotFilter = this.#filters.slot;
 		if (slotFilter) {
 			if (itemTemplate.slot !== slotFilter) {
@@ -241,7 +243,7 @@ export class ItemList {
 
 		const nameFilter = this.#filters.name;
 		if (nameFilter) {
-			var itemName = itemTemplate.name;
+			const itemName = itemTemplate.name;
 			if (!itemName.toLowerCase().includes(nameFilter)) {
 				return false;
 			}
@@ -249,7 +251,7 @@ export class ItemList {
 		return true;
 	}
 
-	#handlePersonaChanged(personaId: number) {
+	#handlePersonaChanged(personaId: number): void {
 		if (!this.#htmlItemsSlotFilter) {
 			return;
 		}
