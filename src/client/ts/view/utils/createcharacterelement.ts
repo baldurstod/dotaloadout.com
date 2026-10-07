@@ -1,9 +1,8 @@
 import { createElement } from 'harmony-ui';
-import { CharacterTemplate } from '../../loadout/characters/charactertemplate';
-import { CharacterTemplates } from '../../loadout/characters/charactertemplates';
+import { Dota2HeroTemplate, Dota2HeroTemplates } from 'loadout';
 
-export function createCharacterElement(characterTemplate: CharacterTemplate): HTMLElement {
-	const heroCount = CharacterTemplates.heroCount;
+export function createCharacterElement(characterTemplate: Dota2HeroTemplate): HTMLElement {
+	const heroCount = Dota2HeroTemplates.heroCount;
 	return createElement('div', {
 		class: 'character-selector-character',
 		childs: [

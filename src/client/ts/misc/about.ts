@@ -1,5 +1,5 @@
 import { createElement, I18n } from 'harmony-ui';
-import { addNotification, NotificationType } from 'harmony-browser-utils/';
+import { addNotification, NotificationType } from 'harmony-browser-utils';
 import { TF2_GROUP_URL } from '../constants';
 
 export function showAboutLayer() {

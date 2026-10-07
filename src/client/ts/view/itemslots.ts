@@ -1,10 +1,8 @@
 import { closeSVG } from 'harmony-svg';
 import { createElement, display, hide, show } from 'harmony-ui';
+import { Dota2Hero, Dota2HeroTemplates, Dota2Item, Dota2LoadoutController } from 'loadout';
 import { DOTA2_DEFAULT_ECON_URL, DOTA2_ECON_URL } from '../constants';
 import { Controller, ControllerEvent, PersonaChanged } from '../controller';
-import { Character } from '../loadout/characters/character';
-import { CharacterTemplates } from '../loadout/characters/charactertemplates';
-import { Item } from '../loadout/items/item';
 import { getPersonaId } from '../utils/persona';
 
 export class ItemSlots {
@@ -13,11 +11,11 @@ export class ItemSlots {
 	#htmlCharacterName?: HTMLElement;
 	#htmlSlotsContainer?: HTMLElement;
 	#htmlSlots = new Map<string, HTMLElement>();
-	#currentCharacter: Character | null = null;
+	#currentCharacter: Dota2Hero | null = null;
 
 	constructor() {
-		Controller.addEventListener(ControllerEvent.CharacterItemAdded, event => this.#handleItemAdded((event as CustomEvent<Item>).detail));
-		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent<PersonaChanged>).detail));
+		Dota2LoadoutController.addEventListener('heroitemadded', event => this.#handleItemAdded((event as CustomEvent<Dota2Item>).detail));
+		Dota2LoadoutController.addEventListener('heropersonachanged', event => this.#handlePersonaChanged((event as CustomEvent<PersonaChanged>).detail));
 
 		Controller.addEventListener(ControllerEvent.CloseItemList, () => hide(this.#htmlElement));
 		Controller.addEventListener(ControllerEvent.OpenItemList, () => show(this.#htmlElement));
@@ -56,7 +54,7 @@ export class ItemSlots {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	setCharacter(character: Character): void {
+	setCharacter(character: Dota2Hero): void {
 		if (!character || character == this.#currentCharacter) {
 			return;
 		}
@@ -65,7 +63,7 @@ export class ItemSlots {
 		this.#htmlSlotsContainer!.innerText = '';
 		this.#htmlSlots.clear();
 
-		const heroCount = CharacterTemplates.heroCount;
+		const heroCount = Dota2HeroTemplates.heroCount;
 
 		// Hero order id starts at 1
 		// we use heroCount - 1 to acknowledge the fact that 0% means top is aligned with top edge and 100% bottom is aligned with bottom edge
@@ -125,7 +123,7 @@ export class ItemSlots {
 		}
 	}
 
-	#handleItemAdded(item: Item): void {
+	#handleItemAdded(item: Dota2Item): void {
 		if (item.character == this.#currentCharacter) {
 			const itemSlot = item.slot;
 			const htmlSlot = this.#htmlSlots.get(itemSlot);

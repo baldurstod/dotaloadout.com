@@ -1,8 +1,8 @@
+import { Dota2ItemTemplates } from 'loadout';
 import { DOTA2_REPOSITORY, ITEM_GAME_PATH } from '../../constants';
 import { Controller, ControllerEvent } from '../../controller';
 import { Units } from '../misc/units';
 import { MODIFIER_ENTITY_MODEL } from '../modifiers';
-import { ItemTemplates } from './itemtemplates';
 
 
 export class ItemManager {
@@ -31,7 +31,7 @@ export class ItemManager {
 			const characterItems = new Set<string>();
 
 			for (const item of itemsJSON) {
-				ItemTemplates.addTemplate(item);
+				Dota2ItemTemplates.addTemplate(item);
 				characterItems.add(String(item.id));
 			}
 
@@ -62,7 +62,7 @@ export class ItemManager {
 					],
 				}
 
-				ItemTemplates.addTemplate(item);
+				Dota2ItemTemplates.addTemplate(item);
 				items.add(key);
 			}
 		}
@@ -84,7 +84,7 @@ export class ItemManager {
 			return null;
 		}
 		for (const itemId of items) {
-			const item = ItemTemplates.getTemplate(itemId);
+			const item = Dota2ItemTemplates.getTemplate(itemId);
 			if (item?.isBaseItem && item?.slot == slot) {
 				return itemId;
 			}

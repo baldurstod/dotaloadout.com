@@ -1,25 +1,25 @@
 import { createElement } from 'harmony-ui';
+import { Dota2Item, Dota2LoadoutController } from 'loadout';
 import { CharacterSelected, Controller, ControllerEvent } from '../controller';
 import { CharacterManager } from '../loadout/characters/charactermanager';
-import { Item } from '../loadout/items/item';
 
 export class StyleSelector {
 	#htmlElement?: HTMLElement;
-	#items = new Map<Item, HTMLElement>();
+	#items = new Map<Dota2Item, HTMLElement>();
 
 	constructor() {
-		Controller.addEventListener(ControllerEvent.CharacterItemAdded, event => this.#addItem((event as CustomEvent<Item>).detail));
-		Controller.addEventListener(ControllerEvent.CharacterItemRemoved, event => this.#removeItem((event as CustomEvent<Item>).detail));
+		Dota2LoadoutController.addEventListener('heroitemadded', event => this.#addItem((event as CustomEvent<Dota2Item>).detail));
+		Dota2LoadoutController.addEventListener('heroitemremoved', event => this.#removeItem((event as CustomEvent<Dota2Item>).detail));
 		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 
-	#addItem(item: Item): void {
+	#addItem(item: Dota2Item): void {
 		if (item.hasStyles()) {
 			this.#items.set(item, this.#createItemSelector(item));
 		}
 	}
 
-	#removeItem(item: Item): void {
+	#removeItem(item: Dota2Item): void {
 		const html = this.#items.get(item);
 		if (html) {
 			html.remove();
@@ -38,7 +38,7 @@ export class StyleSelector {
 		character.getItems().forEach(item => this.#addItem(item));
 	}
 
-	#createItemSelector(item: Item): HTMLElement {
+	#createItemSelector(item: Dota2Item): HTMLElement {
 		let htmlItemStyles;
 		const htmlSelector = createElement('div', {
 			class: 'style-selector-item',

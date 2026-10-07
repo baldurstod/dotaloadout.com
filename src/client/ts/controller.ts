@@ -1,13 +1,9 @@
-import { Character } from './loadout/characters/character';
+import { Dota2Hero } from 'loadout';
 
 export enum ControllerEvent {
 	ChangeAnimFrame = 'changeanimframe',
 	CharacterSelected = 'characterselected',
-	CharacterUnitsChanged = 'characterunitschanged',
 	CharactersLoaded = 'charactersloaded',
-	CharacterItemAdded = 'characteritemadded',
-	CharacterItemRemoved = 'characteritemremoved',
-	CharacterPersonaChanged = 'characterpersonachanged',
 	ItemsLoaded = 'itemsloaded',
 	ItemClick = 'itemclick',
 	SlotClick = 'slotclick',
@@ -40,7 +36,7 @@ export type CharacterSelected = {
 };
 
 export type ItemClick = {
-	character: Character,
+	character: Dota2Hero,
 	itemId: string,
 };
 
@@ -53,7 +49,7 @@ export type ToolbarActivitySelected = string;
 export type ToolbarActivityModifiers = string[];
 
 export type RemoveItem = {
-	character: Character,
+	character: Dota2Hero,
 	itemID: string,
 };
 

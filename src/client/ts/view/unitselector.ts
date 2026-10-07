@@ -1,19 +1,19 @@
 import { OptionsManager } from 'harmony-browser-utils';
 import { createElement, createShadowRoot, defineHarmonySwitch, HarmonySwitchChange, HTMLHarmonySwitchElement, I18n } from 'harmony-ui';
+import { Dota2Hero, Dota2LoadoutController } from 'loadout';
 import unitSelectorCSS from '../../css/unitselector.css';
 import { CharacterSelected, Controller, ControllerEvent } from '../controller';
-import { Character } from '../loadout/characters/character';
 import { CharacterManager } from '../loadout/characters/charactermanager';
 import { Units } from '../loadout/misc/units';
 
 export class UnitSelector {
 	#shadowRoot?: ShadowRoot;
 	#htmlUnits?: HTMLElement;
-	#character?: Character;
+	#character?: Dota2Hero;
 	#items = new Map();
 
 	constructor() {
-		Controller.addEventListener(ControllerEvent.CharacterUnitsChanged, () => this.#refreshUnits());
+		Dota2LoadoutController.addEventListener('herounitschanged', () => this.#refreshUnits());
 		Controller.addEventListener(ControllerEvent.CharacterSelected, event => this.#handleCharacterSelected((event as CustomEvent<CharacterSelected>).detail.characterId));
 	}
 

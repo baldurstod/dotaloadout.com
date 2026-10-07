@@ -1,23 +1,20 @@
-import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils/';
+import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils';
 import { JSONObject } from 'harmony-types';
+import { Dota2AssetModifier, Dota2Hero, Dota2HeroTemplates, Dota2Item, Dota2ItemTemplates } from 'loadout';
 import world from '../../../json/datas/world.json';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { CharacterSelected, Controller, ControllerEvent, ItemClick, RemoveItem, ToolbarActivityModifiers, ToolbarActivitySelected } from '../../controller';
-import { AssetModifier } from '../assetmodifier';
-import { Item } from '../items/item';
 import { ItemManager } from '../items/itemmanager';
-import { ItemTemplates } from '../items/itemtemplates';
 import { MarketPrice } from '../marketprice';
 import { Unit, Units } from '../misc/units';
-import { Character } from './character';
-import { CharacterTemplates } from './charactertemplates';
+import { loadoutScene } from '../scene';
 
 export type LoadoutJSON = { characters: JSONObject[] };
 
 export class CharacterManager {
 	static #characterTemplates = new Map();
-	static #characters = new Map<string, Character>();
-	static #currentCharacter?: Character;
+	static #characters = new Map<string, Dota2Hero>();
+	static #currentCharacter?: Dota2Hero;
 
 	static {
 		Controller.addEventListener(ControllerEvent.CharacterSelected, event => { void this.#characterSelected((event as CustomEvent<CharacterSelected>).detail.characterId) });
@@ -64,10 +61,10 @@ export class CharacterManager {
 
 		for (const character of charactersJSON as JSONObject[]) {
 			character['is_hero'] = true;
-			CharacterTemplates.addTemplate(character);
+			Dota2HeroTemplates.addTemplate(character);
 		}
 		for (const worldItem of world) {
-			CharacterTemplates.addTemplate(worldItem);
+			Dota2HeroTemplates.addTemplate(worldItem);
 		}
 
 		Controller.dispatchEvent<void>(ControllerEvent.CharactersLoaded);
@@ -77,16 +74,16 @@ export class CharacterManager {
 		return this.#characterTemplates;
 	}*/
 
-	static getCharacter(characterId: string): Character {
+	static getCharacter(characterId: string): Dota2Hero {
 		let character = this.#characters.get(characterId);
 		if (!character) {
-			character = new Character(characterId);
+			character = new Dota2Hero(characterId, loadoutScene);
 			this.#characters.set(characterId, character);
 		}
 		return character;
 	}
 
-	static async #characterSelected(characterId: string): Promise<Character> {
+	static async #characterSelected(characterId: string): Promise<Dota2Hero> {
 		if (this.#currentCharacter) {
 			this.#currentCharacter.setVisible(false);
 		}
@@ -103,16 +100,16 @@ export class CharacterManager {
 	static async #handleItemClick(detail: ItemClick): Promise<void> {
 		const character = detail.character;
 		const itemId = detail.itemId;
-		const item = ItemTemplates.getTemplate(itemId);
+		const item = Dota2ItemTemplates.getTemplate(itemId);
 		if (!item) {
 			return;
 		}
 
 		const bundle = item.bundle as string[];
 		if (bundle) {
-			character.bundleItem = new Item(item, character);
+			character.bundleItem = new Dota2Item(item, character);
 			for (const bundleItemName of bundle) {
-				const bundleItemId = ItemTemplates.getTemplateByName(bundleItemName);
+				const bundleItemId = Dota2ItemTemplates.getTemplateByName(bundleItemName);
 				if (bundleItemId) {
 					if (!character.hasItem(bundleItemId)) {
 						await character.addItem(bundleItemId);
@@ -135,11 +132,11 @@ export class CharacterManager {
 		await character.processModifiers();
 	}
 
-	static async #removeItem(character: Character, itemId: string): Promise<void> {
+	static async #removeItem(character: Dota2Hero, itemId: string): Promise<void> {
 		await character?.removeItem(itemId);
 	}
 
-	static async #equipDefaultItems(character: Character, itemIds: Set<string>): Promise<void> {
+	static async #equipDefaultItems(character: Dota2Hero, itemIds: Set<string>): Promise<void> {
 		if (!OptionsManager.getItem('app.characters.equipdefaultitems')) {
 			await character.processModifiers();
 			return;
@@ -153,7 +150,7 @@ export class CharacterManager {
 		if (slots) {
 			let defaultItemId: string | undefined;
 			for (const itemId of itemIds) {
-				const itemTemplate = ItemTemplates.getTemplate(itemId);
+				const itemTemplate = Dota2ItemTemplates.getTemplate(itemId);
 				if (itemTemplate && itemTemplate.isBaseItem && slots.has(itemTemplate.slot)) {
 					defaultItemId = itemId;
 					await character.addItem(itemId);
@@ -170,7 +167,7 @@ export class CharacterManager {
 							continue;
 						}
 
-						item.extraAssetModifiers.push(new AssetModifier(item, {
+						item.extraAssetModifiers.push(new Dota2AssetModifier(item, {
 							asset,
 							modifier,
 							type: "entity_clientside_model",
@@ -191,7 +188,7 @@ export class CharacterManager {
 		}
 
 		const items = currentCharacter.getItemsWithBundle();
-		const prices = new Map<Item, string>();
+		const prices = new Map<Dota2Item, string>();
 		for (const [itemId, item] of items) {
 			const price = await MarketPrice.getPrice(itemId);
 			if (price) {

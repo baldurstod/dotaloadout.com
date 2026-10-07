@@ -1,8 +1,7 @@
-import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils/';
+import { OptionsManager, OptionsManagerEvent, OptionsManagerEvents } from 'harmony-browser-utils';
 import { createElement, hide, show } from 'harmony-ui';
+import { Dota2HeroTemplate, Dota2HeroTemplates } from 'loadout';
 import { CharacterSelected, Controller, ControllerEvent } from '../controller';
-import { CharacterTemplate } from '../loadout/characters/charactertemplate';
-import { CharacterTemplates } from '../loadout/characters/charactertemplates';
 import { createCharacterElement } from './utils/createcharacterelement';
 
 const FILTER_METHOD = 'app.heroselector.filter.method';
@@ -12,7 +11,7 @@ export type HeroSortField = 'name' | 'order' | 'female';
 
 export class CharacterSelector {
 	#htmlElement?: HTMLElement;
-	#htmlCharacters = new Map<CharacterTemplate, HTMLElement>();
+	#htmlCharacters = new Map<Dota2HeroTemplate, HTMLElement>();
 	#filters = { name: '' };
 	#htmlCharactersContainer?: HTMLElement;
 	#htmlNameContainer?: HTMLElement;
@@ -77,7 +76,7 @@ export class CharacterSelector {
 	}
 
 	#init(): void {
-		const characterTemplates = CharacterTemplates.getTemplates();
+		const characterTemplates = Dota2HeroTemplates.getTemplates();
 		let characterElement;
 		for (const [characterId, characterTemplate] of characterTemplates) {
 			this.#htmlCharactersContainer!.append(
@@ -133,7 +132,7 @@ export class CharacterSelector {
 		}
 	}
 
-	#matchFilter(characterTemplate: CharacterTemplate): boolean {
+	#matchFilter(characterTemplate: Dota2HeroTemplate): boolean {
 		const nameFilter = this.#filters.name;
 		if (nameFilter) {
 			/*if (characterTemplate.name != slotFilter) {
@@ -166,7 +165,7 @@ export class CharacterSelector {
 	#sort(): void {
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const that = this;
-		this.#htmlCharacters[Symbol.iterator] = function* (): MapIterator<[CharacterTemplate, HTMLElement]> {
+		this.#htmlCharacters[Symbol.iterator] = function* (): MapIterator<[Dota2HeroTemplate, HTMLElement]> {
 			yield* [...this.entries()].sort(
 				(a, b) => {
 					const templateA = a[0];

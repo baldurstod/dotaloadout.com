@@ -1,4 +1,4 @@
-import { OptionsManager } from 'harmony-browser-utils/';
+import { OptionsManager } from 'harmony-browser-utils';
 import { createElement, defineHarmonySwitch, HTMLHarmonySwitchElement, show } from 'harmony-ui';
 import { Controller, ControllerEvent } from '../controller';
 

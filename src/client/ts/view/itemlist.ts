@@ -1,9 +1,7 @@
 import { createElement, display, hide, show } from 'harmony-ui';
+import { Dota2Hero, Dota2ItemTemplate, Dota2ItemTemplates, Dota2LoadoutController } from 'loadout';
 import { Controller, ControllerEvent, SlotClick } from '../controller';
-import { Character } from '../loadout/characters/character';
 import { ItemManager } from '../loadout/items/itemmanager';
-import { ItemTemplate } from '../loadout/items/itemtemplate';
-import { ItemTemplates } from '../loadout/items/itemtemplates';
 import { getimageinventory } from '../utils/getimageinventory';
 import { getPersonaId } from '../utils/persona';
 
@@ -19,7 +17,7 @@ export class ItemList {
 	#htmlItemsRarityFilter?: HTMLSelectElement;
 	#htmlRarityOptions = new Map<string, HTMLOptionElement>();
 	#htmlItemsList?: HTMLElement;
-	#htmlItems = new Map<ItemTemplate, HTMLElement>();
+	#htmlItems = new Map<Dota2ItemTemplate, HTMLElement>();
 	#filters: Filters = {};
 
 	constructor() {
@@ -32,7 +30,7 @@ export class ItemList {
 		Controller.addEventListener(ControllerEvent.CloseItemList, () => hide(this.#htmlElement));
 		Controller.addEventListener(ControllerEvent.OpenItemList, () => show(this.#htmlElement));
 
-		Controller.addEventListener(ControllerEvent.CharacterPersonaChanged, event => this.#handlePersonaChanged((event as CustomEvent<number>).detail));
+		Dota2LoadoutController.addEventListener('heropersonachanged', event => this.#handlePersonaChanged((event as CustomEvent<number>).detail));
 	}
 
 	#initHTML(): HTMLElement {
@@ -125,7 +123,7 @@ export class ItemList {
 		return this.#htmlElement ?? this.#initHTML();
 	}
 
-	async setCharacter(character: Character): Promise<void> {
+	async setCharacter(character: Dota2Hero): Promise<void> {
 		const itemSlots = character.itemSlots;
 		if (itemSlots) {
 			this.#htmlItemsSlotFilter!.innerHTML = '<option/><option value="none">Bundle</option>';
@@ -148,14 +146,14 @@ export class ItemList {
 		this.#htmlRarityOptions.forEach(html => html.remove());
 		this.#htmlRarityOptions.clear();
 		for (const itemId of itemIds) {
-			const itemTemplate = ItemTemplates.getTemplate(itemId);
+			const itemTemplate = Dota2ItemTemplates.getTemplate(itemId);
 			if (itemTemplate) {
 				this.#addItem(character, itemTemplate);
 			}
 		}
 	}
 
-	#addItem(character: Character, itemTemplate: ItemTemplate): void {
+	#addItem(character: Dota2Hero, itemTemplate: Dota2ItemTemplate): void {
 		const htmlItemSlot = createElement('div', {
 			class: `item-list-item item-rarity-${itemTemplate.rarity as string}`,
 			parent: this.#htmlItemsList,
@@ -222,7 +220,7 @@ export class ItemList {
 		}
 	}
 
-	#matchFilter(itemTemplate: ItemTemplate): boolean {
+	#matchFilter(itemTemplate: Dota2ItemTemplate): boolean {
 		const slotFilter = this.#filters.slot;
 		if (slotFilter) {
 			if (itemTemplate.slot !== slotFilter) {
