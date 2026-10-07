@@ -1,10 +1,9 @@
 import { OptionsManager, OptionsManagerEvents } from 'harmony-browser-utils';
 import { JSONObject } from 'harmony-types';
-import { Dota2AssetModifier, Dota2Hero, Dota2HeroTemplates, Dota2Item, Dota2ItemTemplates } from 'loadout';
+import { Dota2AssetModifier, Dota2Hero, Dota2HeroTemplates, Dota2Item, Dota2ItemManager, Dota2ItemTemplates } from 'loadout';
 import world from '../../../json/datas/world.json';
 import { DOTA2_HEROES_URL } from '../../constants';
 import { CharacterSelected, Controller, ControllerEvent, ItemClick, RemoveItem, ToolbarActivityModifiers, ToolbarActivitySelected } from '../../controller';
-import { ItemManager } from '../items/itemmanager';
 import { MarketPrice } from '../marketprice';
 import { Unit, Units } from '../misc/units';
 import { loadoutScene } from '../scene';
@@ -92,7 +91,7 @@ export class CharacterManager {
 		this.#currentCharacter = character;
 		character.setVisible(true);
 
-		await this.#equipDefaultItems(character, await ItemManager.getItems(characterId));
+		await this.#equipDefaultItems(character, await Dota2ItemManager.getItems(characterId));
 		await CharacterManager.refreshMarketPrices();
 		return character;
 	}
@@ -120,7 +119,7 @@ export class CharacterManager {
 			character.bundleItem = null;
 			if (character.hasItem(itemId)) {
 				await character.removeItem(itemId);
-				const it = await ItemManager.getBaseItemId(character.id, item.slot);
+				const it = await Dota2ItemManager.getBaseItemId(character.id, item.slot);
 				if (it) {
 					await character.addItem(it);
 				}

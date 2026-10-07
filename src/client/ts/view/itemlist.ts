@@ -1,7 +1,6 @@
 import { createElement, display, hide, show } from 'harmony-ui';
-import { Dota2Hero, Dota2ItemTemplate, Dota2ItemTemplates, Dota2LoadoutController } from 'loadout';
+import { Dota2Hero, Dota2ItemManager, Dota2ItemTemplate, Dota2ItemTemplates, Dota2LoadoutController } from 'loadout';
 import { Controller, ControllerEvent, SlotClick } from '../controller';
-import { ItemManager } from '../loadout/items/itemmanager';
 import { getimageinventory } from '../utils/getimageinventory';
 import { getPersonaId } from '../utils/persona';
 
@@ -141,7 +140,7 @@ export class ItemList {
 		this.#setSlotFilter();
 		this.#setRarityFilter();
 
-		const itemIds = await ItemManager.getItems(character.id);
+		const itemIds = await Dota2ItemManager.getItems(character.id);
 
 		this.#htmlRarityOptions.forEach(html => html.remove());
 		this.#htmlRarityOptions.clear();

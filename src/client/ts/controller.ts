@@ -4,7 +4,6 @@ export enum ControllerEvent {
 	ChangeAnimFrame = 'changeanimframe',
 	CharacterSelected = 'characterselected',
 	CharactersLoaded = 'charactersloaded',
-	ItemsLoaded = 'itemsloaded',
 	ItemClick = 'itemclick',
 	SlotClick = 'slotclick',
 	OpenCharacterSelector = 'opencharacterselector',
