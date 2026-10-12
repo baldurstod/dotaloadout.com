@@ -10,7 +10,7 @@ export function showAboutLayer() {
 	${I18n.getString('#valve_tf_trademarks')}`;
 
 	addNotification(html, 'info', 15);*/
-	addNotification(I18n.getString('#loadout_about_content'), NotificationType.Info, 15);
+	addNotification(I18n.getString('#dotaloadout_about_content'), NotificationType.Info, 15);
 }
 
 export function showBugNotification() {

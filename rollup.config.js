@@ -6,8 +6,10 @@ import typescript from '@rollup/plugin-typescript';
 import wasm from '@rollup/plugin-wasm';
 import copy from 'rollup-plugin-copy';
 import css from 'rollup-plugin-import-css';
+import { buildTranslations } from 'translations';
 
 const isProduction = process.env.BUILD === 'production';
+const doTranslations = process.env.TRANSLATIONS === 'true';
 
 const BUILD_OPTIONS = [
 	{ mode: 2, output: "application_poweruser.js" },
@@ -21,6 +23,11 @@ if (isProduction) {
 }
 
 const BUILDS = [];
+
+if (doTranslations) {
+	console.info('Building translations');
+	await buildTranslations('./src/client/json/i18n/translations.json', './src/client/json/i18n/', undefined, '\t');
+}
 
 for (const buildOption of BUILD_OPTIONS) {
 	BUILDS.push(
