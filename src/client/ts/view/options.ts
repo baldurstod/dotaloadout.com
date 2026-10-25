@@ -146,7 +146,7 @@ export class Options {
 						events: {
 							activated: (event: Event) => {
 								this.#shaderEditor.initEditor({ aceUrl: './assets/js/ace-builds/src-min/ace.js', displayCustomShaderButtons: true });
-								(event.target as HTMLHarmonyTabElement).append(this.#shaderEditor);
+								(event.target as HTMLHarmonyTabElement).append(this.#shaderEditor.htmlElement);
 							},
 						},
 					}),

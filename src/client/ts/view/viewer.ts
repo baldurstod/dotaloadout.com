@@ -30,10 +30,10 @@ export class Viewer {
 	}
 
 	async initRenderer(): Promise<void> {
-		let contextType = ContextType.WebGL;
+		let contextType: ContextType = 'webgl';
 
 		if (OptionsManager.getItem('engine.renderer.experimentalwebgpu')) {
-			contextType = ContextType.WebGPU;
+			contextType = 'webgpu';
 		}
 
 		await Graphics.initCanvas({
