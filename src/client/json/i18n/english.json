@@ -3,7 +3,7 @@
 	"strings": {
 		"#feature_patreon": "This feature is available to my <a href=\"https://patreon.com/loadout\">Patreons</a> <a href=\"https://patreon.com/loadout\">https://patreon.com/loadout</a>",
 		"#confirm_patreon_logout": "Do you really want to logout from Patreon ?",
-		"#dotaloadout_about_content": "DotaLoadout.com is a service provided by <a href=\"http://steamcommunity.com/id/baldurstod/\" target=\"_blank\">Baldurs Tod</a><br>Models and texture files are property of <a href=\"http://www.valvesoftware.com/\" target=\"_blank\">Valve Corporation</a><br>Valve, Steam, Dota2 are trademarks and/or registered trademarks of Valve Corporation.",
+		"#dotaloadout_about_content": "DotaLoadout.com is a service provided by ${mylink}$<br> Models and texture files are property of ${valvelink}$<br> Valve, Steam, Dota2 are trademarks and/or registered trademarks of Valve Corporation.",
 		"#get_assistance_on_steam": "Get assistance on Steam",
 		"#get_assistance_on_discord": "Get assistance on Discord",
 		"#reset_camera": "Reset camera",

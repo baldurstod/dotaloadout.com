@@ -1,5 +1,5 @@
-import { createElement, I18n } from 'harmony-ui';
 import { addNotification, NotificationType } from 'harmony-browser-utils';
+import { createElement, I18n } from 'harmony-ui';
 import { TF2_GROUP_URL } from '../constants';
 
 export function showAboutLayer() {
@@ -10,7 +10,18 @@ export function showAboutLayer() {
 	${I18n.getString('#valve_tf_trademarks')}`;
 
 	addNotification(html, 'info', 15);*/
-	addNotification(I18n.getString('#dotaloadout_about_content'), NotificationType.Info, 15);
+	addNotification(I18n.formatHTMLElement('#dotaloadout_about_content', {
+		mylink: createElement('a', {
+			href: 'https://steamcommunity.com/id/baldurstod/',
+			target: '_blank',
+			innerText: 'Baldurs Tod',
+		}),
+		valvelink: createElement('a', {
+			href: 'https://www.valvesoftware.com/',
+			target: '_blank',
+			innerText: 'Valve Corporation',
+		}),
+	}), NotificationType.Info, 15);
 }
 
 export function showBugNotification() {

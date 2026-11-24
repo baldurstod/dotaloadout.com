@@ -1,5 +1,5 @@
 import { AmbientLight, CameraProjection, Graphics, Group, MergeRepository, ObjExporter, PointLight, Repositories, Source2ModelManager, Source2ParticleManager, WebRepository, exportToBinaryFBX, stringToVec3 } from 'harmony-3d';
-import { NotificationType, OptionsManager, OptionsManagerEvents, ShortcutHandler, addNotification, saveFile } from 'harmony-browser-utils';
+import { NotificationType, OptionsManager, OptionsManagerEvents, ShortcutHandler, addNotification, addNotificationI18n, saveFile } from 'harmony-browser-utils';
 import { I18n, createElement, createShadowRoot, documentStyle, hide, shadowRootStyle, show } from 'harmony-ui';
 import { setTimeoutPromise } from 'harmony-utils';
 import applicationCSS from '../css/application.css';
@@ -350,7 +350,7 @@ class Application {
 		const result = await this.#uploadLoadout(loadout);
 
 		if (!result) {
-			addNotification(I18n.getString('#failed_to_upload_this_loadout'), NotificationType.Error, 5);
+			addNotificationI18n('#failed_to_upload_this_loadout', NotificationType.Error, 5);
 			return;
 		}
 
@@ -359,7 +359,7 @@ class Application {
 		let notificationText = `${I18n.getString('#share_this_loadout')}<input value='${loadoutUrl}'>`;
 		try {
 			navigator.clipboard.writeText(loadoutUrl).then(
-				() => addNotification(I18n.getString('#share_link_clipboard_ok'), NotificationType.Info, 5),
+				() => addNotificationI18n('#share_link_clipboard_ok', NotificationType.Info, 5),
 				() => addNotification(notificationText, NotificationType.Info, 15)
 			);
 		} catch (e) {
@@ -437,7 +437,7 @@ class Application {
 			let binaryFBX = await exportToBinaryFBX(loadoutScene);
 			saveFile(new File([binaryFBX as ArrayBuffer], 'dotaloadout.com.fbx'));
 		} else {
-			addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10);
+			addNotificationI18n('#feature_patreon', NotificationType.Warning, 10);
 		}
 	}
 
@@ -450,7 +450,7 @@ class Application {
 				this.#export3D2();
 			}
 		} else {
-			addNotification(I18n.getString('#feature_patreon'), NotificationType.Warning, 10);
+			addNotificationI18n('#feature_patreon', NotificationType.Warning, 10);
 		}
 	}
 
